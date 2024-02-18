@@ -1,0 +1,2108 @@
+repo_name,file_path,file_html,class_name,me_name,me_code,old_code,chatGPT_code,element_str,slice_str,chatgpt_real_acc,ridiom_acc,real_acc,truth_code,
+find_or_refactor_wrong
+AIGames,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/AIGames/AIPacman/Algorithm_1/Algorithm_1_v1/gameAPI/game.py,https://github.com/CharlesPikachu/AIGames/tree/master/AIPacman/Algorithm_1/Algorithm_1_v1/gameAPI/game.py,GamePacmanAgent,runGame$147,"def runGame(self):
+		clock = pygame.time.Clock()
+		is_win = False
+		while True:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					sys.exit(-1)
+					pygame.quit()
+			pressed_keys = pygame.key.get_pressed()
+			if pressed_keys[pygame.K_UP]:
+				self.pacman_sprites.update([0, -1], self.wall_sprites, None)
+			elif pressed_keys[pygame.K_DOWN]:
+				self.pacman_sprites.update([0, 1], self.wall_sprites, None)
+			elif pressed_keys[pygame.K_LEFT]:
+				self.pacman_sprites.update([-1, 0], self.wall_sprites, None)
+			elif pressed_keys[pygame.K_RIGHT]:
+				self.pacman_sprites.update([1, 0], self.wall_sprites, None)
+			for pacman in self.pacman_sprites:
+				food_eaten = pygame.sprite.spritecollide(pacman, self.food_sprites, True)
+				capsule_eaten = pygame.sprite.spritecollide(pacman, self.capsule_sprites, True)
+			nonscared_ghost_sprites = pygame.sprite.Group()
+			dead_ghost_sprites = pygame.sprite.Group()
+			for ghost in self.ghost_sprites:
+				if ghost.is_scared:
+					if pygame.sprite.spritecollide(ghost, self.pacman_sprites, False):
+						self.score += 6
+						dead_ghost_sprites.add(ghost)
+				else:
+					nonscared_ghost_sprites.add(ghost)
+			for ghost in dead_ghost_sprites:
+				ghost.reset()
+			self.score += len(food_eaten) * 2
+			self.score += len(capsule_eaten) * 3
+			if len(capsule_eaten) > 0:
+				for ghost in self.ghost_sprites:
+					ghost.is_scared = True
+			self.ghost_sprites.update(self.wall_sprites, None, self.config.ghost_action_method, self.pacman_sprites)
+			self.screen.fill(self.config.BLACK)
+			self.wall_sprites.draw(self.screen)
+			self.food_sprites.draw(self.screen)
+			self.capsule_sprites.draw(self.screen)
+			self.pacman_sprites.draw(self.screen)
+			self.ghost_sprites.draw(self.screen)
+			# show the score
+			text = self.font.render('SCORE: %s' % self.score, True, self.config.WHITE)
+			self.screen.blit(text, (2, 2))
+			# judge whether game over
+			if len(self.food_sprites) == 0 and len(self.capsule_sprites) == 0:
+				is_win = True
+				break
+			if pygame.sprite.groupcollide(self.pacman_sprites, nonscared_ghost_sprites, False, False):
+				is_win = False
+				break
+			pygame.display.flip()
+			clock.tick(10)
+		if is_win:
+			self.__showText(msg='You won!', position=(self.screen_width//2-50, int(self.screen_height/2.5)))
+		else:
+			self.__showText(msg='Game Over!', position=(self.screen_width//2-80, int(self.screen_height/2.5)))","while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit(-1)
+            pygame.quit()
+    pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[pygame.K_UP]:
+        self.pacman_sprites.update([0, -1], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_DOWN]:
+        self.pacman_sprites.update([0, 1], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_LEFT]:
+        self.pacman_sprites.update([-1, 0], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_RIGHT]:
+        self.pacman_sprites.update([1, 0], self.wall_sprites, None)
+    for pacman in self.pacman_sprites:
+        food_eaten = pygame.sprite.spritecollide(pacman, self.food_sprites, True)
+        capsule_eaten = pygame.sprite.spritecollide(pacman, self.capsule_sprites, True)
+    nonscared_ghost_sprites = pygame.sprite.Group()
+    dead_ghost_sprites = pygame.sprite.Group()
+    for ghost in self.ghost_sprites:
+        if ghost.is_scared:
+            if pygame.sprite.spritecollide(ghost, self.pacman_sprites, False):
+                self.score += 6
+                dead_ghost_sprites.add(ghost)
+        else:
+            nonscared_ghost_sprites.add(ghost)
+    for ghost in dead_ghost_sprites:
+        ghost.reset()
+    self.score += len(food_eaten) * 2
+    self.score += len(capsule_eaten) * 3
+    if len(capsule_eaten) > 0:
+        for ghost in self.ghost_sprites:
+            ghost.is_scared = True
+    self.ghost_sprites.update(self.wall_sprites, None, self.config.ghost_action_method, self.pacman_sprites)
+    self.screen.fill(self.config.BLACK)
+    self.wall_sprites.draw(self.screen)
+    self.food_sprites.draw(self.screen)
+    self.capsule_sprites.draw(self.screen)
+    self.pacman_sprites.draw(self.screen)
+    self.ghost_sprites.draw(self.screen)
+    text = self.font.render('SCORE: %s' % self.score, True, self.config.WHITE)
+    self.screen.blit(text, (2, 2))
+    if len(self.food_sprites) == 0 and len(self.capsule_sprites) == 0:
+        is_win = True
+        break
+    if pygame.sprite.groupcollide(self.pacman_sprites, nonscared_ghost_sprites, False, False):
+        is_win = False
+        break
+    pygame.display.flip()
+    clock.tick(10)
+if is_win:
+    self.__showText(msg='You won!', position=(self.screen_width // 2 - 50, int(self.screen_height / 2.5)))
+else:
+    self.__showText(msg='Game Over!', position=(self.screen_width // 2 - 80, int(self.screen_height / 2.5)))","while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit(-1)
+            pygame.quit()
+    pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[pygame.K_UP]:
+        self.pacman_sprites.update([0, -1], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_DOWN]:
+        self.pacman_sprites.update([0, 1], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_LEFT]:
+        self.pacman_sprites.update([-1, 0], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_RIGHT]:
+        self.pacman_sprites.update([1, 0], self.wall_sprites, None)
+    for pacman in self.pacman_sprites:
+        food_eaten = pygame.sprite.spritecollide(pacman, self.food_sprites, True)
+        capsule_eaten = pygame.sprite.spritecollide(pacman, self.capsule_sprites, True)
+    nonscared_ghost_sprites = pygame.sprite.Group()
+    dead_ghost_sprites = pygame.sprite.Group()
+    for ghost in self.ghost_sprites:
+        if ghost.is_scared:
+            if pygame.sprite.spritecollide(ghost, self.pacman_sprites, False):
+                self.score += 6
+                dead_ghost_sprites.add(ghost)
+        else:
+            nonscared_ghost_sprites.add(ghost)
+    for ghost in dead_ghost_sprites:
+        ghost.reset()
+    self.score += len(food_eaten) * 2
+    self.score += len(capsule_eaten) * 3
+    if len(capsule_eaten) > 0:
+        for ghost in self.ghost_sprites:
+            ghost.is_scared = True
+    self.ghost_sprites.update(self.wall_sprites, None, self.config.ghost_action_method, self.pacman_sprites)
+    self.screen.fill(self.config.BLACK)
+    self.wall_sprites.draw(self.screen)
+    self.food_sprites.draw(self.screen)
+    self.capsule_sprites.draw(self.screen)
+    self.pacman_sprites.draw(self.screen)
+    self.ghost_sprites.draw(self.screen)
+    text = self.font.render('SCORE: %s' % self.score, True, self.config.WHITE)
+    self.screen.blit(text, (2, 2))
+    if len(self.food_sprites) == 0 and len(self.capsule_sprites) == 0:
+        is_win = True
+        self.__showText(msg='Game Over!', position=(self.screen_width // 2 - 80, int(self.screen_height / 2.5)))
+        break
+    if pygame.sprite.groupcollide(self.pacman_sprites, nonscared_ghost_sprites, False, False):
+        is_win = False
+        self.__showText(msg='Game Over!', position=(self.screen_width // 2 - 80, int(self.screen_height / 2.5)))
+        break
+    pygame.display.flip()
+    clock.tick(10)
+else:
+    self.__showText(msg='You won!', position=(self.screen_width // 2 - 50, int(self.screen_height / 2.5)))","while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit(-1)
+            pygame.quit()
+    pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[pygame.K_UP]:
+        self.pacman_sprites.update([0, -1], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_DOWN]:
+        self.pacman_sprites.update([0, 1], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_LEFT]:
+        self.pacman_sprites.update([-1, 0], self.wall_sprites, None)
+    elif pressed_keys[pygame.K_RIGHT]:
+        self.pacman_sprites.update([1, 0], self.wall_sprites, None)
+    for pacman in self.pacman_sprites:
+        food_eaten = pygame.sprite.spritecollide(pacman, self.food_sprites, True)
+        capsule_eaten = pygame.sprite.spritecollide(pacman, self.capsule_sprites, True)
+    nonscared_ghost_sprites = pygame.sprite.Group()
+    dead_ghost_sprites = pygame.sprite.Group()
+    for ghost in self.ghost_sprites:
+        if ghost.is_scared:
+            if pygame.sprite.spritecollide(ghost, self.pacman_sprites, False):
+                self.score += 6
+                dead_ghost_sprites.add(ghost)
+        else:
+            nonscared_ghost_sprites.add(ghost)
+    for ghost in dead_ghost_sprites:
+        ghost.reset()
+    self.score += len(food_eaten) * 2
+    self.score += len(capsule_eaten) * 3
+    if len(capsule_eaten) > 0:
+        for ghost in self.ghost_sprites:
+            ghost.is_scared = True
+    self.ghost_sprites.update(self.wall_sprites, None, self.config.ghost_action_method, self.pacman_sprites)
+    self.screen.fill(self.config.BLACK)
+    self.wall_sprites.draw(self.screen)
+    self.food_sprites.draw(self.screen)
+    self.capsule_sprites.draw(self.screen)
+    self.pacman_sprites.draw(self.screen)
+    self.ghost_sprites.draw(self.screen)
+    text = self.font.render('SCORE: %s' % self.score, True, self.config.WHITE)
+    self.screen.blit(text, (2, 2))
+    if len(self.food_sprites) == 0 and len(self.capsule_sprites) == 0:
+        self.__showText(msg='You won!', position=(self.screen_width // 2 - 50, int(self.screen_height / 2.5)))
+        break
+    if pygame.sprite.groupcollide(self.pacman_sprites, nonscared_ghost_sprites, False, False):
+        self.__showText(msg='Game Over!', position=(self.screen_width // 2 - 80, int(self.screen_height / 2.5)))
+        break
+    pygame.display.flip()
+    clock.tick(10)
+else:
+    self.__showText(msg='You won!', position=(self.screen_width // 2 - 50, int(self.screen_height / 2.5)))",0,-1,-1,0,"for var1 in var2:
+    var3 = True
+    break
+
+    var3 = False
+    break
+
+if var3:
+    zejun1","break statement is executed:None
+break statement is not executed:zejun1",it actually cannot refactor
+unknown-horizons,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/unknown-horizons/horizons/ai/aiplayer/villagebuilder.py,https://github.com/unknown-horizons/unknown-horizons/tree/master/horizons/ai/aiplayer/villagebuilder.py,VillageBuilder,_get_possible_building_positions$233,"def _get_possible_building_positions(self, section_coords_set, size):
+		""""""Return {(x, y): Rect, ...} that contains every size x size potential building location where only the provided coordinates are legal.""""""
+		result = {}
+		for (x, y) in sorted(section_coords_set):
+			ok = True
+			for dx in range(size[0]):
+				for dy in range(size[1]):
+					coords = (x + dx, y + dy)
+					if coords not in section_coords_set or not self.land_manager.coords_usable(coords):
+						ok = False
+						break
+				if not ok:
+					break
+			if ok:
+				result[(x, y)] = Rect.init_from_topleft_and_size_tuples((x, y), size)
+		return result","for dy in range(size[1]):
+    coords = (x + dx, y + dy)
+    if coords not in section_coords_set or not self.land_manager.coords_usable(coords):
+        ok = False
+        break
+if not ok:
+    break","for dy in range(size[1]):
+    coords = (x + dx, y + dy)
+    if coords not in section_coords_set or not self.land_manager.coords_usable(coords):
+        ok = False
+        break
+else:
+    break",Cannot refactor,-1,0,,0,"for var1 in var2:
+    var3 = False
+    break
+
+if not var3:
+    zejun1","break statement is executed:None
+break statement is not executed:zejun1"
+brat,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/brat/server/src/search.py,https://github.com/nlplab/brat/tree/master/server/src/search.py,,search_anns_for_relation$811,"def search_anns_for_relation(ann_objs, arg1, arg1type, arg2, arg2type,
+                             restrict_types=None, ignore_types=None,
+                             text_match=""word"", match_case=False):
+    """"""Searches the given Annotations objects for relation annotations matching
+    the given specification.
+
+    Returns a SearchMatchSet object.
+    """"""
+
+    global REPORT_SEARCH_TIMINGS
+    if REPORT_SEARCH_TIMINGS:
+        process_start = datetime.now()
+
+    # treat None and empty list uniformly
+    restrict_types = [] if restrict_types is None else restrict_types
+    ignore_types = [] if ignore_types is None else ignore_types
+
+    # TODO: include args in description
+    description = ""Relations""
+    if restrict_types != []:
+        description = description + \
+            ' (of type %s)' % ("","".join(restrict_types))
+    matches = SearchMatchSet(description)
+
+    # compile regular expressions according to arguments for matching
+    arg1_match_regex, arg2_match_regex = None, None
+    if arg1 is not None:
+        arg1_match_regex = _get_match_regex(arg1, text_match, match_case)
+    if arg2 is not None:
+        arg2_match_regex = _get_match_regex(arg2, text_match, match_case)
+
+    if ((arg1 is not None and arg1_match_regex is None) or
+            (arg2 is not None and arg2_match_regex is None)):
+        # something went wrong, return empty
+        return matches
+
+    for ann_obj in ann_objs:
+        # collect per-document (ann_obj) for sorting
+        ann_matches = []
+
+        # binary relations and equivs need to be treated separately due
+        # to different structure (not a great design there)
+        for r in ann_obj.get_relations():
+            if r.type in ignore_types:
+                continue
+            if restrict_types != [] and r.type not in restrict_types:
+                continue
+
+            # argument constraints
+            if arg1 is not None or arg1type is not None:
+                arg1ent = ann_obj.get_ann_by_id(r.arg1)
+                if arg1 is not None and not arg1_match_regex.search(
+                        arg1ent.get_text()):
+                    continue
+                if arg1type is not None and arg1type != arg1ent.type:
+                    continue
+            if arg2 is not None or arg2type is not None:
+                arg2ent = ann_obj.get_ann_by_id(r.arg2)
+                if arg2 is not None and not arg2_match_regex.search(
+                        arg2ent.get_text()):
+                    continue
+                if arg2type is not None and arg2type != arg2ent.type:
+                    continue
+
+            ann_matches.append(r)
+
+        for r in ann_obj.get_equivs():
+            if r.type in ignore_types:
+                continue
+            if restrict_types != [] and r.type not in restrict_types:
+                continue
+
+            # argument constraints. This differs from that for non-equiv
+            # for relations as equivs are symmetric, so the arg1-arg2
+            # distinction can be ignored.
+
+            # TODO: this can match the same thing twice, which most
+            # likely isn't what a user expects: for example, having
+            # 'Protein' for both arg1type and arg2type can still match
+            # an equiv between 'Protein' and 'Gene'.
+            match_found = False
+            for arg, argtype, arg_match_regex in (
+                    (arg1, arg1type, arg1_match_regex), (arg2, arg2type, arg2_match_regex)):
+                match_found = False
+                for aeid in r.entities:
+                    argent = ann_obj.get_ann_by_id(aeid)
+                    if arg is not None and not arg_match_regex.search(
+                            argent.get_text()):
+                        continue
+                    if argtype is not None and argtype != argent.type:
+                        continue
+                    match_found = True
+                    break
+                if not match_found:
+                    break
+            if not match_found:
+                continue
+
+            ann_matches.append(r)
+
+        # TODO: sort, e.g. by offset of participant occurring first
+        # ann_matches.sort(lambda a,b: cmp(???))
+
+        # add to overall collection
+        for r in ann_matches:
+            matches.add_match(ann_obj, r)
+
+        # MAX_SEARCH_RESULT_NUMBER <= 0 --> no limit
+        if len(matches) > MAX_SEARCH_RESULT_NUMBER and MAX_SEARCH_RESULT_NUMBER > 0:
+            Messager.warning(
+                'Search result limit (%d) exceeded, stopping search.' %
+                MAX_SEARCH_RESULT_NUMBER)
+            break
+
+    matches.limit_to(MAX_SEARCH_RESULT_NUMBER)
+
+    # sort by document name for output
+    matches.sort_matches()
+
+    if REPORT_SEARCH_TIMINGS:
+        process_delta = datetime.now() - process_start
+        print(""search_anns_for_relation: processed in"", str(
+            process_delta.seconds) + ""."" + str(process_delta.microseconds / 10000), ""seconds"", file=stderr)
+
+    return matches","for (arg, argtype, arg_match_regex) in ((arg1, arg1type, arg1_match_regex), (arg2, arg2type, arg2_match_regex)):
+    match_found = False
+    for aeid in r.entities:
+        argent = ann_obj.get_ann_by_id(aeid)
+        if arg is not None and (not arg_match_regex.search(argent.get_text())):
+            continue
+        if argtype is not None and argtype != argent.type:
+            continue
+        match_found = True
+        break
+    if not match_found:
+        break
+if not match_found:
+    continue","for (arg, argtype, arg_match_regex) in ((arg1, arg1type, arg1_match_regex), (arg2, arg2type, arg2_match_regex)):
+    match_found = False
+    for aeid in r.entities:
+        argent = ann_obj.get_ann_by_id(aeid)
+        if arg is not None and (not arg_match_regex.search(argent.get_text())):
+            continue
+        if argtype is not None and argtype != argent.type:
+            continue
+        match_found = True
+        break
+    if not match_found:
+        break
+else:
+    continue",Cannot refactor,-1,0,,0,"for var1 in var2:
+    var3 = True
+    break
+
+if not var3:
+    zejun1","break statement is executed:None
+break statement is not executed:zejun1"
+xarray,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/xarray/xarray/core/concat.py,https://github.com/pydata/xarray/tree/master/xarray/core/concat.py,,process_subset_opt$296,"def process_subset_opt(opt, subset):
+        if isinstance(opt, str):
+            if opt == ""different"":
+                if compat == ""override"":
+                    raise ValueError(
+                        f""Cannot specify both {subset}='different' and compat='override'.""
+                    )
+                # all nonindexes that are not the same in each dataset
+                for k in getattr(datasets[0], subset):
+                    if k not in concat_over:
+                        equals[k] = None
+
+                        variables = [
+                            ds.variables[k] for ds in datasets if k in ds.variables
+                        ]
+
+                        if len(variables) == 1:
+                            # coords=""different"" doesn't make sense when only one object
+                            # contains a particular variable.
+                            break
+                        elif len(variables) != len(datasets) and opt == ""different"":
+                            raise ValueError(
+                                f""{k!r} not present in all datasets and coords='different'. ""
+                                f""Either add {k!r} to datasets where it is missing or ""
+                                ""specify coords='minimal'.""
+                            )
+
+                        # first check without comparing values i.e. no computes
+                        for var in variables[1:]:
+                            equals[k] = getattr(variables[0], compat)(
+                                var, equiv=lazy_array_equiv
+                            )
+                            if equals[k] is not True:
+                                # exit early if we know these are not equal or that
+                                # equality cannot be determined i.e. one or all of
+                                # the variables wraps a numpy array
+                                break
+
+                        if equals[k] is False:
+                            concat_over.add(k)
+
+                        elif equals[k] is None:
+                            # Compare the variable of all datasets vs. the one
+                            # of the first dataset. Perform the minimum amount of
+                            # loads in order to avoid multiple loads from disk
+                            # while keeping the RAM footprint low.
+                            v_lhs = datasets[0].variables[k].load()
+                            # We'll need to know later on if variables are equal.
+                            computed = []
+                            for ds_rhs in datasets[1:]:
+                                v_rhs = ds_rhs.variables[k].compute()
+                                computed.append(v_rhs)
+                                if not getattr(v_lhs, compat)(v_rhs):
+                                    concat_over.add(k)
+                                    equals[k] = False
+                                    # computed variables are not to be re-computed
+                                    # again in the future
+                                    for ds, v in zip(datasets[1:], computed):
+                                        ds.variables[k].data = v.data
+                                    break
+                            else:
+                                equals[k] = True
+
+            elif opt == ""all"":
+                concat_over.update(
+                    set(getattr(datasets[0], subset)) - set(datasets[0].dims)
+                )
+            elif opt == ""minimal"":
+                pass
+            else:
+                raise ValueError(f""unexpected value for {subset}: {opt}"")
+        else:
+            invalid_vars = [k for k in opt if k not in getattr(datasets[0], subset)]
+            if invalid_vars:
+                if subset == ""coords"":
+                    raise ValueError(
+                        ""some variables in coords are not coordinates on ""
+                        f""the first dataset: {invalid_vars}""
+                    )
+                else:
+                    raise ValueError(
+                        ""some variables in data_vars are not data variables ""
+                        f""on the first dataset: {invalid_vars}""
+                    )
+            concat_over.update(opt)","for k in getattr(datasets[0], subset):
+    if k not in concat_over:
+        equals[k] = None
+        variables = [ds.variables[k] for ds in datasets if k in ds.variables]
+        if len(variables) == 1:
+            break
+        elif len(variables) != len(datasets) and opt == 'different':
+            raise ValueError(f""{k!r} not present in all datasets and coords='different'. Either add {k!r} to datasets where it is missing or specify coords='minimal'."")
+        for var in variables[1:]:
+            equals[k] = getattr(variables[0], compat)(var, equiv=lazy_array_equiv)
+            if equals[k] is not True:
+                break
+        if equals[k] is False:
+            concat_over.add(k)
+        elif equals[k] is None:
+            v_lhs = datasets[0].variables[k].load()
+            computed = []
+            for ds_rhs in datasets[1:]:
+                v_rhs = ds_rhs.variables[k].compute()
+                computed.append(v_rhs)
+                if not getattr(v_lhs, compat)(v_rhs):
+                    concat_over.add(k)
+                    equals[k] = False
+                    for (ds, v) in zip(datasets[1:], computed):
+                        ds.variables[k].data = v.data
+                    break
+            else:
+                equals[k] = True
+if opt == 'all':
+    concat_over.update(set(getattr(datasets[0], subset)) - set(datasets[0].dims))
+elif opt == 'minimal':
+    pass
+else:
+    raise ValueError(f'unexpected value for {subset}: {opt}')","for k in getattr(datasets[0], subset):
+    if k not in concat_over:
+        equals[k] = None
+        variables = [ds.variables[k] for ds in datasets if k in ds.variables]
+        if len(variables) == 1:
+            if opt == 'minimal':
+                pass
+            else:
+                raise ValueError(f'unexpected value for {subset}: {opt}')
+            break
+        elif len(variables) != len(datasets) and opt == 'different':
+            raise ValueError(f""{k!r} not present in all datasets and coords='different'. Either add {k!r} to datasets where it is missing or specify coords='minimal'."")
+        for var in variables[1:]:
+            equals[k] = getattr(variables[0], compat)(var, equiv=lazy_array_equiv)
+            if equals[k] is not True:
+                break
+        if equals[k] is False:
+            concat_over.add(k)
+        elif equals[k] is None:
+            v_lhs = datasets[0].variables[k].load()
+            computed = []
+            for ds_rhs in datasets[1:]:
+                v_rhs = ds_rhs.variables[k].compute()
+                computed.append(v_rhs)
+                if not getattr(v_lhs, compat)(v_rhs):
+                    concat_over.add(k)
+                    equals[k] = False
+                    for (ds, v) in zip(datasets[1:], computed):
+                        ds.variables[k].data = v.data
+                    break
+            else:
+                equals[k] = True
+else:
+    concat_over.update(set(getattr(datasets[0], subset)) - set(datasets[0].dims))",Cannot refactor,-1,0,,,"for var1 in var2:
+    if len(var3) == 1:
+        break
+    elif len(var3) != len(var4) and var5 == 'different':
+        raise ValueError(f""{var6!r} not present in all datasets and coords='different'. Either add {var6!r} to datasets where it is missing or specify coords='minimal'."")
+if var5 == 'all':
+    zejun1","break statement is executed:None
+break statement is not executed:zejun1 (if var5 == 'all')"
+new_find
+no_find
+sunpy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/sunpy/sunpy/net/helio/parser.py,https://github.com/sunpy/sunpy/tree/master/sunpy/net/helio/parser.py,,webservice_parser$23,"def webservice_parser(service='HEC'):
+    """"""
+    Quickly parses important contents from HELIO registry.
+
+    Uses the link with 'service' appended and scrapes the web-service links contained on that webpage.
+
+    Parameters
+    ----------
+    service : str
+        Indicates which particular HELIO service is used. Defaults to HEC.
+
+    Returns
+    -------
+    links: list or NoneType
+        List of urls to registries containing WSDL endpoints.
+
+    Examples
+    --------
+    >>> from sunpy.net.helio import parser
+    >>> parser.webservice_parser()  # doctest: +REMOTE_DATA
+    ['http://helio.mssl.ucl.ac.uk/helio-hec/HelioService',
+    'http://msslkk.mssl.ucl.ac.uk/helio-hec/HelioService',
+    'http://voparis-helio.obspm.fr/helio-hec/HelioService',
+    'http://hec.helio-vo.eu/helio-hec/HelioService',
+    'http://helio.mssl.ucl.ac.uk/helio-hec/HelioLongQueryService',
+    'http://msslkk.mssl.ucl.ac.uk/helio-hec/HelioLongQueryService',
+    'http://voparis-helio.obspm.fr/helio-hec/HelioLongQueryService',
+    'http://hec.helio-vo.eu/helio-hec/HelioLongQueryService']
+    """"""
+    xml = None
+    for REG_LINK in REG_LINKS:
+        link = REG_LINK + service.lower()
+        xml = link_test(link)
+        if xml:
+            break
+    if xml is None:
+        return None
+    root = EL.fromstring(xml)
+    links = []
+
+    for interface in root.iter('interface'):
+        service_type = interface.attrib
+        key = list(service_type.keys())
+        if len(key) > 0:
+            value = service_type[key[0]]
+            if value == 'vr:WebService':
+                for url in interface.iter('accessURL'):
+                    if url.text not in links:
+                        links.append(url.text)
+    return links","for REG_LINK in REG_LINKS:
+    link = REG_LINK + service.lower()
+    xml = link_test(link)
+    if xml:
+        break
+if xml is None:
+    return None","for REG_LINK in REG_LINKS:
+    link = REG_LINK + service.lower()
+    xml = link_test(link)
+    if xml:
+        break
+else:
+    return None",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var3 = link_test(var4)
+    break
+
+if var3 is None:
+    zejun1",
+Krakatau,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Krakatau/Krakatau/java/structuring.py,https://github.com/Storyyeller/Krakatau/tree/master/Krakatau/java/structuring.py,,tryExtend$557,"def tryExtend(con, newblocks, xCSet, xUps, xDowns, removed):
+        forcedup = con.forcedup | xUps
+        forceddown = con.forceddown | xDowns
+        assert con not in forceddown
+        forcedup.discard(con)
+        if forcedup & forceddown:
+            return False
+
+        body = con.lbound | newblocks
+        ubound = con.ubound
+        for tcon in forcedup:
+            ubound &= tcon.lbound
+
+        while 1:
+            done = True
+            parent, pscope = parents[con]
+            # Ugly hack to work around the fact that try bodies are temporarily stored
+            # in the main constraint, not its scopes
+            while not body <= (parent if parent.tag == 'try' else pscope).lbound:
+                # Try to extend parent rather than just failing
+                if parent.tag == 'try' and parent in forcedup:
+                    # Note this call may mutate the parent
+                    done = not tryExtend(parent, body, ExceptionSet.EMPTY, set(), set(), removed)
+                    # Since the tree may have been updated, start over and rewalk the tree
+                    if not done:
+                        break
+
+                body |= parent.lbound
+                if parent in forcedup or not body <= ubound:
+                    return False
+                parent, pscope = parents[parent]
+            if done:
+                break
+
+        for child in children[parent]:
+            if child.lbound.touches(body):
+                body |= child.lbound
+        if not body <= ubound:
+            return False
+
+        cset = con.cset | xCSet
+        forbidden = con.forbidden.copy()
+        for newdown in (forceddown - con.forceddown):
+            unforbid(forbidden, newdown)
+        assert all(forbidden.values())
+
+        for node in body.nodes:
+            if node in forbidden and (cset & forbidden[node]):
+                # The current cset is not compatible with the current partial order
+                # Try to find some cons to force down in order to fix this
+                bad = cset & forbidden[node]
+                candidates = [c for c in trycons if c not in removed]
+                candidates = [c for c in candidates if node in c.lbound.nodes and c.lbound.issubset(body)]
+                candidates = [c for c in candidates if (c.cset & bad)]
+                candidates = [c for c in candidates if c not in forcedup and c is not con]
+
+                for topnd in candidates:
+                    if topnd in forceddown:
+                        continue
+
+                    temp = topnd.forceddown - forceddown - removed
+                    temp.add(topnd)
+                    for newdown in temp:
+                        unforbid(forbidden, newdown)
+
+                    assert con not in temp
+                    forceddown |= temp
+                    bad = cset & forbidden.get(node, ExceptionSet.EMPTY)
+                    if not bad:
+                        break
+                if bad:
+                    assert node not in con.lbound.nodes or cset - con.cset
+                    return False
+        assert forceddown.isdisjoint(forcedup)
+        assert all(forbidden.values())
+        for tcon in forceddown:
+            assert tcon.lbound <= body
+
+        # At this point, everything should be all right, so we need to update con and the tree
+        con.lbound = body
+        con.cset = cset
+        con.forbidden = forbidden
+        con.forcedup = forcedup
+        con.forceddown = forceddown
+        con.scopes[0].lbound = body
+        con.scopes[0].ubound = ubound
+
+        for new in con.forceddown:
+            new.forcedup.add(con)
+            new.forcedup |= forcedup
+
+        for new in con.forcedup:
+            unforbid(new.forbidden, con)
+            for new2 in forceddown - new.forceddown:
+                unforbid(new.forbidden, new2)
+            new.forceddown.add(con)
+            new.forceddown |= forceddown
+
+        # Move con into it's new position in the tree
+        removeFromTree(con)
+        insertInTree(con, parent)
+        return True","while not body <= (parent if parent.tag == 'try' else pscope).lbound:
+    if parent.tag == 'try' and parent in forcedup:
+        done = not tryExtend(parent, body, ExceptionSet.EMPTY, set(), set(), removed)
+        if not done:
+            break
+    body |= parent.lbound
+    if parent in forcedup or not body <= ubound:
+        return False
+    (parent, pscope) = parents[parent]
+if done:
+    break","while not body <= (parent if parent.tag == 'try' else pscope).lbound:
+    if parent.tag == 'try' and parent in forcedup:
+        done = not tryExtend(parent, body, ExceptionSet.EMPTY, set(), set(), removed)
+        if not done:
+            break
+    body |= parent.lbound
+    if parent in forcedup or not body <= ubound:
+        return False
+    (parent, pscope) = parents[parent]
+else:
+    break",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var9 = not tryExtend(var3, var4, var5, var6, var7, var8)
+    break
+
+if var9:
+    zejun1",
+LinOTP,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/LinOTP/linotp/tokens/ocra2token/ocra2token.py,https://github.com/LinOTP/LinOTP/tree/master/linotp/tokens/ocra2token/ocra2token.py,Ocra2TokenClass,checkOtp$1218,"def checkOtp(self, passw, counter, window, options=None):
+        """"""
+        checkOtp - standard callback of linotp to verify the token
+
+        :param passw:      the passw / otp, which has to be checked
+        :type passw:       string
+        :param counter:    the start counter
+        :type counter:     int
+        :param  window:    the window, in which the token is valid
+        :type  window:     int
+        :param options:    options contains the transaction id,
+                            eg. if check_t checks one transaction
+                            this will support assynchreonous otp checks
+                            (when check_t is used)
+        :type options:     dict
+
+        :return:           verification counter or -1
+        :rtype:            int (-1)
+
+        """"""
+        ret = -1
+
+        challenges = []
+        serial = self.getSerial()
+
+        if options is None:
+            options = {}
+
+        maxRequests = int(getFromConfig(""Ocra2MaxChallengeRequests"", ""3""))
+
+        if ""transactionid"" in options:
+            transid = options.get(""transactionid"", None)
+            challs = Challenges.lookup_challenges(
+                serial=serial, transid=transid
+            )
+            for chall in challs:
+                if chall.is_open():
+                    (rec_tan, rec_valid) = chall.getTanStatus()
+                    if rec_tan is False:
+                        challenges.append(chall)
+                    elif rec_valid is False:
+                        # # add all touched but failed challenges
+                        if chall.getTanCount() <= maxRequests:
+                            challenges.append(chall)
+
+        if ""challenge"" in options:
+            # direct challenge - there might be addtionalget info like
+            # session data in the options
+            challenges.append(options)
+
+        if len(challenges) == 0:
+            challs = Challenges.lookup_challenges(serial=serial)
+            for chall in challs:
+                if chall.is_open():
+                    (rec_tan, rec_valid) = chall.getTanStatus()
+                    if rec_tan is False:
+                        # # add all untouched challenges
+                        challenges.append(chall)
+                    elif rec_valid is False:
+                        # add all touched but failed challenges
+                        if chall.getTanCount() <= maxRequests:
+                            challenges.append(chall)
+
+        if len(challenges) == 0:
+            err = ""No open transaction found for token %s"" % serial
+            log.info(err)  # TODO should log and fail!!
+            return -1
+
+        # prepare the challenge check - do the ocra setup
+        secObj = self._get_secret_object()
+        ocraSuite = OcraSuite(self.getOcraSuiteSuite(), secObj)
+
+        # set the ocra token pin
+        ocraPin = """"
+        if ocraSuite.P is not None:
+            key, iv = self.token.getUserPin()
+            ocraPin = SecretObj.decrypt(key, iv, hsm=context.get(""hsm""))
+
+            if ocraPin is None or len(ocraPin) == 0:
+                ocraPin = """"
+
+        timeShift = 0
+        if ocraSuite.T is not None:
+            defTimeWindow = int(getFromConfig(""ocra.timeWindow"", 180))
+            window = (
+                int(self.getFromTokenInfo(""timeWindow"", defTimeWindow))
+                // ocraSuite.T
+            )
+            defTimeShift = int(getFromConfig(""ocra.timeShift"", 0))
+            timeShift = int(self.getFromTokenInfo(""timeShift"", defTimeShift))
+
+        default_retry_window = int(
+            getFromConfig(""ocra2.max_check_challenge_retry"", 0)
+        )
+        retry_window = int(
+            self.getFromTokenInfo(
+                ""max_check_challenge_retry"", default_retry_window
+            )
+        )
+
+        # now check the otp for each challenge
+
+        for ch in challenges:
+            challenge = {}
+
+            # preserve transaction context, so we could use this in the status
+            # callback
+            self.transId = ch.get(""transid"", None)
+            challenge[""transid""] = self.transId
+            challenge[""session""] = ch.get(""session"", None)
+
+            # we saved the 'real' challenge in the data
+            data = ch.get(""data"", None)
+            if data is not None:
+                challenge[""challenge""] = data.get(""challenge"")
+            elif ""challenge"" in ch:
+                # handle explicit challenge requests
+                challenge[""challenge""] = ch.get(""challenge"")
+
+            if challenge.get(""challenge"") is None:
+                raise Exception(
+                    ""could not checkOtp due to missing challenge""
+                    "" in request: %r"" % ch
+                )
+
+            ret = ocraSuite.checkOtp(
+                passw,
+                counter,
+                window,
+                challenge,
+                pin=ocraPin,
+                options=options,
+                timeshift=timeShift,
+            )
+
+            # due to the assynchronous challenge verification of the checkOtp
+            # it might happen, that the found counter is lower than the given
+            # one. Thus we fix this here to deny assynchronous verification
+
+            # we do not support retry checks anymore:
+            # which means, that ret might be smaller than the actual counter
+            if ocraSuite.T is None:
+                if ret + retry_window < counter:
+                    ret = -1
+
+            if ret != -1:
+                break
+
+        if -1 == ret:
+            # autosync: test if two consecutive challenges + it's counter match
+            ret = self.autosync(ocraSuite, passw, challenge)
+
+        return ret","for ch in challenges:
+    challenge = {}
+    self.transId = ch.get('transid', None)
+    challenge['transid'] = self.transId
+    challenge['session'] = ch.get('session', None)
+    data = ch.get('data', None)
+    if data is not None:
+        challenge['challenge'] = data.get('challenge')
+    elif 'challenge' in ch:
+        challenge['challenge'] = ch.get('challenge')
+    if challenge.get('challenge') is None:
+        raise Exception('could not checkOtp due to missing challenge in request: %r' % ch)
+    ret = ocraSuite.checkOtp(passw, counter, window, challenge, pin=ocraPin, options=options, timeshift=timeShift)
+    if ocraSuite.T is None:
+        if ret + retry_window < counter:
+            ret = -1
+    if ret != -1:
+        break
+if -1 == ret:
+    ret = self.autosync(ocraSuite, passw, challenge)","for ch in challenges:
+    challenge = {}
+    self.transId = ch.get('transid', None)
+    challenge['transid'] = self.transId
+    challenge['session'] = ch.get('session', None)
+    data = ch.get('data', None)
+    if data is not None:
+        challenge['challenge'] = data.get('challenge')
+    elif 'challenge' in ch:
+        challenge['challenge'] = ch.get('challenge')
+    if challenge.get('challenge') is None:
+        raise Exception('could not checkOtp due to missing challenge in request: %r' % ch)
+    ret = ocraSuite.checkOtp(passw, counter, window, challenge, pin=ocraPin, options=options, timeshift=timeShift)
+    if ocraSuite.T is None:
+        if ret + retry_window < counter:
+            ret = -1
+    if ret != -1:
+        break
+else:
+    ret = self.autosync(ocraSuite, passw, challenge)",0,execute error,,,,"for var1 in var2:
+    var3 = -1
+    break
+
+if -1 == var3:
+    zejun1",
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/tests/support/unit.py,https://github.com/saltstack/salt/tree/master/tests/support/unit.py,TestSuite,_handleModuleFixture$116,"def _handleModuleFixture(self, test, result):
+        # We override _handleModuleFixture so that we can inspect all test classes in the module.
+        # If all tests in a test class are going to be skipped, mark the class to skip.
+        # This avoids running setUpClass and tearDownClass unnecessarily
+        currentModule = test.__class__.__module__
+        try:
+            module = sys.modules[currentModule]
+        except KeyError:
+            return
+        for attr in dir(module):
+            klass = getattr(module, attr)
+            if not inspect.isclass(klass):
+                # Not even a class? Carry on...
+                continue
+            if klass.__module__ != currentModule:
+                # This class is not defined in the module being tested? Carry on...
+                continue
+            if not issubclass(klass, TestCase):
+                # This class is not a subclass of TestCase, carry on
+                continue
+
+            skip_klass = True
+            test_functions = [name for name in dir(klass) if name.startswith(""test_"")]
+            for name in test_functions:
+                func = getattr(klass, name)
+                if not isinstance(func, types.FunctionType):
+                    # Not even a function, carry on
+                    continue
+                if getattr(func, ""__unittest_skip__"", False) is False:
+                    # At least one test is not going to be skipped.
+                    # Stop searching.
+                    skip_klass = False
+                    break
+            if skip_klass is True:
+                klass.__unittest_skip__ = True
+        return super()._handleModuleFixture(test, result)","for name in test_functions:
+    func = getattr(klass, name)
+    if not isinstance(func, types.FunctionType):
+        continue
+    if getattr(func, '__unittest_skip__', False) is False:
+        skip_klass = False
+        break
+if skip_klass is True:
+    klass.__unittest_skip__ = True","for name in test_functions:
+    func = getattr(klass, name)
+    if not isinstance(func, types.FunctionType):
+        continue
+    if getattr(func, '__unittest_skip__', False) is False:
+        break
+else:
+    klass.__unittest_skip__ = True",0,execute error,,,,"for var1 in var2:
+    var3 = False
+    break
+
+if var3 is True:
+    zejun1",
+nnFormer,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nnFormer/nnformer/evaluation/model_selection/summarize_results_in_one_json.py,https://github.com/282857341/nnFormer/tree/master/nnformer/evaluation/model_selection/summarize_results_in_one_json.py,,summarize$22,"def summarize(tasks, models=('2d', '3d_lowres', '3d_fullres', '3d_cascade_fullres'),
+              output_dir=join(network_training_output_dir, ""summary_jsons""), folds=(0, 1, 2, 3, 4)):
+    maybe_mkdir_p(output_dir)
+
+    if len(tasks) == 1 and tasks[0] == ""all"":
+        tasks = list(range(999))
+    else:
+        tasks = [int(i) for i in tasks]
+
+    for model in models:
+        for t in tasks:
+            t = int(t)
+            if not isdir(join(network_training_output_dir, model)):
+                continue
+            task_name = subfolders(join(network_training_output_dir, model), prefix=""Task%03.0d"" % t, join=False)
+            if len(task_name) != 1:
+                print(""did not find unique output folder for network %s and task %s"" % (model, t))
+                continue
+            task_name = task_name[0]
+            out_dir_task = join(network_training_output_dir, model, task_name)
+
+            model_trainers = subdirs(out_dir_task, join=False)
+            for trainer in model_trainers:
+                if trainer.startswith(""fold""):
+                    continue
+                out_dir = join(out_dir_task, trainer)
+
+                validation_folders = []
+                for fld in folds:
+                    d = join(out_dir, ""fold%d""%fld)
+                    if not isdir(d):
+                        d = join(out_dir, ""fold_%d""%fld)
+                        if not isdir(d):
+                            break
+                    validation_folders += subfolders(d, prefix=""validation"", join=False)
+
+                for v in validation_folders:
+                    ok = True
+                    metrics = OrderedDict()
+                    for fld in folds:
+                        d = join(out_dir, ""fold%d""%fld)
+                        if not isdir(d):
+                            d = join(out_dir, ""fold_%d""%fld)
+                            if not isdir(d):
+                                ok = False
+                                break
+                        validation_folder = join(d, v)
+
+                        if not isfile(join(validation_folder, ""summary.json"")):
+                            print(""summary.json missing for net %s task %s fold %d"" % (model, task_name, fld))
+                            ok = False
+                            break
+
+                        metrics_tmp = load_json(join(validation_folder, ""summary.json""))[""results""][""mean""]
+                        for l in metrics_tmp.keys():
+                            if metrics.get(l) is None:
+                                metrics[l] = OrderedDict()
+                            for m in metrics_tmp[l].keys():
+                                if metrics[l].get(m) is None:
+                                    metrics[l][m] = []
+                                metrics[l][m].append(metrics_tmp[l][m])
+                    if ok:
+                        for l in metrics.keys():
+                            for m in metrics[l].keys():
+                                assert len(metrics[l][m]) == len(folds)
+                                metrics[l][m] = np.mean(metrics[l][m])
+                        json_out = OrderedDict()
+                        json_out[""results""] = OrderedDict()
+                        json_out[""results""][""mean""] = metrics
+                        json_out[""task""] = task_name
+                        json_out[""description""] = model + "" "" + task_name + "" all folds summary""
+                        json_out[""name""] = model + "" "" + task_name + "" all folds summary""
+                        json_out[""experiment_name""] = model
+                        save_json(json_out, join(out_dir, ""summary_allFolds__%s.json"" % v))
+                        save_json(json_out, join(output_dir, ""%s__%s__%s__%s.json"" % (task_name, model, trainer, v)))
+                        foreground_mean(join(out_dir, ""summary_allFolds__%s.json"" % v))
+                        foreground_mean(join(output_dir, ""%s__%s__%s__%s.json"" % (task_name, model, trainer, v)))","for fld in folds:
+    d = join(out_dir, 'fold%d' % fld)
+    if not isdir(d):
+        d = join(out_dir, 'fold_%d' % fld)
+        if not isdir(d):
+            ok = False
+            break
+    validation_folder = join(d, v)
+    if not isfile(join(validation_folder, 'summary.json')):
+        print('summary.json missing for net %s task %s fold %d' % (model, task_name, fld))
+        ok = False
+        break
+    metrics_tmp = load_json(join(validation_folder, 'summary.json'))['results']['mean']
+    for l in metrics_tmp.keys():
+        if metrics.get(l) is None:
+            metrics[l] = OrderedDict()
+        for m in metrics_tmp[l].keys():
+            if metrics[l].get(m) is None:
+                metrics[l][m] = []
+            metrics[l][m].append(metrics_tmp[l][m])
+if ok:
+    for l in metrics.keys():
+        for m in metrics[l].keys():
+            assert len(metrics[l][m]) == len(folds)
+            metrics[l][m] = np.mean(metrics[l][m])
+    json_out = OrderedDict()
+    json_out['results'] = OrderedDict()
+    json_out['results']['mean'] = metrics
+    json_out['task'] = task_name
+    json_out['description'] = model + ' ' + task_name + ' all folds summary'
+    json_out['name'] = model + ' ' + task_name + ' all folds summary'
+    json_out['experiment_name'] = model
+    save_json(json_out, join(out_dir, 'summary_allFolds__%s.json' % v))
+    save_json(json_out, join(output_dir, '%s__%s__%s__%s.json' % (task_name, model, trainer, v)))
+    foreground_mean(join(out_dir, 'summary_allFolds__%s.json' % v))
+    foreground_mean(join(output_dir, '%s__%s__%s__%s.json' % (task_name, model, trainer, v)))","for fld in folds:
+    d = join(out_dir, 'fold%d' % fld)
+    if not isdir(d):
+        d = join(out_dir, 'fold_%d' % fld)
+        if not isdir(d):
+            break
+    validation_folder = join(d, v)
+    if not isfile(join(validation_folder, 'summary.json')):
+        print('summary.json missing for net %s task %s fold %d' % (model, task_name, fld))
+        break
+    metrics_tmp = load_json(join(validation_folder, 'summary.json'))['results']['mean']
+    for l in metrics_tmp.keys():
+        if metrics.get(l) is None:
+            metrics[l] = OrderedDict()
+        for m in metrics_tmp[l].keys():
+            if metrics[l].get(m) is None:
+                metrics[l][m] = []
+            metrics[l][m].append(metrics_tmp[l][m])
+else:
+    for l in metrics.keys():
+        for m in metrics[l].keys():
+            assert len(metrics[l][m]) == len(folds)
+            metrics[l][m] = np.mean(metrics[l][m])
+    json_out = OrderedDict()
+    json_out['results'] = OrderedDict()
+    json_out['results']['mean'] = metrics
+    json_out['task'] = task_name
+    json_out['description'] = model + ' ' + task_name + ' all folds summary'
+    json_out['name'] = model + ' ' + task_name + ' all folds summary'
+    json_out['experiment_name'] = model
+    save_json(json_out, join(out_dir, 'summary_allFolds__%s.json' % v))
+    save_json(json_out, join(output_dir, '%s__%s__%s__%s.json' % (task_name, model, trainer, v)))
+    foreground_mean(join(out_dir, 'summary_allFolds__%s.json' % v))
+    foreground_mean(join(output_dir, '%s__%s__%s__%s.json' % (task_name, model, trainer, v)))",0,"execute error
+
+abstract",,,,"
+for var1 in var2:
+    var3 = False
+    break
+
+    var3 = False
+    break
+
+if var3:
+    zejun1",
+BlenderProc,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/BlenderProc/blenderproc/python/modules/provider/getter/Texture.py,https://github.com/DLR-RM/BlenderProc/tree/master/blenderproc/python/modules/provider/getter/Texture.py,Texture,perform_and_condition_check$139,"def perform_and_condition_check(and_condition, textures, used_textures_to_check=None):
+        """""" Checks for all textures and if all given conditions are true, collects them in the return list.
+
+        :param and_condition: Given conditions. Type: dict.
+        :param textures: Textures, that are already in the return list. Type: list.
+        :param used_textures_to_check: Textures to perform the check on. Type: list. Default: all materials
+        :return: Textures that comply with given conditions. Type: list.
+        """"""
+        new_textures = []
+        if used_textures_to_check is None:
+            used_textures_to_check = get_all_textures()
+
+        for texture in used_textures_to_check:
+            if texture in new_textures or texture in textures:
+                continue
+
+            select_texture = True
+            for key, value in and_condition.items():
+                # check if the key is a requested custom property
+                requested_custom_property = False
+                #requested_custom_function = False
+                if key.startswith('cp_'):
+                    requested_custom_property = True
+                    key = key[3:]
+                if key.startswith('cf_'):
+                    #requested_custom_function = True
+                    #key = key[3:]
+                    raise RuntimeError(""Custom functions for texture objects are yet to be implemented!"")
+                if hasattr(texture, key) and not requested_custom_property:
+                    # check if the type of the value of attribute matches desired
+                    if isinstance(getattr(texture, key), type(value)):
+                        new_value = value
+                    # if not, try to enforce some mathutils-specific type
+                    else:
+                        if isinstance(getattr(texture, key), mathutils.Vector):
+                            new_value = mathutils.Vector(value)
+                        elif isinstance(getattr(texture, key), mathutils.Euler):
+                            new_value = mathutils.Euler(value)
+                        elif isinstance(getattr(texture, key), mathutils.Color):
+                            new_value = mathutils.Color(value)
+                        # raise an exception if it is none of them
+                        else:
+                            raise Exception(""Types are not matching: %s and %s !""
+                                            % (type(getattr(texture, key)), type(value)))
+                    # or check for equality
+                    if not ((isinstance(getattr(texture, key), str) and
+                             re.fullmatch(value, getattr(texture, key)) is not None)
+                            or getattr(texture, key) == new_value):
+                        select_texture = False
+                        break
+                    # check if a custom property with this name exists
+                elif key in texture and requested_custom_property:
+                    # check if the type of the value of such custom property matches desired
+                    if isinstance(texture[key], type(value)) or (
+                            isinstance(texture[key], int) and isinstance(value, bool)):
+                        # if it is a string and if the whole string matches the given pattern
+                        if not ((isinstance(texture[key], str) and re.fullmatch(value, texture[key]) is not None) or
+                                texture[key] == value):
+                            select_texture = False
+                            break
+                    else:
+                        # raise an exception if not
+                        raise Exception(""Types are not matching: {} and {} !"".format(type(texture[key]), type(value)))
+                else:
+                    select_texture = False
+                    break
+
+            if select_texture:
+                new_textures.append(texture)
+
+        return new_textures","for (key, value) in and_condition.items():
+    requested_custom_property = False
+    if key.startswith('cp_'):
+        requested_custom_property = True
+        key = key[3:]
+    if key.startswith('cf_'):
+        raise RuntimeError('Custom functions for texture objects are yet to be implemented!')
+    if hasattr(texture, key) and (not requested_custom_property):
+        if isinstance(getattr(texture, key), type(value)):
+            new_value = value
+        elif isinstance(getattr(texture, key), mathutils.Vector):
+            new_value = mathutils.Vector(value)
+        elif isinstance(getattr(texture, key), mathutils.Euler):
+            new_value = mathutils.Euler(value)
+        elif isinstance(getattr(texture, key), mathutils.Color):
+            new_value = mathutils.Color(value)
+        else:
+            raise Exception('Types are not matching: %s and %s !' % (type(getattr(texture, key)), type(value)))
+        if not (isinstance(getattr(texture, key), str) and re.fullmatch(value, getattr(texture, key)) is not None or getattr(texture, key) == new_value):
+            select_texture = False
+            break
+    elif key in texture and requested_custom_property:
+        if isinstance(texture[key], type(value)) or (isinstance(texture[key], int) and isinstance(value, bool)):
+            if not (isinstance(texture[key], str) and re.fullmatch(value, texture[key]) is not None or texture[key] == value):
+                select_texture = False
+                break
+        else:
+            raise Exception('Types are not matching: {} and {} !'.format(type(texture[key]), type(value)))
+    else:
+        select_texture = False
+        break
+if select_texture:
+    new_textures.append(texture)","for (key, value) in and_condition.items():
+    requested_custom_property = False
+    if key.startswith('cp_'):
+        requested_custom_property = True
+        key = key[3:]
+    if key.startswith('cf_'):
+        raise RuntimeError('Custom functions for texture objects are yet to be implemented!')
+    if hasattr(texture, key) and (not requested_custom_property):
+        if isinstance(getattr(texture, key), type(value)):
+            new_value = value
+        elif isinstance(getattr(texture, key), mathutils.Vector):
+            new_value = mathutils.Vector(value)
+        elif isinstance(getattr(texture, key), mathutils.Euler):
+            new_value = mathutils.Euler(value)
+        elif isinstance(getattr(texture, key), mathutils.Color):
+            new_value = mathutils.Color(value)
+        else:
+            raise Exception('Types are not matching: %s and %s !' % (type(getattr(texture, key)), type(value)))
+        if not (isinstance(getattr(texture, key), str) and re.fullmatch(value, getattr(texture, key)) is not None or getattr(texture, key) == new_value):
+            break
+    elif key in texture and requested_custom_property:
+        if isinstance(texture[key], type(value)) or (isinstance(texture[key], int) and isinstance(value, bool)):
+            if not (isinstance(texture[key], str) and re.fullmatch(value, texture[key]) is not None or texture[key] == value):
+                break
+        else:
+            raise Exception('Types are not matching: {} and {} !'.format(type(texture[key]), type(value)))
+    else:
+        break
+else:
+    new_textures.append(texture)",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var3 = False
+    break
+
+    var3 = False
+    break
+
+    var3 = False
+    break
+
+if var3:
+    zejun1",
+LightAutoML,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/LightAutoML/lightautoml/pipelines/utils.py,https://github.com/sberbank-ai-lab/LightAutoML/tree/master/lightautoml/pipelines/utils.py,,get_columns_by_role$46,"def get_columns_by_role(dataset: LAMLDataset, role_name: str, **kwargs: Any) -> List[str]:
+    """"""Search for columns with specific role and attributes when building pipeline.
+
+    Args:
+        dataset: Dataset to search.
+        role_name: Name of features role.
+        **kwargs: Specific parameters values to search.
+            Example: search for categories with OHE processing only.
+
+    Returns:
+        List of str features names.
+
+    """"""
+    features = []
+    inv_roles = dataset.inverse_roles
+    for role in inv_roles:
+        if role.name == role_name:
+            flg = True
+            # TODO: maybe refactor
+            for k in kwargs:
+                try:
+                    attr = getattr(role, k)
+                except AttributeError:
+                    flg = False
+                    break
+                if attr != kwargs[k]:
+                    flg = False
+                    break
+            if flg:
+                features.extend(inv_roles[role])
+
+    return sorted(features)","for k in kwargs:
+    try:
+        attr = getattr(role, k)
+    except AttributeError:
+        flg = False
+        break
+    if attr != kwargs[k]:
+        flg = False
+        break
+if flg:
+    features.extend(inv_roles[role])","for k in kwargs:
+    try:
+        attr = getattr(role, k)
+    except AttributeError:
+        flg = False
+        break
+    if attr != kwargs[k]:
+        flg = False
+        break
+else:
+    features.extend(inv_roles[role])",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var3 = False
+    break
+
+    var3 = False
+    break
+
+if var3:
+    zejun1",
+youtube-dl,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/youtube-dl/youtube_dl/extractor/theplatform.py,https://github.com/lrvick/youtube-dl/tree/master/youtube_dl/extractor/theplatform.py,ThePlatformIE,_real_extract$235,"def _real_extract(self, url):
+        url, smuggled_data = unsmuggle_url(url, {})
+        self._initialize_geo_bypass({
+            'countries': smuggled_data.get('geo_countries'),
+        })
+
+        mobj = re.match(self._VALID_URL, url)
+        provider_id = mobj.group('provider_id')
+        video_id = mobj.group('id')
+
+        if not provider_id:
+            provider_id = 'dJ5BDC'
+
+        path = provider_id + '/'
+        if mobj.group('media'):
+            path += mobj.group('media')
+        path += video_id
+
+        qs_dict = compat_parse_qs(compat_urllib_parse_urlparse(url).query)
+        if 'guid' in qs_dict:
+            webpage = self._download_webpage(url, video_id)
+            scripts = re.findall(r'<script[^>]+src=""([^""]+)""', webpage)
+            feed_id = None
+            # feed id usually locates in the last script.
+            # Seems there's no pattern for the interested script filename, so
+            # I try one by one
+            for script in reversed(scripts):
+                feed_script = self._download_webpage(
+                    self._proto_relative_url(script, 'http:'),
+                    video_id, 'Downloading feed script')
+                feed_id = self._search_regex(
+                    r'defaultFeedId\s*:\s*""([^""]+)""', feed_script,
+                    'default feed id', default=None)
+                if feed_id is not None:
+                    break
+            if feed_id is None:
+                raise ExtractorError('Unable to find feed id')
+            return self.url_result('http://feed.theplatform.com/f/%s/%s?byGuid=%s' % (
+                provider_id, feed_id, qs_dict['guid'][0]))
+
+        if smuggled_data.get('force_smil_url', False):
+            smil_url = url
+        # Explicitly specified SMIL (see https://github.com/ytdl-org/youtube-dl/issues/7385)
+        elif '/guid/' in url:
+            headers = {}
+            source_url = smuggled_data.get('source_url')
+            if source_url:
+                headers['Referer'] = source_url
+            request = sanitized_Request(url, headers=headers)
+            webpage = self._download_webpage(request, video_id)
+            smil_url = self._search_regex(
+                r'<link[^>]+href=([""\'])(?P<url>.+?)\1[^>]+type=[""\']application/smil\+xml',
+                webpage, 'smil url', group='url')
+            path = self._search_regex(
+                r'link\.theplatform\.com/s/((?:[^/?#&]+/)+[^/?#&]+)', smil_url, 'path')
+            smil_url += '?' if '?' not in smil_url else '&' + 'formats=m3u,mpeg4'
+        elif mobj.group('config'):
+            config_url = url + '&form=json'
+            config_url = config_url.replace('swf/', 'config/')
+            config_url = config_url.replace('onsite/', 'onsite/config/')
+            config = self._download_json(config_url, video_id, 'Downloading config')
+            if 'releaseUrl' in config:
+                release_url = config['releaseUrl']
+            else:
+                release_url = 'http://link.theplatform.com/s/%s?mbr=true' % path
+            smil_url = release_url + '&formats=MPEG4&manifest=f4m'
+        else:
+            smil_url = 'http://link.theplatform.com/s/%s?mbr=true' % path
+
+        sig = smuggled_data.get('sig')
+        if sig:
+            smil_url = self._sign_url(smil_url, sig['key'], sig['secret'])
+
+        formats, subtitles = self._extract_theplatform_smil(smil_url, video_id)
+        self._sort_formats(formats)
+
+        ret = self._extract_theplatform_metadata(path, video_id)
+        combined_subtitles = self._merge_subtitles(ret.get('subtitles', {}), subtitles)
+        ret.update({
+            'id': video_id,
+            'formats': formats,
+            'subtitles': combined_subtitles,
+        })
+
+        return ret","for script in reversed(scripts):
+    feed_script = self._download_webpage(self._proto_relative_url(script, 'http:'), video_id, 'Downloading feed script')
+    feed_id = self._search_regex('defaultFeedId\\s*:\\s*""([^""]+)""', feed_script, 'default feed id', default=None)
+    if feed_id is not None:
+        break
+if feed_id is None:
+    raise ExtractorError('Unable to find feed id')","for script in reversed(scripts):
+    feed_script = self._download_webpage(self._proto_relative_url(script, 'http:'), video_id, 'Downloading feed script')
+    feed_id = self._search_regex('defaultFeedId\\s*:\\s*""([^""]+)""', feed_script, 'default feed id', default=None)
+    if feed_id is not None:
+        break
+else:
+    raise ExtractorError('Unable to find feed id')",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var5 = var3._search_regex('defaultFeedId\\s*:\\s*""([^""]+)""', var4, 'default feed id', default=None)
+    break
+
+if var5 is None:
+    zejun1",
+yt-dlc,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/yt-dlc/youtube_dlc/extractor/theplatform.py,https://github.com/blackjack4494/yt-dlc/tree/master/youtube_dlc/extractor/theplatform.py,ThePlatformIE,_real_extract$235,"def _real_extract(self, url):
+        url, smuggled_data = unsmuggle_url(url, {})
+
+        mobj = re.match(self._VALID_URL, url)
+        provider_id = mobj.group('provider_id')
+        video_id = mobj.group('id')
+
+        if not provider_id:
+            provider_id = 'dJ5BDC'
+
+        path = provider_id + '/'
+        if mobj.group('media'):
+            path += mobj.group('media')
+        path += video_id
+
+        qs_dict = compat_parse_qs(compat_urllib_parse_urlparse(url).query)
+        if 'guid' in qs_dict:
+            webpage = self._download_webpage(url, video_id)
+            scripts = re.findall(r'<script[^>]+src=""([^""]+)""', webpage)
+            feed_id = None
+            # feed id usually locates in the last script.
+            # Seems there's no pattern for the interested script filename, so
+            # I try one by one
+            for script in reversed(scripts):
+                feed_script = self._download_webpage(
+                    self._proto_relative_url(script, 'http:'),
+                    video_id, 'Downloading feed script')
+                feed_id = self._search_regex(
+                    r'defaultFeedId\s*:\s*""([^""]+)""', feed_script,
+                    'default feed id', default=None)
+                if feed_id is not None:
+                    break
+            if feed_id is None:
+                raise ExtractorError('Unable to find feed id')
+            return self.url_result('http://feed.theplatform.com/f/%s/%s?byGuid=%s' % (
+                provider_id, feed_id, qs_dict['guid'][0]))
+
+        if smuggled_data.get('force_smil_url', False):
+            smil_url = url
+        # Explicitly specified SMIL (see https://github.com/ytdl-org/youtube-dl/issues/7385)
+        elif '/guid/' in url:
+            headers = {}
+            source_url = smuggled_data.get('source_url')
+            if source_url:
+                headers['Referer'] = source_url
+            request = sanitized_Request(url, headers=headers)
+            webpage = self._download_webpage(request, video_id)
+            smil_url = self._search_regex(
+                r'<link[^>]+href=([""\'])(?P<url>.+?)\1[^>]+type=[""\']application/smil\+xml',
+                webpage, 'smil url', group='url')
+            path = self._search_regex(
+                r'link\.theplatform\.com/s/((?:[^/?#&]+/)+[^/?#&]+)', smil_url, 'path')
+            smil_url += '?' if '?' not in smil_url else '&' + 'formats=m3u,mpeg4'
+        elif mobj.group('config'):
+            config_url = url + '&form=json'
+            config_url = config_url.replace('swf/', 'config/')
+            config_url = config_url.replace('onsite/', 'onsite/config/')
+            config = self._download_json(config_url, video_id, 'Downloading config')
+            if 'releaseUrl' in config:
+                release_url = config['releaseUrl']
+            else:
+                release_url = 'http://link.theplatform.com/s/%s?mbr=true' % path
+            smil_url = release_url + '&formats=MPEG4&manifest=f4m'
+        else:
+            smil_url = 'http://link.theplatform.com/s/%s?mbr=true' % path
+
+        sig = smuggled_data.get('sig')
+        if sig:
+            smil_url = self._sign_url(smil_url, sig['key'], sig['secret'])
+
+        formats, subtitles = self._extract_theplatform_smil(smil_url, video_id)
+        self._sort_formats(formats)
+
+        ret = self._extract_theplatform_metadata(path, video_id)
+        combined_subtitles = self._merge_subtitles(ret.get('subtitles', {}), subtitles)
+        ret.update({
+            'id': video_id,
+            'formats': formats,
+            'subtitles': combined_subtitles,
+        })
+
+        return ret","for script in reversed(scripts):
+    feed_script = self._download_webpage(self._proto_relative_url(script, 'http:'), video_id, 'Downloading feed script')
+    feed_id = self._search_regex('defaultFeedId\\s*:\\s*""([^""]+)""', feed_script, 'default feed id', default=None)
+    if feed_id is not None:
+        break
+if feed_id is None:
+    raise ExtractorError('Unable to find feed id')","for script in reversed(scripts):
+    feed_script = self._download_webpage(self._proto_relative_url(script, 'http:'), video_id, 'Downloading feed script')
+    feed_id = self._search_regex('defaultFeedId\\s*:\\s*""([^""]+)""', feed_script, 'default feed id', default=None)
+    if feed_id is not None:
+        break
+else:
+    raise ExtractorError('Unable to find feed id')",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var5 = var3._search_regex('defaultFeedId\\s*:\\s*""([^""]+)""', var4, 'default feed id', default=None)
+    break
+
+if var5 is None:
+    zejun1",
+alexa-skills-kit-sdk-for-python,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/alexa-skills-kit-sdk-for-python/ask-sdk-runtime/ask_sdk_runtime/dispatch.py,https://github.com/alexa/alexa-skills-kit-sdk-for-python/tree/master/ask-sdk-runtime/ask_sdk_runtime/dispatch.py,GenericRequestDispatcher,__dispatch_request$135,"def __dispatch_request(self, handler_input):
+        # type: (Input) -> Union[Output, None]
+        """"""Process the request and return handler output.
+
+        When the method is invoked, using the registered list of
+        :py:class:`RequestMapper`, a Handler Chain is found that can
+        handle the request. The handler invocation is delegated to the
+        supported :py:class:`HandlerAdapter`. The registered
+        request interceptors in the handler chain are processed before
+        executing the handler. The registered response interceptors in
+        the handler chain are processed after executing the handler.
+
+        :param handler_input: generic input to the dispatcher containing
+            incoming request and other context.
+        :type handler_input: Input
+        :return: Output from the 'handle' method execution of the
+            supporting handler.
+        :rtype: Union[None, Output]
+        :raises DispatchException if there is no supporting
+            handler chain or adapter
+        """"""
+        request_handler_chain = None
+        for mapper in self.request_mappers:
+            request_handler_chain = mapper.get_request_handler_chain(
+                handler_input)
+            if request_handler_chain is not None:
+                break
+
+        if request_handler_chain is None:
+            raise DispatchException(
+                ""Unable to find a suitable request handler"")
+
+        request_handler = request_handler_chain.request_handler
+        supported_handler_adapter = None
+        for adapter in self.handler_adapters:
+            if adapter.supports(request_handler):
+                supported_handler_adapter = adapter
+                break
+
+        if supported_handler_adapter is None:
+            raise DispatchException(
+                ""Unable to find a suitable request adapter"")
+
+        local_request_interceptors = request_handler_chain.request_interceptors
+        for interceptor in local_request_interceptors:
+            interceptor.process(handler_input=handler_input)
+
+        output = supported_handler_adapter.execute(
+            handler_input=handler_input, handler=request_handler)  # type: Union[Output, None]
+
+        local_response_interceptors = (
+            request_handler_chain.response_interceptors)
+        for response_interceptor in local_response_interceptors:
+            response_interceptor.process(
+                handler_input=handler_input, response=output)
+
+        return output","for mapper in self.request_mappers:
+    request_handler_chain = mapper.get_request_handler_chain(handler_input)
+    if request_handler_chain is not None:
+        break
+if request_handler_chain is None:
+    raise DispatchException('Unable to find a suitable request handler')","for mapper in self.request_mappers:
+    request_handler_chain = mapper.get_request_handler_chain(handler_input)
+    if request_handler_chain is not None:
+        break
+else:
+    raise DispatchException('Unable to find a suitable request handler')",0,"execute error
+
+abstract",,,,"for var1 in var2:
+    var3 = var4.get_request_handler_chain(var5)
+    break
+
+if var3 is None:
+    zejun1",
+rotki,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/rotki/rotkehlchen/exchanges/bitstamp.py,https://github.com/rotki/rotki/tree/master/rotkehlchen/exchanges/bitstamp.py,Bitstamp,_deserialize_asset_movement$518,"def _deserialize_asset_movement(
+            raw_movement: Dict[str, Any],
+    ) -> AssetMovement:
+        """"""Process a deposit/withdrawal user transaction from Bitstamp and
+        deserialize it.
+
+        Can raise DeserializationError.
+
+        From Bitstamp documentation, deposits/withdrawals can have a fee
+        (the amount is expected to be in the currency involved)
+        https://www.bitstamp.net/fee-schedule/
+
+        Endpoint docs:
+        https://www.bitstamp.net/api/#user-transactions
+        """"""
+        type_ = deserialize_int_from_str(raw_movement['type'], 'bitstamp asset movement')
+        category: AssetMovementCategory
+        if type_ == 0:
+            category = AssetMovementCategory.DEPOSIT
+        elif type_ == 1:
+            category = AssetMovementCategory.WITHDRAWAL
+        else:
+            raise AssertionError(f'Unexpected Bitstamp asset movement case: {type_}.')
+
+        timestamp = deserialize_timestamp_from_bitstamp_date(raw_movement['datetime'])
+        amount: FVal = ZERO
+        fee_asset: AssetWithOracles
+        for raw_movement_key, value in raw_movement.items():
+            if raw_movement_key in KNOWN_NON_ASSET_KEYS_FOR_MOVEMENTS:
+                continue
+            try:
+                candidate_fee_asset = asset_from_bitstamp(raw_movement_key)
+            except (UnknownAsset, DeserializationError):
+                continue
+            try:
+                amount = deserialize_asset_amount(value)
+            except DeserializationError:
+                continue
+            if amount != ZERO:
+                fee_asset = candidate_fee_asset
+                break
+
+        if amount == ZERO:
+            raise DeserializationError(
+                'Could not deserialize Bitstamp asset movement from user transaction. '
+                f'Unexpected asset amount combination found in: {raw_movement}.',
+            )
+
+        asset_movement = AssetMovement(
+            timestamp=timestamp,
+            location=Location.BITSTAMP,
+            category=category,
+            address=None,  # requires query ""crypto_transactions"" endpoint
+            transaction_id=None,  # requires query ""crypto_transactions"" endpoint
+            asset=fee_asset,
+            amount=abs(amount),
+            fee_asset=fee_asset,
+            fee=deserialize_fee(raw_movement['fee']),
+            link=str(raw_movement['id']),
+        )
+        return asset_movement","for (raw_movement_key, value) in raw_movement.items():
+    if raw_movement_key in KNOWN_NON_ASSET_KEYS_FOR_MOVEMENTS:
+        continue
+    try:
+        candidate_fee_asset = asset_from_bitstamp(raw_movement_key)
+    except (UnknownAsset, DeserializationError):
+        continue
+    try:
+        amount = deserialize_asset_amount(value)
+    except DeserializationError:
+        continue
+    if amount != ZERO:
+        fee_asset = candidate_fee_asset
+        break
+if amount == ZERO:
+    raise DeserializationError(f'Could not deserialize Bitstamp asset movement from user transaction. Unexpected asset amount combination found in: {raw_movement}.')","for (raw_movement_key, value) in raw_movement.items():
+    if raw_movement_key in KNOWN_NON_ASSET_KEYS_FOR_MOVEMENTS:
+        continue
+    try:
+        candidate_fee_asset = asset_from_bitstamp(raw_movement_key)
+    except (UnknownAsset, DeserializationError):
+        continue
+    try:
+        amount = deserialize_asset_amount(value)
+    except DeserializationError:
+        continue
+    if amount != ZERO:
+        fee_asset = candidate_fee_asset
+        break
+else:
+    raise DeserializationError(f'Could not deserialize Bitstamp asset movement from user transaction. Unexpected asset amount combination found in: {raw_movement}.')",0,no found,,,,,
+i3ipc-python,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/i3ipc-python/i3ipc/aio/connection.py,https://github.com/altdesktop/i3ipc-python/tree/master/i3ipc/aio/connection.py,Connection,_reconnect$412,"def _reconnect(self) -> Future:
+        if self._reconnect_future is not None:
+            return self._reconnect_future
+
+        self._reconnect_future = self._loop.create_future()
+
+        async def do_reconnect():
+            error = None
+
+            for tries in range(0, 1000):
+                try:
+                    await self.connect()
+                    error = None
+                    break
+                except Exception as e:
+                    error = e
+                    await asyncio.sleep(0.001)
+
+            if error:
+                self._reconnect_future.set_exception(error)
+            else:
+                self._reconnect_future.set_result(None)
+
+            self._reconnect_future = None
+
+        ensure_future(do_reconnect())
+
+        return self._reconnect_future","for tries in range(0, 1000):
+    try:
+        await self.connect()
+        error = None
+        break
+    except Exception as e:
+        error = e
+        await asyncio.sleep(0.001)
+if error:
+    self._reconnect_future.set_exception(error)
+else:
+    self._reconnect_future.set_result(None)","for tries in range(0, 1000):
+    try:
+        await self.connect()
+        error = None
+        self._reconnect_future.set_result(None)
+        break
+    except Exception as e:
+        error = e
+        await asyncio.sleep(0.001)
+else:
+    self._reconnect_future.set_exception(error)",0,execute error,,,,,
+AutoBlue-MS17-010,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/AutoBlue-MS17-010/zzz_exploit.py,https://github.com/3ndG4me/AutoBlue-MS17-010/tree/master//zzz_exploit.py,,exploit_matched_pairs$461,"def exploit_matched_pairs(conn, pipe_name, info):
+    # for Windows 7/2008 R2 and later
+
+    tid = conn.tree_connect_andx('\\\\'+conn.get_remote_host()+'\\'+'IPC$')
+    conn.set_default_tid(tid)
+    # fid for first open is always 0x4000. We can open named pipe multiple times to get other fids.
+    fid = conn.nt_create_andx(tid, pipe_name)
+
+    info.update(leak_frag_size(conn, tid, fid))
+    # add os and arch specific exploit info
+    info.update(OS_ARCH_INFO[info['os']][info['arch']])
+
+    # groom: srv buffer header
+    info['GROOM_POOL_SIZE'] = calc_alloc_size(GROOM_TRANS_SIZE + info['SRV_BUFHDR_SIZE'] + info['POOL_ALIGN'], info['POOL_ALIGN'])
+    print('GROOM_POOL_SIZE: 0x{:x}'.format(info['GROOM_POOL_SIZE']))
+    # groom paramters and data is alignment by 8 because it is NT_TRANS
+    info['GROOM_DATA_SIZE'] = GROOM_TRANS_SIZE - TRANS_NAME_LEN - 4 - info['TRANS_SIZE']  # alignment (4)
+
+    # bride: srv buffer header, pool header (same as pool align size), empty transaction name (4)
+    bridePoolSize = 0x1000 - (info['GROOM_POOL_SIZE'] & 0xfff) - info['FRAG_POOL_SIZE']
+    info['BRIDE_TRANS_SIZE'] = bridePoolSize - (info['SRV_BUFHDR_SIZE'] + info['POOL_ALIGN'])
+    print('BRIDE_TRANS_SIZE: 0x{:x}'.format(info['BRIDE_TRANS_SIZE']))
+    # bride paramters and data is alignment by 4 because it is TRANS
+    info['BRIDE_DATA_SIZE'] = info['BRIDE_TRANS_SIZE'] - TRANS_NAME_LEN - info['TRANS_SIZE']
+
+    # ================================
+    # try align pagedpool and leak info until satisfy
+    # ================================
+    leakInfo = None
+    # max attempt: 10
+    for i in range(10):
+        reset_extra_mid(conn)
+        leakInfo = align_transaction_and_leak(conn, tid, fid, info)
+        if leakInfo is not None:
+            break
+        print('[-] leak failleak failed... try again')
+        conn.close(tid, fid)
+        conn.disconnect_tree(tid)
+
+        tid = conn.tree_connect_andx('\\\\'+conn.get_remote_host()+'\\'+'IPC$')
+        conn.set_default_tid(tid)
+        fid = conn.nt_create_andx(tid, pipe_name)
+
+    if leakInfo is None:
+        return False
+
+    info['fid'] = fid
+    info.update(leakInfo)
+
+    # ================================
+    # shift transGroom.Indata ptr with SmbWriteAndX
+    # ================================
+    shift_indata_byte = 0x200
+    conn.do_write_andx_raw_pipe(fid, 'A'*shift_indata_byte)
+
+    # Note: Even the distance between bride transaction is exactly what we want, the groom transaction might be in a wrong place.
+    #       So the below operation is still dangerous. Write only 1 byte with '\x00' might be safe even alignment is wrong.
+    # maxParameterCount (0x1000), trans name (4), param (4)
+    indata_value = info['next_page_addr'] + info['TRANS_SIZE'] + 8 + info['SRV_BUFHDR_SIZE'] + 0x1000 + shift_indata_byte
+    indata_next_trans_displacement = info['trans2_addr'] - indata_value
+    conn.send_nt_trans_secondary(mid=fid, data=b'\x00', dataDisplacement=indata_next_trans_displacement + info['TRANS_MID_OFFSET'])
+    wait_for_request_processed(conn)
+
+    # if the overwritten is correct, a modified transaction mid should be special_mid now.
+    # a new transaction with special_mid should be error.
+    recvPkt = conn.send_nt_trans(5, mid=special_mid, param=pack('<HH', fid, 0), data='')
+    if recvPkt.getNTStatus() != 0x10002:  # invalid SMB
+        print('unexpected return status: 0x{:x}'.format(recvPkt.getNTStatus()))
+        print('!!! Write to wrong place !!!')
+        print('the target might be crashed')
+        return False
+
+    print('[+] success controlling groom transaction')
+
+    # NSA exploit set refCnt on leaked transaction to very large number for reading data repeatly
+    # but this method make the transation never get freed
+    # I will avoid memory leak
+
+    # ================================
+    # modify trans1 struct to be used for arbitrary read/write
+    # ================================
+    print('[*] modify trans1 struct for arbitrary read/write')
+    fmt = info['PTR_FMT']
+    # use transGroom to modify trans2.InData to &trans1. so we can modify trans1 with trans2 data
+    conn.send_nt_trans_secondary(mid=fid, data=pack('<'+fmt, info['trans1_addr']), dataDisplacement=indata_next_trans_displacement + info['TRANS_INDATA_OFFSET'])
+    wait_for_request_processed(conn)
+
+    # modify
+    # - trans1.InParameter to &trans1. so we can modify trans1 struct with itself (trans1 param)
+    # - trans1.InData to &trans2. so we can modify trans2 with trans1 data
+    conn.send_nt_trans_secondary(mid=special_mid, data=pack('<'+fmt*3, info['trans1_addr'], info['trans1_addr']+0x200, info['trans2_addr']), dataDisplacement=info['TRANS_INPARAM_OFFSET'])
+    wait_for_request_processed(conn)
+
+    # modify trans2.mid
+    info['trans2_mid'] = conn.next_mid()
+    conn.send_nt_trans_secondary(mid=info['trans1_mid'], data=pack('<H', info['trans2_mid']), dataDisplacement=info['TRANS_MID_OFFSET'])
+    return True","for i in range(10):
+    reset_extra_mid(conn)
+    leakInfo = align_transaction_and_leak(conn, tid, fid, info)
+    if leakInfo is not None:
+        break
+    print('[-] leak failleak failed... try again')
+    conn.close(tid, fid)
+    conn.disconnect_tree(tid)
+    tid = conn.tree_connect_andx('\\\\' + conn.get_remote_host() + '\\' + 'IPC$')
+    conn.set_default_tid(tid)
+    fid = conn.nt_create_andx(tid, pipe_name)
+if leakInfo is None:
+    return False","for i in range(10):
+    reset_extra_mid(conn)
+    leakInfo = align_transaction_and_leak(conn, tid, fid, info)
+    if leakInfo is not None:
+        break
+    print('[-] leak failleak failed... try again')
+    conn.close(tid, fid)
+    conn.disconnect_tree(tid)
+    tid = conn.tree_connect_andx('\\\\' + conn.get_remote_host() + '\\' + 'IPC$')
+    conn.set_default_tid(tid)
+    fid = conn.nt_create_andx(tid, pipe_name)
+else:
+    return False",0,"execute error
+abstract",,,,,
+Mycodo,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Mycodo/mycodo/utils/lockfile.py,https://github.com/kizniche/Mycodo/tree/master/mycodo/utils/lockfile.py,LockFile,lock_acquire$19,"def lock_acquire(self, lockfile, timeout):
+        """"""Non-blocking locking method.""""""
+        self.lock[lockfile] = filelock.FileLock(lockfile, timeout=1)
+        self.locked[lockfile] = False
+        timer = time.time() + timeout
+        logger.debug(""Acquiring lock for {} ({} sec timeout)"".format(lockfile, timeout))
+        while time.time() < timer:
+            try:
+                self.lock[lockfile].acquire()
+                seconds = time.time() - (timer - timeout)
+                logger.debug(""Lock acquired for {} in {:.3f} seconds"".format(lockfile, seconds))
+                self.locked[lockfile] = True
+                break
+            except:
+                pass
+            time.sleep(0.05)
+        if not self.locked[lockfile]:
+            logger.debug(""Lock unable to be acquired after {:.3f} seconds. Breaking lock."".format(timeout))
+            self.lock_release(lockfile)
+        else:
+            return True","while time.time() < timer:
+    try:
+        self.lock[lockfile].acquire()
+        seconds = time.time() - (timer - timeout)
+        logger.debug('Lock acquired for {} in {:.3f} seconds'.format(lockfile, seconds))
+        self.locked[lockfile] = True
+        break
+    except:
+        pass
+    time.sleep(0.05)
+if not self.locked[lockfile]:
+    logger.debug('Lock unable to be acquired after {:.3f} seconds. Breaking lock.'.format(timeout))
+    self.lock_release(lockfile)
+else:
+    return True","while time.time() < timer:
+    try:
+        self.lock[lockfile].acquire()
+        seconds = time.time() - (timer - timeout)
+        logger.debug('Lock acquired for {} in {:.3f} seconds'.format(lockfile, seconds))
+        return True
+        break
+    except:
+        pass
+    time.sleep(0.05)
+else:
+    logger.debug('Lock unable to be acquired after {:.3f} seconds. Breaking lock.'.format(timeout))
+    self.lock_release(lockfile)",0,no found,,,,,
+xarray,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/xarray/xarray/core/concat.py,https://github.com/pydata/xarray/tree/master/xarray/core/concat.py,,process_subset_opt$296,"def process_subset_opt(opt, subset):
+        if isinstance(opt, str):
+            if opt == ""different"":
+                if compat == ""override"":
+                    raise ValueError(
+                        f""Cannot specify both {subset}='different' and compat='override'.""
+                    )
+                # all nonindexes that are not the same in each dataset
+                for k in getattr(datasets[0], subset):
+                    if k not in concat_over:
+                        equals[k] = None
+
+                        variables = [
+                            ds.variables[k] for ds in datasets if k in ds.variables
+                        ]
+
+                        if len(variables) == 1:
+                            # coords=""different"" doesn't make sense when only one object
+                            # contains a particular variable.
+                            break
+                        elif len(variables) != len(datasets) and opt == ""different"":
+                            raise ValueError(
+                                f""{k!r} not present in all datasets and coords='different'. ""
+                                f""Either add {k!r} to datasets where it is missing or ""
+                                ""specify coords='minimal'.""
+                            )
+
+                        # first check without comparing values i.e. no computes
+                        for var in variables[1:]:
+                            equals[k] = getattr(variables[0], compat)(
+                                var, equiv=lazy_array_equiv
+                            )
+                            if equals[k] is not True:
+                                # exit early if we know these are not equal or that
+                                # equality cannot be determined i.e. one or all of
+                                # the variables wraps a numpy array
+                                break
+
+                        if equals[k] is False:
+                            concat_over.add(k)
+
+                        elif equals[k] is None:
+                            # Compare the variable of all datasets vs. the one
+                            # of the first dataset. Perform the minimum amount of
+                            # loads in order to avoid multiple loads from disk
+                            # while keeping the RAM footprint low.
+                            v_lhs = datasets[0].variables[k].load()
+                            # We'll need to know later on if variables are equal.
+                            computed = []
+                            for ds_rhs in datasets[1:]:
+                                v_rhs = ds_rhs.variables[k].compute()
+                                computed.append(v_rhs)
+                                if not getattr(v_lhs, compat)(v_rhs):
+                                    concat_over.add(k)
+                                    equals[k] = False
+                                    # computed variables are not to be re-computed
+                                    # again in the future
+                                    for ds, v in zip(datasets[1:], computed):
+                                        ds.variables[k].data = v.data
+                                    break
+                            else:
+                                equals[k] = True
+
+            elif opt == ""all"":
+                concat_over.update(
+                    set(getattr(datasets[0], subset)) - set(datasets[0].dims)
+                )
+            elif opt == ""minimal"":
+                pass
+            else:
+                raise ValueError(f""unexpected value for {subset}: {opt}"")
+        else:
+            invalid_vars = [k for k in opt if k not in getattr(datasets[0], subset)]
+            if invalid_vars:
+                if subset == ""coords"":
+                    raise ValueError(
+                        ""some variables in coords are not coordinates on ""
+                        f""the first dataset: {invalid_vars}""
+                    )
+                else:
+                    raise ValueError(
+                        ""some variables in data_vars are not data variables ""
+                        f""on the first dataset: {invalid_vars}""
+                    )
+            concat_over.update(opt)","for var in variables[1:]:
+    equals[k] = getattr(variables[0], compat)(var, equiv=lazy_array_equiv)
+    if equals[k] is not True:
+        break
+if equals[k] is False:
+    concat_over.add(k)
+elif equals[k] is None:
+    v_lhs = datasets[0].variables[k].load()
+    computed = []
+    for ds_rhs in datasets[1:]:
+        v_rhs = ds_rhs.variables[k].compute()
+        computed.append(v_rhs)
+        if not getattr(v_lhs, compat)(v_rhs):
+            concat_over.add(k)
+            equals[k] = False
+            for (ds, v) in zip(datasets[1:], computed):
+                ds.variables[k].data = v.data
+            break
+    else:
+        equals[k] = True","for var in variables[1:]:
+    equals[k] = getattr(variables[0], compat)(var, equiv=lazy_array_equiv)
+    if equals[k] is not True:
+        concat_over.add(k)
+        break
+else:
+    if equals[k] is None:
+        v_lhs = datasets[0].variables[k].load()
+        computed = []
+        for ds_rhs in datasets[1:]:
+            v_rhs = ds_rhs.variables[k].compute()
+            computed.append(v_rhs)
+            if not getattr(v_lhs, compat)(v_rhs):
+                concat_over.add(k)
+                equals[k] = False
+                for (ds, v) in zip(datasets[1:], computed):
+                    ds.variables[k].data = v.data
+                break
+        else:
+            equals[k] = True",0,no found,,,,,
+,,,,,,,,,,,,,,
+366-351,14,,,,,,,,,,,,,
+,15,,15,,,,,,,,,,,
+350,349,3,346,361,,,,,,,,,,
+,,,,没找到15个,ridiom 没找到/重构错误27个,,,,,,,,,
+,,,,找错7个,找错6个,,,,,,,,,

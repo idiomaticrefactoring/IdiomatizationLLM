@@ -1,0 +1,2211 @@
+repo_name,file_path,file_html,class_name,me_name,me_code,old_code,chatGPT_code,element_str,slice_str,truth_code
+PaddleSlim,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/PaddleSlim/paddleslim/dygraph/prune/pruning_plan.py,https://github.com/PaddlePaddle/PaddleSlim/tree/master/paddleslim/dygraph/prune/pruning_plan.py,PruningPlan,_restore_opt$137,"def _restore_opt(self, param_name, sub_layer, opt):
+        if opt is None:
+            return
+        for k, v in opt._accumulators.items():
+            var_tmp = v.get(param_name)
+            if var_tmp is None: continue
+            backup_name = var_tmp.name.replace(""."", ""_"") + ""_backup""
+            if backup_name in sub_layer._buffers:
+                _logger.debug(""Restore values of variable: {}"".format(
+                    var_tmp.name))
+                t_value = var_tmp.value().get_tensor()
+                t_backup = sub_layer._buffers[backup_name].value().get_tensor()
+
+                p = t_value._place()
+                if p.is_cpu_place():
+                    place = paddle.CPUPlace()
+                elif p.is_cuda_pinned_place():
+                    place = paddle.CUDAPinnedPlace()
+                else:
+                    p = paddle.framework.core.Place()
+                    p.set_place(t_value._place())
+                    place = paddle.CUDAPlace(p.gpu_device_id())
+
+                t_value.set(np.array(t_backup).astype(""float32""), place)
+                del sub_layer._buffers[backup_name]","t_value = var_tmp.value().get_tensor()
+t_backup = sub_layer._buffers[backup_name].value().get_tensor()","t_value, t_backup= var_tmp.value().get_tensor(), sub_layer._buffers[backup_name].value().get_tensor()","t_value = zejun1
+t_backup = zejun2",Cannot refactor,-1
+PaddleSlim,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/PaddleSlim/paddleslim/dygraph/prune/pruning_plan.py,https://github.com/PaddlePaddle/PaddleSlim/tree/master/paddleslim/dygraph/prune/pruning_plan.py,PruningPlan,_restore_opt$137,"def _restore_opt(self, param_name, sub_layer, opt):
+        if opt is None:
+            return
+        for k, v in opt._accumulators.items():
+            var_tmp = v.get(param_name)
+            if var_tmp is None: continue
+            backup_name = var_tmp.name.replace(""."", ""_"") + ""_backup""
+            if backup_name in sub_layer._buffers:
+                _logger.debug(""Restore values of variable: {}"".format(
+                    var_tmp.name))
+                t_value = var_tmp.value().get_tensor()
+                t_backup = sub_layer._buffers[backup_name].value().get_tensor()
+
+                p = t_value._place()
+                if p.is_cpu_place():
+                    place = paddle.CPUPlace()
+                elif p.is_cuda_pinned_place():
+                    place = paddle.CUDAPinnedPlace()
+                else:
+                    p = paddle.framework.core.Place()
+                    p.set_place(t_value._place())
+                    place = paddle.CUDAPlace(p.gpu_device_id())
+
+                t_value.set(np.array(t_backup).astype(""float32""), place)
+                del sub_layer._buffers[backup_name]","t_backup = sub_layer._buffers[backup_name].value().get_tensor()
+p = t_value._place()","(t_backup, p) = (sub_layer._buffers[backup_name].value().get_tensor(), t_value._place())","t_backup = zejun1
+p = zejun2","(t_backup, p) = (sub_layer._buffers[backup_name].value().get_tensor(), t_value._place())",1
+python-mss,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/python-mss/mss/linux.py,https://github.com/BoboTiG/python-mss/tree/master/mss/linux.py,MSS,_monitors_impl$385,"def _monitors_impl(self) -> None:
+        """"""Get positions of monitors. It will populate self._monitors.""""""
+
+        display = self._get_display()
+        int_ = int
+        xrandr = self.xrandr
+
+        # All monitors
+        gwa = XWindowAttributes()
+        self.xlib.XGetWindowAttributes(display, self.root, ctypes.byref(gwa))
+        self._monitors.append(
+            {
+                ""left"": int_(gwa.x),
+                ""top"": int_(gwa.y),
+                ""width"": int_(gwa.width),
+                ""height"": int_(gwa.height),
+            }
+        )
+
+        # Each monitor
+        # A simple benchmark calling 10 times those 2 functions:
+        # XRRGetScreenResources():        0.1755971429956844 s
+        # XRRGetScreenResourcesCurrent(): 0.0039125580078689 s
+        # The second is faster by a factor of 44! So try to use it first.
+        try:
+            mon = xrandr.XRRGetScreenResourcesCurrent(display, self.drawable).contents
+        except AttributeError:
+            mon = xrandr.XRRGetScreenResources(display, self.drawable).contents
+
+        crtcs = mon.crtcs
+        for idx in range(mon.ncrtc):
+            crtc = xrandr.XRRGetCrtcInfo(display, mon, crtcs[idx]).contents
+            if crtc.noutput == 0:
+                xrandr.XRRFreeCrtcInfo(crtc)
+                continue
+
+            self._monitors.append(
+                {
+                    ""left"": int_(crtc.x),
+                    ""top"": int_(crtc.y),
+                    ""width"": int_(crtc.width),
+                    ""height"": int_(crtc.height),
+                }
+            )
+            xrandr.XRRFreeCrtcInfo(crtc)
+        xrandr.XRRFreeScreenResources(mon)","display = self._get_display()
+int_ = int
+xrandr = self.xrandr
+gwa = XWindowAttributes()","(display, int_, xrandr, gwa) = (self._get_display(), int, self.xrandr, XWindowAttributes())","display = zejun1
+int_ = zejun2
+xrandr = zejun3
+gwa = zejun4","(display, int_, xrandr, gwa) = (self._get_display(), int, self.xrandr, XWindowAttributes())",1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,https://github.com/mars-project/mars/tree/master/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,,test_set_get_imag_execution$692,"def test_set_get_imag_execution(setup):
+    a_data = np.array([1 + 2j, 3 + 4j, 5 + 6j])
+    a = tensor(a_data, chunk_size=2)
+
+    res = a.imag.execute().fetch()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)
+
+    # test sparse
+    a_data = np.array([[1 + 2j, 3 + 4j, 0], [0, 0, 0]])
+    a = tensor(sps.csr_matrix(a_data))
+
+    res = a.imag.execute().fetch().toarray()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)","res = a.imag.execute().fetch()
+expected = a_data.imag","(res, expected) = (a.imag.execute().fetch(), a_data.imag)","res = zejun1
+expected = zejun2","(res, expected) = (a.imag.execute().fetch(), a_data.imag)",1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,https://github.com/mars-project/mars/tree/master/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,,test_set_get_imag_execution$692,"def test_set_get_imag_execution(setup):
+    a_data = np.array([1 + 2j, 3 + 4j, 5 + 6j])
+    a = tensor(a_data, chunk_size=2)
+
+    res = a.imag.execute().fetch()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)
+
+    # test sparse
+    a_data = np.array([[1 + 2j, 3 + 4j, 0], [0, 0, 0]])
+    a = tensor(sps.csr_matrix(a_data))
+
+    res = a.imag.execute().fetch().toarray()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)","res = a.execute().fetch()
+expected = a_data.copy()","(res, expected) = (a.execute().fetch(), a_data.copy())","res = zejun1
+expected = zejun2","(res, expected) = (a.execute().fetch(), a_data.copy())",1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,https://github.com/mars-project/mars/tree/master/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,,test_set_get_imag_execution$692,"def test_set_get_imag_execution(setup):
+    a_data = np.array([1 + 2j, 3 + 4j, 5 + 6j])
+    a = tensor(a_data, chunk_size=2)
+
+    res = a.imag.execute().fetch()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)
+
+    # test sparse
+    a_data = np.array([[1 + 2j, 3 + 4j, 0], [0, 0, 0]])
+    a = tensor(sps.csr_matrix(a_data))
+
+    res = a.imag.execute().fetch().toarray()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)","res = a.execute().fetch()
+expected = a_data.copy()","(res, expected) = (a.execute().fetch(), a_data.copy())","res = zejun1
+expected = zejun2","(res, expected) = (a.execute().fetch(), a_data.copy())",1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,https://github.com/mars-project/mars/tree/master/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,,test_set_get_imag_execution$692,"def test_set_get_imag_execution(setup):
+    a_data = np.array([1 + 2j, 3 + 4j, 5 + 6j])
+    a = tensor(a_data, chunk_size=2)
+
+    res = a.imag.execute().fetch()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)
+
+    # test sparse
+    a_data = np.array([[1 + 2j, 3 + 4j, 0], [0, 0, 0]])
+    a = tensor(sps.csr_matrix(a_data))
+
+    res = a.imag.execute().fetch().toarray()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)","res = a.imag.execute().fetch().toarray()
+expected = a_data.imag","(res, expected) = (a.imag.execute().fetch().toarray(), a_data.imag)","res = zejun1
+expected = zejun2","(res, expected) = (a.imag.execute().fetch().toarray(), a_data.imag)",1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,https://github.com/mars-project/mars/tree/master/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,,test_set_get_imag_execution$692,"def test_set_get_imag_execution(setup):
+    a_data = np.array([1 + 2j, 3 + 4j, 5 + 6j])
+    a = tensor(a_data, chunk_size=2)
+
+    res = a.imag.execute().fetch()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)
+
+    # test sparse
+    a_data = np.array([[1 + 2j, 3 + 4j, 0], [0, 0, 0]])
+    a = tensor(sps.csr_matrix(a_data))
+
+    res = a.imag.execute().fetch().toarray()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)","res = a.execute().fetch().toarray()
+expected = a_data.copy()","(res, expected) = (a.execute().fetch().toarray(), a_data.copy())","res = zejun1
+expected = zejun2","(res, expected) = (a.execute().fetch().toarray(), a_data.copy())",1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,https://github.com/mars-project/mars/tree/master/mars/tensor/arithmetic/tests/test_arithmetic_execution.py,,test_set_get_imag_execution$692,"def test_set_get_imag_execution(setup):
+    a_data = np.array([1 + 2j, 3 + 4j, 5 + 6j])
+    a = tensor(a_data, chunk_size=2)
+
+    res = a.imag.execute().fetch()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)
+
+    # test sparse
+    a_data = np.array([[1 + 2j, 3 + 4j, 0], [0, 0, 0]])
+    a = tensor(sps.csr_matrix(a_data))
+
+    res = a.imag.execute().fetch().toarray()
+    expected = a_data.imag
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = 9
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = 9
+
+    np.testing.assert_equal(res, expected)
+
+    a.imag = np.array([9, 8, 7])
+
+    res = a.execute().fetch().toarray()
+    expected = a_data.copy()
+    expected.imag = np.array([9, 8, 7])
+
+    np.testing.assert_equal(res, expected)","res = a.execute().fetch().toarray()
+expected = a_data.copy()","(res, expected) = (a.execute().fetch().toarray(), a_data.copy())","res = zejun1
+expected = zejun2","(res, expected) = (a.execute().fetch().toarray(), a_data.copy())",1
+Awesome-GANs,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Awesome-GANs/awesome_gans/sgan/sgan_model.py,https://github.com/kozistr/Awesome-GANs/tree/master/awesome_gans/sgan/sgan_model.py,SGAN,discriminator_0$195,"def discriminator_0(self, x, reuse=None):
+        """"""
+        :param x: MNIST image, (-1, 784)
+        :param reuse: re-usability
+        :return: z prob, disc prob
+        """"""
+        with tf.variable_scope('discriminator_0', reuse=reuse):
+            x = tf.reshape(x, [-1] + self.image_shape)  # (-1, 28, 28, 1)
+            x = gaussian_noise(x)
+
+            x = conv2d(x, self.df_dim * 1, name='d_0-conv2d-1')
+            x = tf.nn.leaky_relu(x)
+
+            x = conv2d(x, self.df_dim * 2, name='d_0-conv2d-2')
+            x = batch_norm(x)
+            x = tf.nn.leaky_relu(x)
+
+            x = conv2d(x, self.df_dim * 4, name='d_0-conv2d-3')
+            x = batch_norm(x)
+            x = tf.nn.leaky_relu(x)
+
+            x = tf.layers.flatten(x)
+
+            x = tf.layers.dense(x, self.fc_unit, name='d_0-fc-1')
+
+            z = tf.layers.dense(x, self.z_dim, activation=tf.nn.sigmoid, name='d_0-fc-2')
+            logits = tf.layers.dense(x, self.input_channel, name='d_0-fc-3')
+
+            return z, logits","z = tf.layers.dense(x, self.z_dim, activation=tf.nn.sigmoid, name='d_0-fc-2')
+logits = tf.layers.dense(x, self.input_channel, name='d_0-fc-3')","(z, logits) = (tf.layers.dense(x, self.z_dim, activation=tf.nn.sigmoid, name='d_0-fc-2'), tf.layers.dense(x, self.input_channel, name='d_0-fc-3'))","z = zejun1
+logits = zejun2","(z, logits) = (tf.layers.dense(x, self.z_dim, activation=tf.nn.sigmoid, name='d_0-fc-2'), tf.layers.dense(x, self.input_channel, name='d_0-fc-3'))",1
+saleor,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/saleor/saleor/graphql/attribute/tests/test_utils.py,https://github.com/saleor/saleor/tree/master/saleor/graphql/attribute/tests/test_utils.py,,test_validate_multiselect_attribute_duplicated_values$1559,"def test_validate_multiselect_attribute_duplicated_values(
+    creation, weight_attribute, product_type
+):
+    # given
+    weight_attribute.input_type = AttributeInputType.MULTISELECT
+    weight_attribute.value_required = True
+    weight_attribute.save(update_fields=[""value_required"", ""input_type""])
+
+    input_data = [
+        (
+            weight_attribute,
+            AttrValuesInput(
+                global_id=graphene.Node.to_global_id(""Attribute"", weight_attribute.pk),
+                multiselect=[
+                    AttrValuesForSelectableFieldInput(value=""new weight""),
+                    AttrValuesForSelectableFieldInput(value=""new weight""),
+                    AttrValuesForSelectableFieldInput(value=""new weight 2""),
+                ],
+            ),
+        ),
+    ]
+
+    # when
+    errors = validate_attributes_input(
+        input_data,
+        product_type.product_attributes.all(),
+        is_page_attributes=False,
+        creation=creation,
+    )
+
+    # then
+    assert len(errors) == 1
+    assert errors[0].code == ProductErrorCode.DUPLICATED_INPUT_ITEM.value","weight_attribute.input_type = AttributeInputType.MULTISELECT
+weight_attribute.value_required = True","(weight_attribute.input_type, weight_attribute.value_required) = (AttributeInputType.MULTISELECT, True)","weight_attribute.input_type = zejun1
+weight_attribute.value_required = zejun2","(weight_attribute.input_type, weight_attribute.value_required) = (AttributeInputType.MULTISELECT, True)",1
+boto3,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/boto3/tests/unit/docs/test_service.py,https://github.com/boto/boto3/tree/master/tests/unit/docs/test_service.py,TestServiceDocumenter,test_document_service$22,"def test_document_service(self):
+        service_documenter = ServiceDocumenter('myservice', self.session)
+        contents = service_documenter.document_service().decode('utf-8')
+        lines = [
+            '*********',
+            'MyService',
+            '*********',
+            '.. contents:: Table of Contents',
+            '   :depth: 2',
+            '======',
+            'Client',
+            '======',
+            '.. py:class:: MyService.Client',
+            '  These are the available methods:',
+            '  *   :py:meth:`~MyService.Client.sample_operation`',
+            '    **Examples** ',
+            '    Sample Description.',
+            '    ::',
+            '      response = client.sample_operation(',
+            '==========',
+            'Paginators',
+            '==========',
+            'The available paginators are:',
+            '* :py:class:`MyService.Paginator.SampleOperation`',
+            '.. py:class:: MyService.Paginator.SampleOperation',
+            '  .. py:method:: paginate(**kwargs)',
+            '=======',
+            'Waiters',
+            '=======',
+            'The available waiters are:',
+            '* :py:class:`MyService.Waiter.SampleOperationComplete`',
+            '.. py:class:: MyService.Waiter.SampleOperationComplete',
+            '  .. py:method:: wait(**kwargs)',
+            '================',
+            'Service Resource',
+            '================',
+            '.. py:class:: MyService.ServiceResource()',
+            ""  These are the resource's available actions:"",
+            '  *   :py:meth:`sample_operation()`',
+            ""  These are the resource's available sub-resources:"",
+            '  *   :py:meth:`Sample()`',
+            ""  These are the resource's available collections:"",
+            '  *   :py:attr:`samples`',
+            '  .. py:method:: sample_operation(**kwargs)',
+            '  .. py:method:: Sample(name)',
+            '  .. py:attribute:: samples',
+            '    .. py:method:: all()',
+            '    .. py:method:: filter(**kwargs)',
+            '    .. py:method:: limit(**kwargs)',
+            '    .. py:method:: page_size(**kwargs)',
+            '======',
+            'Sample',
+            '======',
+            '.. py:class:: MyService.Sample(name)',
+            ""  These are the resource's available identifiers:"",
+            '  *   :py:attr:`name`',
+            ""  These are the resource's available attributes:"",
+            '  *   :py:attr:`bar`',
+            '  *   :py:attr:`foo`',
+            ""  These are the resource's available actions:"",
+            '  *   :py:meth:`load()`',
+            '  *   :py:meth:`operate()`',
+            '  *   :py:meth:`reload()`',
+            ""  These are the resource's available waiters:"",
+            '  *   :py:meth:`wait_until_complete()`',
+            '  .. py:attribute:: name',
+            '  .. py:attribute:: bar',
+            '  .. py:attribute:: foo',
+            '  .. py:method:: load()',
+            '  .. py:method:: operate(**kwargs)',
+            '  .. py:method:: reload()',
+            '  .. py:method:: wait_until_complete(**kwargs)',
+        ]
+        self.assert_contains_lines_in_order(lines, contents)","contents = service_documenter.document_service().decode('utf-8')
+lines = ['*********', 'MyService', '*********', '.. contents:: Table of Contents', '   :depth: 2', '======', 'Client', '======', '.. py:class:: MyService.Client', '  These are the available methods:', '  *   :py:meth:`~MyService.Client.sample_operation`', '    **Examples** ', '    Sample Description.', '    ::', '      response = client.sample_operation(', '==========', 'Paginators', '==========', 'The available paginators are:', '* :py:class:`MyService.Paginator.SampleOperation`', '.. py:class:: MyService.Paginator.SampleOperation', '  .. py:method:: paginate(**kwargs)', '=======', 'Waiters', '=======', 'The available waiters are:', '* :py:class:`MyService.Waiter.SampleOperationComplete`', '.. py:class:: MyService.Waiter.SampleOperationComplete', '  .. py:method:: wait(**kwargs)', '================', 'Service Resource', '================', '.. py:class:: MyService.ServiceResource()', ""  These are the resource's available actions:"", '  *   :py:meth:`sample_operation()`', ""  These are the resource's available sub-resources:"", '  *   :py:meth:`Sample()`', ""  These are the resource's available collections:"", '  *   :py:attr:`samples`', '  .. py:method:: sample_operation(**kwargs)', '  .. py:method:: Sample(name)', '  .. py:attribute:: samples', '    .. py:method:: all()', '    .. py:method:: filter(**kwargs)', '    .. py:method:: limit(**kwargs)', '    .. py:method:: page_size(**kwargs)', '======', 'Sample', '======', '.. py:class:: MyService.Sample(name)', ""  These are the resource's available identifiers:"", '  *   :py:attr:`name`', ""  These are the resource's available attributes:"", '  *   :py:attr:`bar`', '  *   :py:attr:`foo`', ""  These are the resource's available actions:"", '  *   :py:meth:`load()`', '  *   :py:meth:`operate()`', '  *   :py:meth:`reload()`', ""  These are the resource's available waiters:"", '  *   :py:meth:`wait_until_complete()`', '  .. py:attribute:: name', '  .. py:attribute:: bar', '  .. py:attribute:: foo', '  .. py:method:: load()', '  .. py:method:: operate(**kwargs)', '  .. py:method:: reload()', '  .. py:method:: wait_until_complete(**kwargs)']","(contents, lines) = (service_documenter.document_service().decode('utf-8'), ['*********', 'MyService', '*********', '.. contents:: Table of Contents', '   :depth: 2', '======', 'Client', '======', '.. py:class:: MyService.Client', '  These are the available methods:', '  *   :py:meth:`~MyService.Client.sample_operation`', '    **Examples** ', '    Sample Description.', '    ::', '      response = client.sample_operation(', '==========', 'Paginators', '==========', 'The available paginators are:', '* :py:class:`MyService.Paginator.SampleOperation`', '.. py:class:: MyService.Paginator.SampleOperation', '  .. py:method:: paginate(**kwargs)', '=======', 'Waiters', '=======', 'The available waiters are:', '* :py:class:`MyService.Waiter.SampleOperationComplete`', '.. py:class:: MyService.Waiter.SampleOperationComplete', '  .. py:method:: wait(**kwargs)', '================', 'Service Resource', '================', '.. py:class:: MyService.ServiceResource()', ""  These are the resource's available actions:"", '  *   :py:meth:`sample_operation()`', ""  These are the resource's available sub-resources:"", '  *   :py:meth:`Sample()`', ""  These are the resource's available collections:"", '  *   :py:attr:`samples`', '  .. py:method:: sample_operation(**kwargs)', '  .. py:method:: Sample(name)', '  .. py:attribute:: samples', '    .. py:method:: all()', '    .. py:method:: filter(**kwargs)', '    .. py:method:: limit(**kwargs)', '    .. py:method:: page_size(**kwargs)', '======', 'Sample', '======', '.. py:class:: MyService.Sample(name)', ""  These are the resource's available identifiers:"", '  *   :py:attr:`name`', ""  These are the resource's available attributes:"", '  *   :py:attr:`bar`', '  *   :py:attr:`foo`', ""  These are the resource's available actions:"", '  *   :py:meth:`load()`', '  *   :py:meth:`operate()`', '  *   :py:meth:`reload()`', ""  These are the resource's available waiters:"", '  *   :py:meth:`wait_until_complete()`', '  .. py:attribute:: name', '  .. py:attribute:: bar', '  .. py:attribute:: foo', '  .. py:method:: load()', '  .. py:method:: operate(**kwargs)', '  .. py:method:: reload()', '  .. py:method:: wait_until_complete(**kwargs)'])","contents = zejun1
+lines = zejun2","(contents, lines) = (service_documenter.document_service().decode('utf-8'), ['*********', 'MyService', '*********', '.. contents:: Table of Contents', '   :depth: 2', '======', 'Client', '======', '.. py:class:: MyService.Client', '  These are the available methods:', '  *   :py:meth:`~MyService.Client.sample_operation`', '    **Examples** ', '    Sample Description.', '    ::', '      response = client.sample_operation(', '==========', 'Paginators', '==========', 'The available paginators are:', '* :py:class:`MyService.Paginator.SampleOperation`', '.. py:class:: MyService.Paginator.SampleOperation', '  .. py:method:: paginate(**kwargs)', '=======', 'Waiters', '=======', 'The available waiters are:', '* :py:class:`MyService.Waiter.SampleOperationComplete`', '.. py:class:: MyService.Waiter.SampleOperationComplete', '  .. py:method:: wait(**kwargs)', '================', 'Service Resource', '================', '.. py:class:: MyService.ServiceResource()', ""  These are the resource's available actions:"", '  *   :py:meth:`sample_operation()`', ""  These are the resource's available sub-resources:"", '  *   :py:meth:`Sample()`', ""  These are the resource's available collections:"", '  *   :py:attr:`samples`', '  .. py:method:: sample_operation(**kwargs)', '  .. py:method:: Sample(name)', '  .. py:attribute:: samples', '    .. py:method:: all()', '    .. py:method:: filter(**kwargs)', '    .. py:method:: limit(**kwargs)', '    .. py:method:: page_size(**kwargs)', '======', 'Sample', '======', '.. py:class:: MyService.Sample(name)', ""  These are the resource's available identifiers:"", '  *   :py:attr:`name`', ""  These are the resource's available attributes:"", '  *   :py:attr:`bar`', '  *   :py:attr:`foo`', ""  These are the resource's available actions:"", '  *   :py:meth:`load()`', '  *   :py:meth:`operate()`', '  *   :py:meth:`reload()`', ""  These are the resource's available waiters:"", '  *   :py:meth:`wait_until_complete()`', '  .. py:attribute:: name', '  .. py:attribute:: bar', '  .. py:attribute:: foo', '  .. py:method:: load()', '  .. py:method:: operate(**kwargs)', '  .. py:method:: reload()', '  .. py:method:: wait_until_complete(**kwargs)'])",1
+spiderfoot,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/spiderfoot/test/unit/modules/test_sfp_ipregistry.py,https://github.com/smicallef/spiderfoot/tree/master/test/unit/modules/test_sfp_ipregistry.py,TestModuletemplate,test_handleEvent_no_api_key_should_set_errorState$37,"def test_handleEvent_no_api_key_should_set_errorState(self):
+        """"""
+        Test handleEvent(self, event)
+        """"""
+        sf = SpiderFoot(self.default_options)
+
+        module = sfp_ipregistry()
+        module.setup(sf, dict())
+
+        target_value = ""example target value""
+        target_type = ""IP_ADDRESS""
+        target = SpiderFootTarget(target_value, target_type)
+        module.setTarget(target)
+
+        event_type = ""ROOT""
+        event_data = ""example data""
+        event_module = """"
+        source_event = """"
+        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+
+        result = module.handleEvent(evt)
+
+        self.assertIsNone(result)
+        self.assertTrue(module.errorState)","sf = SpiderFoot(self.default_options)
+module = sfp_ipregistry()","(sf, module) = (SpiderFoot(self.default_options), sfp_ipregistry())","sf = zejun1
+module = zejun2","(sf, module) = (SpiderFoot(self.default_options), sfp_ipregistry())",1
+spiderfoot,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/spiderfoot/test/unit/modules/test_sfp_ipregistry.py,https://github.com/smicallef/spiderfoot/tree/master/test/unit/modules/test_sfp_ipregistry.py,TestModuletemplate,test_handleEvent_no_api_key_should_set_errorState$37,"def test_handleEvent_no_api_key_should_set_errorState(self):
+        """"""
+        Test handleEvent(self, event)
+        """"""
+        sf = SpiderFoot(self.default_options)
+
+        module = sfp_ipregistry()
+        module.setup(sf, dict())
+
+        target_value = ""example target value""
+        target_type = ""IP_ADDRESS""
+        target = SpiderFootTarget(target_value, target_type)
+        module.setTarget(target)
+
+        event_type = ""ROOT""
+        event_data = ""example data""
+        event_module = """"
+        source_event = """"
+        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+
+        result = module.handleEvent(evt)
+
+        self.assertIsNone(result)
+        self.assertTrue(module.errorState)","target_value = 'example target value'
+target_type = 'IP_ADDRESS'","(target_value, target_type) = ('example target value', 'IP_ADDRESS')","target_value = zejun1
+target_type = zejun2","(target_value, target_type) = ('example target value', 'IP_ADDRESS')",1
+DPR,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/DPR/dpr/models/biencoder.py,https://github.com/facebookresearch/DPR/tree/master/dpr/models/biencoder.py,BiEncoder,get_representation$79,"def get_representation(
+        sub_model: nn.Module,
+        ids: T,
+        segments: T,
+        attn_mask: T,
+        fix_encoder: bool = False,
+        representation_token_pos=0,
+    ) -> (T, T, T):
+        sequence_output = None
+        pooled_output = None
+        hidden_states = None
+        if ids is not None:
+            if fix_encoder:
+                with torch.no_grad():
+                    sequence_output, pooled_output, hidden_states = sub_model(
+                        ids,
+                        segments,
+                        attn_mask,
+                        representation_token_pos=representation_token_pos,
+                    )
+
+                if sub_model.training:
+                    sequence_output.requires_grad_(requires_grad=True)
+                    pooled_output.requires_grad_(requires_grad=True)
+            else:
+                sequence_output, pooled_output, hidden_states = sub_model(
+                    ids,
+                    segments,
+                    attn_mask,
+                    representation_token_pos=representation_token_pos,
+                )
+
+        return sequence_output, pooled_output, hidden_states","sequence_output = None
+pooled_output = None
+hidden_states = None","(sequence_output, pooled_output, hidden_states) = (None, None, None)","sequence_output = zejun1
+pooled_output = zejun2
+hidden_states = zejun3","(sequence_output, pooled_output, hidden_states) = (None, None, None)",1
+openstates-scrapers,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/openstates-scrapers/scrapers/ri/events.py,https://github.com/openstates/openstates-scrapers/tree/master/scrapers/ri/events.py,RIEventScraper,scrape_chamber$160,"def scrape_chamber(self, chamber):
+        offset = column_order[chamber]
+        page = self.lxmlize(agenda_url)
+        rows = page.xpath(""//table[@class='agenda_table']/tr"")[1:]
+        for row in rows:
+            ctty = row.xpath(""./td"")[offset]
+            to_scrape = ctty.xpath(""./a"")
+            for page in to_scrape:
+                yield from self.scrape_agenda_dir(chamber, page.attrib[""href""])","offset = column_order[chamber]
+page = self.lxmlize(agenda_url)","(offset, page) = (column_order[chamber], self.lxmlize(agenda_url))","offset = zejun1
+page = zejun2","(offset, page) = (column_order[chamber], self.lxmlize(agenda_url))",1
+pootle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pootle/pootle/apps/pootle_fs/state.py,https://github.com/translate/pootle/tree/master/pootle/apps/pootle_fs/state.py,ProjectFSState,state_fs_ahead$233,"def state_fs_ahead(self):
+        all_pootle_changed = list(
+            self.resources.pootle_changed.values_list(""pk"", flat=True))
+        all_fs_changed = list(self.resources.fs_changed)
+        fs_changed = self.resources.synced.filter(pk__in=all_fs_changed)
+        fs_changed = (
+            fs_changed.exclude(pk__in=all_pootle_changed)
+            | (fs_changed.filter(pk__in=all_pootle_changed)
+                         .filter(resolve_conflict=SOURCE_WINS)))
+        fs_changed = fs_changed.values_list(
+            ""pk"", ""pootle_path"", ""path"", ""store_id"", ""store__obsolete"")
+        fs_hashes = self.resources.file_hashes
+        pootle_revisions = self.resources.pootle_revisions
+        for changed in fs_changed.iterator():
+            pk, pootle_path, path, store_id, store_obsolete = changed
+            if store_obsolete:
+                continue
+            if pootle_path not in fs_hashes:
+                # fs_removed
+                continue
+            if store_id not in pootle_revisions:
+                # pootle_removed
+                continue
+            yield dict(
+                store_fs=pk,
+                pootle_path=pootle_path,
+                fs_path=path)","all_pootle_changed = list(self.resources.pootle_changed.values_list('pk', flat=True))
+all_fs_changed = list(self.resources.fs_changed)","(all_pootle_changed, all_fs_changed) = (list(self.resources.pootle_changed.values_list('pk', flat=True)), list(self.resources.fs_changed))","all_pootle_changed = zejun1
+all_fs_changed = zejun2","(all_pootle_changed, all_fs_changed) = (list(self.resources.pootle_changed.values_list('pk', flat=True)), list(self.resources.fs_changed))",1
+pootle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pootle/pootle/apps/pootle_fs/state.py,https://github.com/translate/pootle/tree/master/pootle/apps/pootle_fs/state.py,ProjectFSState,state_fs_ahead$233,"def state_fs_ahead(self):
+        all_pootle_changed = list(
+            self.resources.pootle_changed.values_list(""pk"", flat=True))
+        all_fs_changed = list(self.resources.fs_changed)
+        fs_changed = self.resources.synced.filter(pk__in=all_fs_changed)
+        fs_changed = (
+            fs_changed.exclude(pk__in=all_pootle_changed)
+            | (fs_changed.filter(pk__in=all_pootle_changed)
+                         .filter(resolve_conflict=SOURCE_WINS)))
+        fs_changed = fs_changed.values_list(
+            ""pk"", ""pootle_path"", ""path"", ""store_id"", ""store__obsolete"")
+        fs_hashes = self.resources.file_hashes
+        pootle_revisions = self.resources.pootle_revisions
+        for changed in fs_changed.iterator():
+            pk, pootle_path, path, store_id, store_obsolete = changed
+            if store_obsolete:
+                continue
+            if pootle_path not in fs_hashes:
+                # fs_removed
+                continue
+            if store_id not in pootle_revisions:
+                # pootle_removed
+                continue
+            yield dict(
+                store_fs=pk,
+                pootle_path=pootle_path,
+                fs_path=path)","fs_changed = fs_changed.values_list('pk', 'pootle_path', 'path', 'store_id', 'store__obsolete')
+fs_hashes = self.resources.file_hashes
+pootle_revisions = self.resources.pootle_revisions","(fs_changed, fs_hashes, pootle_revisions) = (fs_changed.values_list('pk', 'pootle_path', 'path', 'store_id', 'store__obsolete'), self.resources.file_hashes, self.resources.pootle_revisions)","fs_changed = zejun1
+fs_hashes = zejun2
+pootle_revisions = zejun3","(fs_changed, fs_hashes, pootle_revisions) = (fs_changed.values_list('pk', 'pootle_path', 'path', 'store_id', 'store__obsolete'), self.resources.file_hashes, self.resources.pootle_revisions)",1
+adapter-transformers,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/adapter-transformers/src/transformers/models/longformer/modeling_tf_longformer.py,https://github.com/Adapter-Hub/adapter-transformers/tree/master/src/transformers/models/longformer/modeling_tf_longformer.py,,_compute_global_attention_mask$393,"def _compute_global_attention_mask(input_ids_shape, sep_token_indices, before_sep_token=True):
+    """"""
+    Computes global attention mask by putting attention on all tokens before `sep_token_id` if `before_sep_token is
+    True` else after `sep_token_id`.
+    """"""
+    assert shape_list(sep_token_indices)[1] == 2, ""`input_ids` should have two dimensions""
+    question_end_index = tf.reshape(sep_token_indices, (input_ids_shape[0], 3, 2))[:, 0, 1][:, None]
+    # bool attention mask with True in locations of global attention
+    attention_mask = tf.expand_dims(tf.range(input_ids_shape[1], dtype=tf.int64), axis=0)
+    attention_mask = tf.tile(attention_mask, (input_ids_shape[0], 1))
+    if before_sep_token is True:
+        question_end_index = tf.tile(question_end_index, (1, input_ids_shape[1]))
+        attention_mask = tf.cast(attention_mask < question_end_index, dtype=question_end_index.dtype)
+    else:
+        # last token is separation token and should not be counted and in the middle are two separation tokens
+        question_end_index = tf.tile(question_end_index + 1, (1, input_ids_shape[1]))
+        attention_mask = tf.cast(
+            attention_mask > question_end_index,
+            dtype=question_end_index.dtype,
+        ) * tf.cast(attention_mask < input_ids_shape[-1], dtype=question_end_index.dtype)
+
+    return attention_mask","question_end_index = tf.reshape(sep_token_indices, (input_ids_shape[0], 3, 2))[:, 0, 1][:, None]
+attention_mask = tf.expand_dims(tf.range(input_ids_shape[1], dtype=tf.int64), axis=0)","(question_end_index, attention_mask) = (tf.reshape(sep_token_indices, (input_ids_shape[0], 3, 2))[:, 0, 1][:, None], tf.expand_dims(tf.range(input_ids_shape[1], dtype=tf.int64), axis=0))","question_end_index = zejun1
+attention_mask = zejun2","(question_end_index, attention_mask) = (tf.reshape(sep_token_indices, (input_ids_shape[0], 3, 2))[:, 0, 1][:, None], tf.expand_dims(tf.range(input_ids_shape[1], dtype=tf.int64), axis=0))",1
+Ghostwriter,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Ghostwriter/ghostwriter/rolodex/tests/test_views.py,https://github.com/GhostManager/Ghostwriter/tree/master/ghostwriter/rolodex/tests/test_views.py,RollCodenameViewTests,setUp$129,"def setUp(self):
+        self.client = Client()
+        self.client_auth = Client()
+        self.client_auth.login(username=self.user.username, password=PASSWORD)
+        self.assertTrue(
+            self.client_auth.login(username=self.user.username, password=PASSWORD)
+        )","self.client = Client()
+self.client_auth = Client()","""""""Cannot refactor""""""","self.client = zejun1
+self.client_auth = zejun1","(self.client, self.client_auth) = (Client(), Client())",0
+TradingGym,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/TradingGym/trading_env/envs/backtest_v1.py,https://github.com/Yvictor/TradingGym/tree/master/trading_env/envs/backtest_v1.py,trading_env,render$342,"def render(self, save=False):
+        if self.render_on == 0:
+            matplotlib.style.use('dark_background')
+            self.render_on = 1
+
+            left, width = 0.1, 0.8
+            rect1 = [left, 0.4, width, 0.55]
+            rect2 = [left, 0.2, width, 0.2]
+            rect3 = [left, 0.05, width, 0.15]
+
+            self.fig = plt.figure(figsize=(15,8))
+            self.fig.suptitle('%s'%self.df_sample['datetime'].iloc[0].date(), fontsize=14, fontweight='bold')
+            #self.ax = self.fig.add_subplot(1,1,1)
+            self.ax = self.fig.add_axes(rect1)  # left, bottom, width, height
+            self.ax2 = self.fig.add_axes(rect2, sharex=self.ax)
+            self.ax3 = self.fig.add_axes(rect3, sharex=self.ax)
+            self.ax.grid(color='gray', linestyle='-', linewidth=0.5)
+            self.ax2.grid(color='gray', linestyle='-', linewidth=0.5)
+            self.ax3.grid(color='gray', linestyle='-', linewidth=0.5)
+            self.features_color = [c.rgb+(0.9,) for c in Color('yellow').range_to(Color('cyan'), self.feature_len)]
+            #fig, ax = plt.subplots()
+            self._plot_trading()
+
+            self.ax.set_xlim(0,len(self.price[:self.step_st+self.obs_len])+200)
+            plt.ion()
+            #self.fig.tight_layout()
+            plt.show()
+            if save:
+                self.fig.savefig('fig/%s.png' % str(self.t_index))
+
+        elif self.render_on == 1:
+            self.ax.lines.remove(self.price_plot[0])
+            [self.ax3.lines.remove(plot) for plot in self.features_plot]
+            self.fluc_reward_plot_p.remove()
+            self.fluc_reward_plot_n.remove()
+            self.target_box.remove()
+            self.reward_plot_p.remove()
+            self.reward_plot_n.remove()
+            self.posi_plot_long.remove()
+            self.posi_plot_short.remove()
+            self.trade_plot_buy.remove()
+            self.trade_plot_sell.remove()
+
+            self._plot_trading()
+
+            self.ax.set_xlim(0,len(self.price[:self.step_st+self.obs_len])+200)
+            if save:
+                self.fig.savefig('fig/%s.png' % str(self.t_index))
+            plt.pause(0.0001)","self.render_on = 1
+(left, width) = (0.1, 0.8)","self.render_on, (left, width) = 1, (0.1, 0.8)","self.render_on = zejun1
+(left, width) = zejun2",Cannot refactor,-1
+TradingGym,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/TradingGym/trading_env/envs/backtest_v1.py,https://github.com/Yvictor/TradingGym/tree/master/trading_env/envs/backtest_v1.py,trading_env,render$342,"def render(self, save=False):
+        if self.render_on == 0:
+            matplotlib.style.use('dark_background')
+            self.render_on = 1
+
+            left, width = 0.1, 0.8
+            rect1 = [left, 0.4, width, 0.55]
+            rect2 = [left, 0.2, width, 0.2]
+            rect3 = [left, 0.05, width, 0.15]
+
+            self.fig = plt.figure(figsize=(15,8))
+            self.fig.suptitle('%s'%self.df_sample['datetime'].iloc[0].date(), fontsize=14, fontweight='bold')
+            #self.ax = self.fig.add_subplot(1,1,1)
+            self.ax = self.fig.add_axes(rect1)  # left, bottom, width, height
+            self.ax2 = self.fig.add_axes(rect2, sharex=self.ax)
+            self.ax3 = self.fig.add_axes(rect3, sharex=self.ax)
+            self.ax.grid(color='gray', linestyle='-', linewidth=0.5)
+            self.ax2.grid(color='gray', linestyle='-', linewidth=0.5)
+            self.ax3.grid(color='gray', linestyle='-', linewidth=0.5)
+            self.features_color = [c.rgb+(0.9,) for c in Color('yellow').range_to(Color('cyan'), self.feature_len)]
+            #fig, ax = plt.subplots()
+            self._plot_trading()
+
+            self.ax.set_xlim(0,len(self.price[:self.step_st+self.obs_len])+200)
+            plt.ion()
+            #self.fig.tight_layout()
+            plt.show()
+            if save:
+                self.fig.savefig('fig/%s.png' % str(self.t_index))
+
+        elif self.render_on == 1:
+            self.ax.lines.remove(self.price_plot[0])
+            [self.ax3.lines.remove(plot) for plot in self.features_plot]
+            self.fluc_reward_plot_p.remove()
+            self.fluc_reward_plot_n.remove()
+            self.target_box.remove()
+            self.reward_plot_p.remove()
+            self.reward_plot_n.remove()
+            self.posi_plot_long.remove()
+            self.posi_plot_short.remove()
+            self.trade_plot_buy.remove()
+            self.trade_plot_sell.remove()
+
+            self._plot_trading()
+
+            self.ax.set_xlim(0,len(self.price[:self.step_st+self.obs_len])+200)
+            if save:
+                self.fig.savefig('fig/%s.png' % str(self.t_index))
+            plt.pause(0.0001)","rect1 = [left, 0.4, width, 0.55]
+rect2 = [left, 0.2, width, 0.2]
+rect3 = [left, 0.05, width, 0.15]
+self.fig = plt.figure(figsize=(15, 8))","(rect1, rect2, rect3, self.fig) = ([left, 0.4, width, 0.55], [left, 0.2, width, 0.2], [left, 0.05, width, 0.15], plt.figure(figsize=(15, 8)))","rect1 = zejun1
+rect2 = zejun2
+rect3 = zejun3
+self.fig = zejun4","(rect1, rect2, rect3, self.fig) = ([left, 0.4, width, 0.55], [left, 0.2, width, 0.2], [left, 0.05, width, 0.15], plt.figure(figsize=(15, 8)))",1
+docker-py,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/docker-py/tests/integration/api_build_test.py,https://github.com/docker/docker-py/tree/master/tests/integration/api_build_test.py,BuildTest,test_build_in_context_nested_dockerfile$516,"def test_build_in_context_nested_dockerfile(self):
+        base_dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, base_dir)
+        with open(os.path.join(base_dir, 'file.txt'), 'w') as f:
+            f.write('hello world')
+        subdir = os.path.join(base_dir, 'hello', 'world')
+        os.makedirs(subdir)
+        with open(os.path.join(subdir, 'custom.dockerfile'), 'w') as df:
+            df.write('\n'.join([
+                'FROM busybox',
+                'COPY . /src',
+                'WORKDIR /src',
+            ]))
+        img_name = random_name()
+        self.tmp_imgs.append(img_name)
+        stream = self.client.build(
+            path=base_dir, dockerfile='hello/world/custom.dockerfile',
+            tag=img_name, decode=True
+        )
+        lines = []
+        for chunk in stream:
+            lines.append(chunk)
+        assert 'Successfully tagged' in lines[-1]['stream']
+
+        ctnr = self.client.create_container(img_name, 'ls -a')
+        self.tmp_containers.append(ctnr)
+        self.client.start(ctnr)
+        lsdata = self.client.logs(ctnr).strip().split(b'\n')
+        assert len(lsdata) == 4
+        assert sorted(
+            [b'.', b'..', b'file.txt', b'hello']
+        ) == sorted(lsdata)","stream = self.client.build(path=base_dir, dockerfile='hello/world/custom.dockerfile', tag=img_name, decode=True)
+lines = []","(stream, lines) = (self.client.build(path=base_dir, dockerfile='hello/world/custom.dockerfile', tag=img_name, decode=True), [])","stream = zejun1
+lines = []","(stream, lines) = (self.client.build(path=base_dir, dockerfile='hello/world/custom.dockerfile', tag=img_name, decode=True), [])",1
+keras,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/keras/keras/distribute/multi_worker_testing_utils.py,https://github.com/keras-team/keras/tree/master/keras/distribute/multi_worker_testing_utils.py,,mnist_synthetic_dataset$39,"def mnist_synthetic_dataset(batch_size, steps_per_epoch):
+  """"""Generate synthetic MNIST dataset for testing.""""""
+  # train dataset
+  x_train = tf.ones([batch_size * steps_per_epoch, 28, 28, 1],
+                           dtype=tf.float32)
+  y_train = tf.ones([batch_size * steps_per_epoch, 1],
+                           dtype=tf.int32)
+  train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+  train_ds = train_ds.repeat()
+  # train_ds = train_ds.shuffle(100)
+  train_ds = train_ds.batch(64, drop_remainder=True)
+
+  # eval dataset
+  x_test = tf.random.uniform([10000, 28, 28, 1], dtype=tf.float32)
+  y_test = tf.random.uniform([10000, 1],
+                                     minval=0,
+                                     maxval=9,
+                                     dtype=tf.int32)
+  eval_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+  eval_ds = eval_ds.batch(64, drop_remainder=True)
+
+  return train_ds, eval_ds","x_train = tf.ones([batch_size * steps_per_epoch, 28, 28, 1], dtype=tf.float32)
+y_train = tf.ones([batch_size * steps_per_epoch, 1], dtype=tf.int32)","(x_train, y_train) = (tf.ones([batch_size * steps_per_epoch, 28, 28, 1], dtype=tf.float32), tf.ones([batch_size * steps_per_epoch, 1], dtype=tf.int32))","x_train = zejun1
+y_train = zejun2","(x_train, y_train) = (tf.ones([batch_size * steps_per_epoch, 28, 28, 1], dtype=tf.float32), tf.ones([batch_size * steps_per_epoch, 1], dtype=tf.int32))",1
+keras,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/keras/keras/distribute/multi_worker_testing_utils.py,https://github.com/keras-team/keras/tree/master/keras/distribute/multi_worker_testing_utils.py,,mnist_synthetic_dataset$39,"def mnist_synthetic_dataset(batch_size, steps_per_epoch):
+  """"""Generate synthetic MNIST dataset for testing.""""""
+  # train dataset
+  x_train = tf.ones([batch_size * steps_per_epoch, 28, 28, 1],
+                           dtype=tf.float32)
+  y_train = tf.ones([batch_size * steps_per_epoch, 1],
+                           dtype=tf.int32)
+  train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+  train_ds = train_ds.repeat()
+  # train_ds = train_ds.shuffle(100)
+  train_ds = train_ds.batch(64, drop_remainder=True)
+
+  # eval dataset
+  x_test = tf.random.uniform([10000, 28, 28, 1], dtype=tf.float32)
+  y_test = tf.random.uniform([10000, 1],
+                                     minval=0,
+                                     maxval=9,
+                                     dtype=tf.int32)
+  eval_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+  eval_ds = eval_ds.batch(64, drop_remainder=True)
+
+  return train_ds, eval_ds","train_ds = train_ds.batch(64, drop_remainder=True)
+x_test = tf.random.uniform([10000, 28, 28, 1], dtype=tf.float32)
+y_test = tf.random.uniform([10000, 1], minval=0, maxval=9, dtype=tf.int32)","(train_ds, x_test, y_test) = (train_ds.batch(64, drop_remainder=True), tf.random.uniform([10000, 28, 28, 1], dtype=tf.float32), tf.random.uniform([10000, 1], minval=0, maxval=9, dtype=tf.int32))","train_ds = zejun1
+x_test = zejun2
+y_test = zejun3","(train_ds, x_test, y_test) = (train_ds.batch(64, drop_remainder=True), tf.random.uniform([10000, 28, 28, 1], dtype=tf.float32), tf.random.uniform([10000, 1], minval=0, maxval=9, dtype=tf.int32))",1
+SublimeJEDI,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/SublimeJEDI/dependencies/parso/python/diff.py,https://github.com/srusskih/SublimeJEDI/tree/master/dependencies/parso/python/diff.py,_NodesTree,__init__$593,"def __init__(self, module):
+        self._base_node = _NodesTreeNode(module)
+        self._working_stack = [self._base_node]
+        self._module = module
+        self._prefix_remainder = ''
+        self.prefix = ''
+        self.indents = [0]","self._working_stack = [self._base_node]
+self._module = module
+self._prefix_remainder = ''
+self.prefix = ''
+self.indents = [0]","(self._working_stack, self._module, self._prefix_remainder, self.prefix, self.indents) = ([self._base_node], module, '', '', [0])","self._working_stack = zejun1
+self._module = zejun2
+self._prefix_remainder = zejun3
+self.prefix = zejun3
+self.indents = zejun4","(self._working_stack, self._module, self._prefix_remainder, self.prefix, self.indents) = ([self._base_node], module, '', '', [0])",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/beacons.py,https://github.com/saltstack/salt/tree/master/salt/modules/beacons.py,,reset$744,"def reset(**kwargs):
+    """"""
+    Reset beacon configuration on the minion
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' beacons.reset
+    """"""
+
+    ret = {""comment"": [], ""result"": True}
+
+    if kwargs.get(""test""):
+        ret[""comment""] = ""Beacons would be reset.""
+    else:
+        try:
+            with salt.utils.event.get_event(
+                ""minion"", opts=__opts__, listen=True
+            ) as event_bus:
+                res = __salt__[""event.fire""]({""func"": ""reset""}, ""manage_beacons"")
+                if res:
+                    event_ret = event_bus.get_event(
+                        tag=""/salt/minion/minion_beacon_reset_complete"",
+                        wait=kwargs.get(""timeout"", default_event_wait),
+                    )
+                    if event_ret and event_ret[""complete""]:
+                        ret[""result""] = True
+                        ret[""comment""] = ""Beacon configuration reset.""
+                    else:
+                        ret[""result""] = False
+                        if ret is not None:
+                            ret[""comment""] = event_ret[""comment""]
+                        else:
+                            ret[""comment""] = (
+                                ""Did not receive the beacon reset event before the""
+                                "" timeout of {}s"".format(
+                                    kwargs.get(""timeout"", default_event_wait)
+                                )
+                            )
+                    return ret
+        except KeyError:
+            # Effectively a no-op, since we can't really return without an event system
+            ret[""result""] = False
+            ret[""comment""] = ""Event module not available. Beacon reset job failed.""
+    return ret","ret['result'] = False
+ret['comment'] = 'Event module not available. Beacon reset job failed.'","(ret['result'], ret['comment']) = (False, 'Event module not available. Beacon reset job failed.')","ret['result'] = zejun1
+ret['comment'] = zejun2","(ret['result'], ret['comment']) = (False, 'Event module not available. Beacon reset job failed.')",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/beacons.py,https://github.com/saltstack/salt/tree/master/salt/modules/beacons.py,,reset$744,"def reset(**kwargs):
+    """"""
+    Reset beacon configuration on the minion
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' beacons.reset
+    """"""
+
+    ret = {""comment"": [], ""result"": True}
+
+    if kwargs.get(""test""):
+        ret[""comment""] = ""Beacons would be reset.""
+    else:
+        try:
+            with salt.utils.event.get_event(
+                ""minion"", opts=__opts__, listen=True
+            ) as event_bus:
+                res = __salt__[""event.fire""]({""func"": ""reset""}, ""manage_beacons"")
+                if res:
+                    event_ret = event_bus.get_event(
+                        tag=""/salt/minion/minion_beacon_reset_complete"",
+                        wait=kwargs.get(""timeout"", default_event_wait),
+                    )
+                    if event_ret and event_ret[""complete""]:
+                        ret[""result""] = True
+                        ret[""comment""] = ""Beacon configuration reset.""
+                    else:
+                        ret[""result""] = False
+                        if ret is not None:
+                            ret[""comment""] = event_ret[""comment""]
+                        else:
+                            ret[""comment""] = (
+                                ""Did not receive the beacon reset event before the""
+                                "" timeout of {}s"".format(
+                                    kwargs.get(""timeout"", default_event_wait)
+                                )
+                            )
+                    return ret
+        except KeyError:
+            # Effectively a no-op, since we can't really return without an event system
+            ret[""result""] = False
+            ret[""comment""] = ""Event module not available. Beacon reset job failed.""
+    return ret","ret['result'] = True
+ret['comment'] = 'Beacon configuration reset.'","(ret['result'], ret['comment']) = (True, 'Beacon configuration reset.')","ret['result'] = zejun1
+ret['comment'] = zejun2","(ret['result'], ret['comment']) = (True, 'Beacon configuration reset.')",1
+streamlink,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/streamlink/src/streamlink/stream/wrappers.py,https://github.com/streamlink/streamlink/tree/master/src/streamlink/stream/wrappers.py,Filler,__init__$53,"def __init__(self, fd, buffer):
+            Thread.__init__(self)
+
+            self.error = None
+            self.fd = fd
+            self.buffer = buffer
+            self.daemon = True
+            self.running = False","self.error = None
+self.fd = fd
+self.buffer = buffer
+self.daemon = True
+self.running = False","(self.error, self.fd, self.buffer, self.daemon, self.running) = (None, fd, buffer, True, False)","self.error = zejun1
+self.fd = zejun2
+self.buffer = zejun3
+self.daemon = zejun4
+self.running = zejun5","(self.error, self.fd, self.buffer, self.daemon, self.running) = (None, fd, buffer, True, False)",1
+veusz,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/veusz/veusz/document/svg_export.py,https://github.com/veusz/veusz/tree/master/veusz/document/svg_export.py,SVGPaintEngine,__init__$141,"def __init__(self, writetextastext=False):
+        qt.QPaintEngine.__init__(
+            self,
+            qt.QPaintEngine.Antialiasing |
+            qt.QPaintEngine.PainterPaths |
+            qt.QPaintEngine.PrimitiveTransform |
+            qt.QPaintEngine.PaintOutsidePaintEvent |
+            qt.QPaintEngine.PixmapTransform |
+            qt.QPaintEngine.AlphaBlend
+        )
+
+        self.imageformat = 'png'
+        self.writetextastext = writetextastext","self.imageformat = 'png'
+self.writetextastext = writetextastext","(self.imageformat, self.writetextastext) = ('png', writetextastext)","self.imageformat = zejun1
+self.writetextastext = zejun2","(self.imageformat, self.writetextastext) = ('png', writetextastext)",1
+imageio,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/imageio/tests/test_pillow.py,https://github.com/imageio/imageio/tree/master/tests/test_pillow.py,,test_gif_rgb_vs_rgba$225,"def test_gif_rgb_vs_rgba(test_images):
+    # Note: I don't understand the point of this test
+    im_rgb = iio.imread(
+        test_images / ""newtonscradle.gif"",
+        plugin=""pillow"",
+        mode=""RGB"",
+    )
+    im_rgba = iio.imread(
+        test_images / ""newtonscradle.gif"",
+        plugin=""pillow"",
+        mode=""RGBA"",
+    )
+
+    assert np.allclose(im_rgb, im_rgba[..., :3])","im_rgb = iio.imread(test_images / 'newtonscradle.gif', plugin='pillow', mode='RGB')
+im_rgba = iio.imread(test_images / 'newtonscradle.gif', plugin='pillow', mode='RGBA')","(im_rgb, im_rgba) = (iio.imread(test_images / 'newtonscradle.gif', plugin='pillow', mode='RGB'), iio.imread(test_images / 'newtonscradle.gif', plugin='pillow', mode='RGBA'))","im_rgb = zejun1
+im_rgba = zejun2","(im_rgb, im_rgba) = (iio.imread(test_images / 'newtonscradle.gif', plugin='pillow', mode='RGB'), iio.imread(test_images / 'newtonscradle.gif', plugin='pillow', mode='RGBA'))",1
+smart_login,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/smart_login/sina_login/sina_login_direct.py,https://github.com/SpiderClub/smart_login/tree/master/sina_login/sina_login_direct.py,,get_pincode_url$28,"def get_pincode_url(pcid):
+    size = 0
+    url = ""http://login.sina.com.cn/cgi/pin.php""
+    pincode_url = '{}?r={}&s={}&p={}'.format(url, math.floor(random.random() * 100000000), size, pcid)
+    return pincode_url","size = 0
+url = 'http://login.sina.com.cn/cgi/pin.php'","(size, url) = (0, 'http://login.sina.com.cn/cgi/pin.php')","size = zejun1
+url = zejun2","(size, url) = (0, 'http://login.sina.com.cn/cgi/pin.php')",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/boto3_elasticsearch.py,https://github.com/saltstack/salt/tree/master/salt/modules/boto3_elasticsearch.py,,describe_elasticsearch_instance_type_limits$524,"def describe_elasticsearch_instance_type_limits(
+    instance_type,
+    elasticsearch_version,
+    domain_name=None,
+    region=None,
+    keyid=None,
+    key=None,
+    profile=None,
+):
+    """"""
+    Describe Elasticsearch Limits for a given InstanceType and ElasticsearchVersion.
+    When modifying existing Domain, specify the `` DomainName `` to know what Limits
+    are supported for modifying.
+
+    :param str instance_type: The instance type for an Elasticsearch cluster for
+        which Elasticsearch ``Limits`` are needed.
+    :param str elasticsearch_version: Version of Elasticsearch for which ``Limits``
+        are needed.
+    :param str domain_name: Represents the name of the Domain that we are trying
+        to modify. This should be present only if we are querying for Elasticsearch
+        ``Limits`` for existing domain.
+
+    :rtype: dict
+    :return: Dictionary with key 'result' and as value a boolean denoting success or failure.
+        Upon success, also contains a key 'reponse' with the limits information.
+        Upon failure, also contains a key 'error' with the error message as value.
+
+    .. versionadded:: 3001
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt myminion boto3_elasticsearch.describe_elasticsearch_instance_type_limits \\
+          instance_type=r3.8xlarge.elasticsearch \\
+          elasticsearch_version='6.2'
+    """"""
+    ret = {""result"": False}
+    boto_params = salt.utils.data.filter_falsey(
+        {
+            ""DomainName"": domain_name,
+            ""InstanceType"": instance_type,
+            ""ElasticsearchVersion"": str(elasticsearch_version),
+        }
+    )
+    try:
+        conn = _get_conn(region=region, keyid=keyid, key=key, profile=profile)
+        res = conn.describe_elasticsearch_instance_type_limits(**boto_params)
+        if res and ""LimitsByRole"" in res:
+            ret[""result""] = True
+            ret[""response""] = res[""LimitsByRole""]
+    except (ParamValidationError, ClientError) as exp:
+        ret.update({""error"": __utils__[""boto3.get_error""](exp)[""message""]})
+    return ret","ret = {'result': False}
+boto_params = salt.utils.data.filter_falsey({'DomainName': domain_name, 'InstanceType': instance_type, 'ElasticsearchVersion': str(elasticsearch_version)})","(ret, boto_params) = ({'result': False}, salt.utils.data.filter_falsey({'DomainName': domain_name, 'InstanceType': instance_type, 'ElasticsearchVersion': str(elasticsearch_version)}))","ret = zejun1
+boto_params = zejun2","(ret, boto_params) = ({'result': False}, salt.utils.data.filter_falsey({'DomainName': domain_name, 'InstanceType': instance_type, 'ElasticsearchVersion': str(elasticsearch_version)}))",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/boto3_elasticsearch.py,https://github.com/saltstack/salt/tree/master/salt/modules/boto3_elasticsearch.py,,describe_elasticsearch_instance_type_limits$524,"def describe_elasticsearch_instance_type_limits(
+    instance_type,
+    elasticsearch_version,
+    domain_name=None,
+    region=None,
+    keyid=None,
+    key=None,
+    profile=None,
+):
+    """"""
+    Describe Elasticsearch Limits for a given InstanceType and ElasticsearchVersion.
+    When modifying existing Domain, specify the `` DomainName `` to know what Limits
+    are supported for modifying.
+
+    :param str instance_type: The instance type for an Elasticsearch cluster for
+        which Elasticsearch ``Limits`` are needed.
+    :param str elasticsearch_version: Version of Elasticsearch for which ``Limits``
+        are needed.
+    :param str domain_name: Represents the name of the Domain that we are trying
+        to modify. This should be present only if we are querying for Elasticsearch
+        ``Limits`` for existing domain.
+
+    :rtype: dict
+    :return: Dictionary with key 'result' and as value a boolean denoting success or failure.
+        Upon success, also contains a key 'reponse' with the limits information.
+        Upon failure, also contains a key 'error' with the error message as value.
+
+    .. versionadded:: 3001
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt myminion boto3_elasticsearch.describe_elasticsearch_instance_type_limits \\
+          instance_type=r3.8xlarge.elasticsearch \\
+          elasticsearch_version='6.2'
+    """"""
+    ret = {""result"": False}
+    boto_params = salt.utils.data.filter_falsey(
+        {
+            ""DomainName"": domain_name,
+            ""InstanceType"": instance_type,
+            ""ElasticsearchVersion"": str(elasticsearch_version),
+        }
+    )
+    try:
+        conn = _get_conn(region=region, keyid=keyid, key=key, profile=profile)
+        res = conn.describe_elasticsearch_instance_type_limits(**boto_params)
+        if res and ""LimitsByRole"" in res:
+            ret[""result""] = True
+            ret[""response""] = res[""LimitsByRole""]
+    except (ParamValidationError, ClientError) as exp:
+        ret.update({""error"": __utils__[""boto3.get_error""](exp)[""message""]})
+    return ret","ret['result'] = True
+ret['response'] = res['LimitsByRole']","(ret['result'], ret['response']) = (True, res['LimitsByRole'])","ret['result'] = zejun1
+ret['response'] = zejun2","(ret['result'], ret['response']) = (True, res['LimitsByRole'])",1
+django-axes,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/django-axes/axes/handlers/database.py,https://github.com/jazzband/django-axes/tree/master/axes/handlers/database.py,AxesDatabaseHandler,user_login_failed$117,"def user_login_failed(self, sender, credentials: dict, request=None, **kwargs):
+        """"""When user login fails, save AccessFailureLog record in database,
+        save AccessAttempt record in database, mark request with
+        lockout attribute and emit lockout signal.
+
+        """"""
+
+        log.info(""AXES: User login failed, running database handler for failure."")
+
+        if request is None:
+            log.error(
+                ""AXES: AxesDatabaseHandler.user_login_failed does not function without a request.""
+            )
+            return
+
+        # 1. database query: Clean up expired user attempts from the database before logging new attempts
+        clean_expired_user_attempts(request.axes_attempt_time)
+
+        username = get_client_username(request, credentials)
+        client_str = get_client_str(
+            username,
+            request.axes_ip_address,
+            request.axes_user_agent,
+            request.axes_path_info,
+            request,
+        )
+
+        # If axes denied access, don't record the failed attempt as that would reset the lockout time.
+        if (
+            not settings.AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT
+            and request.axes_locked_out
+        ):
+            request.axes_credentials = credentials
+            user_locked_out.send(
+                ""axes"",
+                request=request,
+                username=username,
+                ip_address=request.axes_ip_address,
+            )
+            return
+
+        # This replaces null byte chars that crash saving failures.
+        get_data = get_query_str(request.GET).replace(""\0"", ""0x00"")
+        post_data = get_query_str(request.POST).replace(""\0"", ""0x00"")
+
+        if self.is_whitelisted(request, credentials):
+            log.info(""AXES: Login failed from whitelisted client %s."", client_str)
+            return
+
+        # 2. database query: Get or create access record with the new failure data
+        if settings.AXES_ONLY_USER_FAILURES and username is None:
+            log.warning(
+                ""AXES: Username is None and AXES_ONLY_USER_FAILURES is enabled, new record will NOT be created.""
+            )
+        else:
+            with transaction.atomic():
+                (
+                    attempt,
+                    created,
+                ) = AccessAttempt.objects.select_for_update().get_or_create(
+                    username=username,
+                    ip_address=request.axes_ip_address,
+                    user_agent=request.axes_user_agent,
+                    defaults={
+                        ""get_data"": get_data,
+                        ""post_data"": post_data,
+                        ""http_accept"": request.axes_http_accept,
+                        ""path_info"": request.axes_path_info,
+                        ""failures_since_start"": 1,
+                        ""attempt_time"": request.axes_attempt_time,
+                    },
+                )
+
+                # Record failed attempt with all the relevant information.
+                # Filtering based on username, IP address and user agent handled elsewhere,
+                # and this handler just records the available information for further use.
+                if created:
+                    log.warning(
+                        ""AXES: New login failure by %s. Created new record in the database."",
+                        client_str,
+                    )
+
+                # 3. database query if there were previous attempts in the database
+                # Update failed attempt information but do not touch the username, IP address, or user agent fields,
+                # because attackers can request the site with multiple different configurations
+                # in order to bypass the defense mechanisms that are used by the site.
+                else:
+                    separator = ""\n---------\n""
+
+                    attempt.get_data = Concat(""get_data"", Value(separator + get_data))
+                    attempt.post_data = Concat(
+                        ""post_data"", Value(separator + post_data)
+                    )
+                    attempt.http_accept = request.axes_http_accept
+                    attempt.path_info = request.axes_path_info
+                    attempt.failures_since_start = F(""failures_since_start"") + 1
+                    attempt.attempt_time = request.axes_attempt_time
+                    attempt.save()
+
+                    log.warning(
+                        ""AXES: Repeated login failure by %s. Updated existing record in the database."",
+                        client_str,
+                    )
+
+        # 3. or 4. database query: Calculate the current maximum failure number from the existing attempts
+        failures_since_start = self.get_failures(request, credentials)
+        request.axes_failures_since_start = failures_since_start
+
+        if (
+            settings.AXES_LOCK_OUT_AT_FAILURE
+            and failures_since_start >= get_failure_limit(request, credentials)
+        ):
+            log.warning(
+                ""AXES: Locking out %s after repeated login failures."", client_str
+            )
+
+            request.axes_locked_out = True
+            request.axes_credentials = credentials
+            user_locked_out.send(
+                ""axes"",
+                request=request,
+                username=username,
+                ip_address=request.axes_ip_address,
+            )
+
+        # 5. database entry: Log for ever the attempt in the AccessFailureLog
+        if settings.AXES_ENABLE_ACCESS_FAILURE_LOG:
+            with transaction.atomic():
+                AccessFailureLog.objects.create(
+                    username=username,
+                    ip_address=request.axes_ip_address,
+                    user_agent=request.axes_user_agent,
+                    http_accept=request.axes_http_accept,
+                    path_info=request.axes_path_info,
+                    attempt_time=request.axes_attempt_time,
+                    locked_out=request.axes_locked_out,
+                )
+                self.remove_out_of_limit_failure_logs(username=username)","get_data = get_query_str(request.GET).replace('\x00', '0x00')
+post_data = get_query_str(request.POST).replace('\x00', '0x00')","(get_data, post_data) = (get_query_str(request.GET).replace('\x00', '0x00'), get_query_str(request.POST).replace('\x00', '0x00'))","get_data = zejun1
+post_data = zejun2","(get_data, post_data) = (get_query_str(request.GET).replace('\x00', '0x00'), get_query_str(request.POST).replace('\x00', '0x00'))",1
+django-axes,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/django-axes/axes/handlers/database.py,https://github.com/jazzband/django-axes/tree/master/axes/handlers/database.py,AxesDatabaseHandler,user_login_failed$117,"def user_login_failed(self, sender, credentials: dict, request=None, **kwargs):
+        """"""When user login fails, save AccessFailureLog record in database,
+        save AccessAttempt record in database, mark request with
+        lockout attribute and emit lockout signal.
+
+        """"""
+
+        log.info(""AXES: User login failed, running database handler for failure."")
+
+        if request is None:
+            log.error(
+                ""AXES: AxesDatabaseHandler.user_login_failed does not function without a request.""
+            )
+            return
+
+        # 1. database query: Clean up expired user attempts from the database before logging new attempts
+        clean_expired_user_attempts(request.axes_attempt_time)
+
+        username = get_client_username(request, credentials)
+        client_str = get_client_str(
+            username,
+            request.axes_ip_address,
+            request.axes_user_agent,
+            request.axes_path_info,
+            request,
+        )
+
+        # If axes denied access, don't record the failed attempt as that would reset the lockout time.
+        if (
+            not settings.AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT
+            and request.axes_locked_out
+        ):
+            request.axes_credentials = credentials
+            user_locked_out.send(
+                ""axes"",
+                request=request,
+                username=username,
+                ip_address=request.axes_ip_address,
+            )
+            return
+
+        # This replaces null byte chars that crash saving failures.
+        get_data = get_query_str(request.GET).replace(""\0"", ""0x00"")
+        post_data = get_query_str(request.POST).replace(""\0"", ""0x00"")
+
+        if self.is_whitelisted(request, credentials):
+            log.info(""AXES: Login failed from whitelisted client %s."", client_str)
+            return
+
+        # 2. database query: Get or create access record with the new failure data
+        if settings.AXES_ONLY_USER_FAILURES and username is None:
+            log.warning(
+                ""AXES: Username is None and AXES_ONLY_USER_FAILURES is enabled, new record will NOT be created.""
+            )
+        else:
+            with transaction.atomic():
+                (
+                    attempt,
+                    created,
+                ) = AccessAttempt.objects.select_for_update().get_or_create(
+                    username=username,
+                    ip_address=request.axes_ip_address,
+                    user_agent=request.axes_user_agent,
+                    defaults={
+                        ""get_data"": get_data,
+                        ""post_data"": post_data,
+                        ""http_accept"": request.axes_http_accept,
+                        ""path_info"": request.axes_path_info,
+                        ""failures_since_start"": 1,
+                        ""attempt_time"": request.axes_attempt_time,
+                    },
+                )
+
+                # Record failed attempt with all the relevant information.
+                # Filtering based on username, IP address and user agent handled elsewhere,
+                # and this handler just records the available information for further use.
+                if created:
+                    log.warning(
+                        ""AXES: New login failure by %s. Created new record in the database."",
+                        client_str,
+                    )
+
+                # 3. database query if there were previous attempts in the database
+                # Update failed attempt information but do not touch the username, IP address, or user agent fields,
+                # because attackers can request the site with multiple different configurations
+                # in order to bypass the defense mechanisms that are used by the site.
+                else:
+                    separator = ""\n---------\n""
+
+                    attempt.get_data = Concat(""get_data"", Value(separator + get_data))
+                    attempt.post_data = Concat(
+                        ""post_data"", Value(separator + post_data)
+                    )
+                    attempt.http_accept = request.axes_http_accept
+                    attempt.path_info = request.axes_path_info
+                    attempt.failures_since_start = F(""failures_since_start"") + 1
+                    attempt.attempt_time = request.axes_attempt_time
+                    attempt.save()
+
+                    log.warning(
+                        ""AXES: Repeated login failure by %s. Updated existing record in the database."",
+                        client_str,
+                    )
+
+        # 3. or 4. database query: Calculate the current maximum failure number from the existing attempts
+        failures_since_start = self.get_failures(request, credentials)
+        request.axes_failures_since_start = failures_since_start
+
+        if (
+            settings.AXES_LOCK_OUT_AT_FAILURE
+            and failures_since_start >= get_failure_limit(request, credentials)
+        ):
+            log.warning(
+                ""AXES: Locking out %s after repeated login failures."", client_str
+            )
+
+            request.axes_locked_out = True
+            request.axes_credentials = credentials
+            user_locked_out.send(
+                ""axes"",
+                request=request,
+                username=username,
+                ip_address=request.axes_ip_address,
+            )
+
+        # 5. database entry: Log for ever the attempt in the AccessFailureLog
+        if settings.AXES_ENABLE_ACCESS_FAILURE_LOG:
+            with transaction.atomic():
+                AccessFailureLog.objects.create(
+                    username=username,
+                    ip_address=request.axes_ip_address,
+                    user_agent=request.axes_user_agent,
+                    http_accept=request.axes_http_accept,
+                    path_info=request.axes_path_info,
+                    attempt_time=request.axes_attempt_time,
+                    locked_out=request.axes_locked_out,
+                )
+                self.remove_out_of_limit_failure_logs(username=username)","request.axes_locked_out = True
+request.axes_credentials = credentials","(request.axes_locked_out, request.axes_credentials) = (True, credentials)","request.axes_locked_out = zejun1
+request.axes_credentials = zejun2","(request.axes_locked_out, request.axes_credentials) = (True, credentials)",1
+django-axes,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/django-axes/axes/handlers/database.py,https://github.com/jazzband/django-axes/tree/master/axes/handlers/database.py,AxesDatabaseHandler,user_login_failed$117,"def user_login_failed(self, sender, credentials: dict, request=None, **kwargs):
+        """"""When user login fails, save AccessFailureLog record in database,
+        save AccessAttempt record in database, mark request with
+        lockout attribute and emit lockout signal.
+
+        """"""
+
+        log.info(""AXES: User login failed, running database handler for failure."")
+
+        if request is None:
+            log.error(
+                ""AXES: AxesDatabaseHandler.user_login_failed does not function without a request.""
+            )
+            return
+
+        # 1. database query: Clean up expired user attempts from the database before logging new attempts
+        clean_expired_user_attempts(request.axes_attempt_time)
+
+        username = get_client_username(request, credentials)
+        client_str = get_client_str(
+            username,
+            request.axes_ip_address,
+            request.axes_user_agent,
+            request.axes_path_info,
+            request,
+        )
+
+        # If axes denied access, don't record the failed attempt as that would reset the lockout time.
+        if (
+            not settings.AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT
+            and request.axes_locked_out
+        ):
+            request.axes_credentials = credentials
+            user_locked_out.send(
+                ""axes"",
+                request=request,
+                username=username,
+                ip_address=request.axes_ip_address,
+            )
+            return
+
+        # This replaces null byte chars that crash saving failures.
+        get_data = get_query_str(request.GET).replace(""\0"", ""0x00"")
+        post_data = get_query_str(request.POST).replace(""\0"", ""0x00"")
+
+        if self.is_whitelisted(request, credentials):
+            log.info(""AXES: Login failed from whitelisted client %s."", client_str)
+            return
+
+        # 2. database query: Get or create access record with the new failure data
+        if settings.AXES_ONLY_USER_FAILURES and username is None:
+            log.warning(
+                ""AXES: Username is None and AXES_ONLY_USER_FAILURES is enabled, new record will NOT be created.""
+            )
+        else:
+            with transaction.atomic():
+                (
+                    attempt,
+                    created,
+                ) = AccessAttempt.objects.select_for_update().get_or_create(
+                    username=username,
+                    ip_address=request.axes_ip_address,
+                    user_agent=request.axes_user_agent,
+                    defaults={
+                        ""get_data"": get_data,
+                        ""post_data"": post_data,
+                        ""http_accept"": request.axes_http_accept,
+                        ""path_info"": request.axes_path_info,
+                        ""failures_since_start"": 1,
+                        ""attempt_time"": request.axes_attempt_time,
+                    },
+                )
+
+                # Record failed attempt with all the relevant information.
+                # Filtering based on username, IP address and user agent handled elsewhere,
+                # and this handler just records the available information for further use.
+                if created:
+                    log.warning(
+                        ""AXES: New login failure by %s. Created new record in the database."",
+                        client_str,
+                    )
+
+                # 3. database query if there were previous attempts in the database
+                # Update failed attempt information but do not touch the username, IP address, or user agent fields,
+                # because attackers can request the site with multiple different configurations
+                # in order to bypass the defense mechanisms that are used by the site.
+                else:
+                    separator = ""\n---------\n""
+
+                    attempt.get_data = Concat(""get_data"", Value(separator + get_data))
+                    attempt.post_data = Concat(
+                        ""post_data"", Value(separator + post_data)
+                    )
+                    attempt.http_accept = request.axes_http_accept
+                    attempt.path_info = request.axes_path_info
+                    attempt.failures_since_start = F(""failures_since_start"") + 1
+                    attempt.attempt_time = request.axes_attempt_time
+                    attempt.save()
+
+                    log.warning(
+                        ""AXES: Repeated login failure by %s. Updated existing record in the database."",
+                        client_str,
+                    )
+
+        # 3. or 4. database query: Calculate the current maximum failure number from the existing attempts
+        failures_since_start = self.get_failures(request, credentials)
+        request.axes_failures_since_start = failures_since_start
+
+        if (
+            settings.AXES_LOCK_OUT_AT_FAILURE
+            and failures_since_start >= get_failure_limit(request, credentials)
+        ):
+            log.warning(
+                ""AXES: Locking out %s after repeated login failures."", client_str
+            )
+
+            request.axes_locked_out = True
+            request.axes_credentials = credentials
+            user_locked_out.send(
+                ""axes"",
+                request=request,
+                username=username,
+                ip_address=request.axes_ip_address,
+            )
+
+        # 5. database entry: Log for ever the attempt in the AccessFailureLog
+        if settings.AXES_ENABLE_ACCESS_FAILURE_LOG:
+            with transaction.atomic():
+                AccessFailureLog.objects.create(
+                    username=username,
+                    ip_address=request.axes_ip_address,
+                    user_agent=request.axes_user_agent,
+                    http_accept=request.axes_http_accept,
+                    path_info=request.axes_path_info,
+                    attempt_time=request.axes_attempt_time,
+                    locked_out=request.axes_locked_out,
+                )
+                self.remove_out_of_limit_failure_logs(username=username)","attempt.get_data = Concat('get_data', Value(separator + get_data))
+attempt.post_data = Concat('post_data', Value(separator + post_data))
+attempt.http_accept = request.axes_http_accept
+attempt.path_info = request.axes_path_info
+attempt.failures_since_start = F('failures_since_start') + 1
+attempt.attempt_time = request.axes_attempt_time","attempt.get_data, attempt.post_data, attempt.http_accept, attempt.path_info, attempt.failures_since_start, attempt.attempt_time = Concat('get_data', Value(separator + get_data)), Concat('post_data', Value(separator + post_data)), request.axes_http_accept, request.axes_path_info, F('failures_since_start') + 1, request.axes_attempt_time","attempt.get_data = zejun1
+attempt.post_data = zejun2
+attempt.http_accept = zejun3
+attempt.path_info = zejun4
+attempt.failures_since_start = zejun5
+attempt.attempt_time = zejun6",Cannot refactor,-1
+taskonomy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/taskonomy/code/lib/models/encoder_decoder_softmax_colorization.py,https://github.com/StanfordVL/taskonomy/tree/master/code/lib/models/encoder_decoder_softmax_colorization.py,SoftmaxED,colorized_image_from_softmax$58,"def colorized_image_from_softmax(self, targets, decoder_output):
+        ''' Regenerate colorized image from softmax distribution for all colors
+
+        Notes:
+            This is a constant mapping from distribution to actual image
+
+        Args:
+            decoder_output: list of input images (scaled between -1 and 1) with the
+                       dimensions specified in the cfg
+        '''
+        resize_shape = tf.stack([self.input_size[0],self.input_size[1]])
+        softmax_to_ab = tf.nn.convolution(decoder_output, self.trans_kernel, 'SAME' )
+        resized_output = tf.image.resize_images(softmax_to_ab, 
+                resize_shape,
+                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+
+        softmax_to_ab = tf.nn.convolution(targets, self.trans_kernel, 'SAME' )
+        resized_target = tf.image.resize_images(softmax_to_ab, 
+                resize_shape,
+                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    
+        return resized_target, resized_output","resized_output = tf.image.resize_images(softmax_to_ab, resize_shape, method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+softmax_to_ab = tf.nn.convolution(targets, self.trans_kernel, 'SAME')","(resized_output, softmax_to_ab) = (tf.image.resize_images(softmax_to_ab, resize_shape, method=tf.image.ResizeMethod.NEAREST_NEIGHBOR), tf.nn.convolution(targets, self.trans_kernel, 'SAME'))","resized_output = zejun1
+softmax_to_ab = zejun2","(resized_output, softmax_to_ab) = (tf.image.resize_images(softmax_to_ab, resize_shape, method=tf.image.ResizeMethod.NEAREST_NEIGHBOR), tf.nn.convolution(targets, self.trans_kernel, 'SAME'))",1
+taskonomy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/taskonomy/code/lib/models/encoder_decoder_softmax_colorization.py,https://github.com/StanfordVL/taskonomy/tree/master/code/lib/models/encoder_decoder_softmax_colorization.py,SoftmaxED,colorized_image_from_softmax$58,"def colorized_image_from_softmax(self, targets, decoder_output):
+        ''' Regenerate colorized image from softmax distribution for all colors
+
+        Notes:
+            This is a constant mapping from distribution to actual image
+
+        Args:
+            decoder_output: list of input images (scaled between -1 and 1) with the
+                       dimensions specified in the cfg
+        '''
+        resize_shape = tf.stack([self.input_size[0],self.input_size[1]])
+        softmax_to_ab = tf.nn.convolution(decoder_output, self.trans_kernel, 'SAME' )
+        resized_output = tf.image.resize_images(softmax_to_ab, 
+                resize_shape,
+                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+
+        softmax_to_ab = tf.nn.convolution(targets, self.trans_kernel, 'SAME' )
+        resized_target = tf.image.resize_images(softmax_to_ab, 
+                resize_shape,
+                method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+    
+        return resized_target, resized_output","resize_shape = tf.stack([self.input_size[0], self.input_size[1]])
+softmax_to_ab = tf.nn.convolution(decoder_output, self.trans_kernel, 'SAME')","(resize_shape, softmax_to_ab) = (tf.stack([self.input_size[0], self.input_size[1]]), tf.nn.convolution(decoder_output, self.trans_kernel, 'SAME'))","resize_shape = zejun1
+softmax_to_ab = zejun2","(resize_shape, softmax_to_ab) = (tf.stack([self.input_size[0], self.input_size[1]]), tf.nn.convolution(decoder_output, self.trans_kernel, 'SAME'))",1
+OpenFermion,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/OpenFermion/src/openfermion/hamiltonians/general_hubbard.py,https://github.com/quantumlib/OpenFermion/tree/master/src/openfermion/hamiltonians/general_hubbard.py,FermiHubbardModel,__init__$163,"def __init__(self,
+                 lattice,
+                 tunneling_parameters=None,
+                 interaction_parameters=None,
+                 potential_parameters=None,
+                 magnetic_field=0.,
+                 particle_hole_symmetry=False):
+        r""""""A Hubbard model defined on a lattice.
+
+        Args:
+            lattice (HubbardLattice): The lattice on which the model is defined.
+            tunneling_parameters (Iterable[Tuple[Hashable, Tuple[int, int],
+                float]], optional): The tunneling parameters.
+            interaction_parameters (Iterable[Tuple[Hashable, Tuple[int, int],
+                float, int?]], optional): The interaction parameters.
+            potential_parameters (Iterable[Tuple[int, float]], optional): The
+                potential parameters.
+            magnetic_field (float, optional): The magnetic field. Default is 0.
+            particle_hole_symmetry: If true, each number operator $n$ is
+                replaced with $n - 1/2$.
+
+        Each group of parameters is specified as an iterable of tuples.
+
+        Each tunneling parameter is a tuple ``(edge_type, dofs, coefficient)``.
+
+        In the spinful, model, the tunneling parameter corresponds to the terms
+
+        $$
+            t \sum_{(i, j) \in E^{(\mathrm{edge type})}}
+            \sum_{\sigma}
+            \left(a_{i, a, \sigma}^{\dagger} a_{j, b, \sigma}
+            + a_{j, b, \sigma}^{\dagger} a_{i, a, \sigma}\right)
+        $$
+
+        and in the spinless model to
+
+        $$
+            -t \sum_{(i, j) \in E^{(\mathrm{edge type})}}
+            \left(a_{i, a}^{\dagger} a_{j, b}
+            + a_{j, b}^{\dagger} a_{i, a}\right),
+        $$
+
+        where
+
+            - $(a, b)$ is the pair of degrees
+            of freedom given by ``dofs``;
+            - $E^{(\mathrm{edge type})}$ is the set of ordered pairs of
+              site indices returned by ``lattice.site_pairs_iter(edge_type, a !=
+              b)``; and
+            - $t$ is the ``coefficient``.
+
+        Each interaction parameter is a tuple ``(edge_type, dofs,
+        coefficient, spin_pairs)``. The final ``spin_pairs`` element is
+        optional, and will default to ``SpinPairs.ALL``. In any case, it is
+        ignored for spinless lattices.
+
+        For example, in the spinful model if `dofs`
+        indicates distinct degrees of freedom then the
+        parameter corresponds to the terms
+
+        $$
+        U \sum_{(i, j) \in E^{(\mathrm{edge type})}} \sum_{(\sigma, \sigma')}
+        n_{i, a, \sigma} n_{j, b, \sigma'}
+        $$
+
+        where
+
+            - $(a, b)$ is the pair of degrees of
+            freedom given by ``dofs``;
+            - $E^{(\mathrm{edge type})}$ is the set of ordered pairs of
+              site indices returned by ``lattice.site_pairs_iter(edge_type)``;
+            - $U$ is the ``coefficient``; and
+            - $(\sigma, \sigma')$ runs over
+                - all four possible pairs of spins
+                if `spin_pairs == SpinPairs.ALL`,
+                - $\{(\uparrow, \downarrow), (\downarrow, \uparrow)\}$
+                if `spin_pairs == SpinPairs.DIFF`, and
+                - $\{(\uparrow, \uparrow), (\downarrow, \downarrow)\}$
+                if 'spin_pairs == SpinPairs.SAME`.
+
+        Each potential parameter is a tuple ``(dof, coefficient)``.
+        For example, in the spinful model, it corresponds to the terms
+
+        $$
+            -\mu \sum_{i} \sum_{\sigma} n_{i, a, \sigma},
+        $$
+
+        where
+
+            - $i$ runs over the sites of the lattice;
+            - $a$ is the degree of freedom ``dof``; and
+            - $\mu$ is the ``coefficient``.
+
+        In the spinless model, the magnetic field is ignored.
+        """"""
+
+        self.lattice = lattice
+
+        self.tunneling_parameters = self.parse_tunneling_parameters(
+            tunneling_parameters)
+        self.interaction_parameters = self.parse_interaction_parameters(
+            interaction_parameters)
+        self.potential_parameters = self.parse_potential_parameters(
+            potential_parameters)
+        self.magnetic_field = magnetic_field
+        self.particle_hole_symmetry = particle_hole_symmetry","self.potential_parameters = self.parse_potential_parameters(potential_parameters)
+self.magnetic_field = magnetic_field
+self.particle_hole_symmetry = particle_hole_symmetry","(self.potential_parameters, self.magnetic_field, self.particle_hole_symmetry) = (self.parse_potential_parameters(potential_parameters), magnetic_field, particle_hole_symmetry)","self.potential_parameters = zejun1
+self.magnetic_field = zejun2
+self.particle_hole_symmetry = zejun3","(self.potential_parameters, self.magnetic_field, self.particle_hole_symmetry) = (self.parse_potential_parameters(potential_parameters), magnetic_field, particle_hole_symmetry)",1
+FasterSeg,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/FasterSeg/search/dataloader.py,https://github.com/VITA-Group/FasterSeg/tree/master/search/dataloader.py,TrainPre,__call__$14,"def __call__(self, img, gt):
+        img, gt = random_mirror(img, gt)
+        if self.config.train_scale_array is not None:
+            img, gt, scale = random_scale(img, gt, self.config.train_scale_array)
+
+        img = normalize(img, self.img_mean, self.img_std)
+
+        crop_size = (self.config.image_height, self.config.image_width)
+        crop_pos = generate_random_crop_pos(img.shape[:2], crop_size)
+        p_img, _ = random_crop_pad_to_shape(img, crop_pos, crop_size, 0)
+        p_gt, _ = random_crop_pad_to_shape(gt, crop_pos, crop_size, 255)
+        p_gt = cv2.resize(p_gt, (self.config.image_width // self.config.gt_down_sampling, self.config.image_height // self.config.gt_down_sampling), interpolation=cv2.INTER_NEAREST)
+
+        p_img = p_img.transpose(2, 0, 1)
+
+        extra_dict = None
+
+        return p_img, p_gt, extra_dict","p_gt = cv2.resize(p_gt, (self.config.image_width // self.config.gt_down_sampling, self.config.image_height // self.config.gt_down_sampling), interpolation=cv2.INTER_NEAREST)
+p_img = p_img.transpose(2, 0, 1)
+extra_dict = None","(p_gt, p_img, extra_dict) = (cv2.resize(p_gt, (self.config.image_width // self.config.gt_down_sampling, self.config.image_height // self.config.gt_down_sampling), interpolation=cv2.INTER_NEAREST), p_img.transpose(2, 0, 1), None)","p_gt = zejun1
+p_img = zejun2
+extra_dict = zejun3","(p_gt, p_img, extra_dict) = (cv2.resize(p_gt, (self.config.image_width // self.config.gt_down_sampling, self.config.image_height // self.config.gt_down_sampling), interpolation=cv2.INTER_NEAREST), p_img.transpose(2, 0, 1), None)",1
+FasterSeg,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/FasterSeg/search/dataloader.py,https://github.com/VITA-Group/FasterSeg/tree/master/search/dataloader.py,TrainPre,__call__$14,"def __call__(self, img, gt):
+        img, gt = random_mirror(img, gt)
+        if self.config.train_scale_array is not None:
+            img, gt, scale = random_scale(img, gt, self.config.train_scale_array)
+
+        img = normalize(img, self.img_mean, self.img_std)
+
+        crop_size = (self.config.image_height, self.config.image_width)
+        crop_pos = generate_random_crop_pos(img.shape[:2], crop_size)
+        p_img, _ = random_crop_pad_to_shape(img, crop_pos, crop_size, 0)
+        p_gt, _ = random_crop_pad_to_shape(gt, crop_pos, crop_size, 255)
+        p_gt = cv2.resize(p_gt, (self.config.image_width // self.config.gt_down_sampling, self.config.image_height // self.config.gt_down_sampling), interpolation=cv2.INTER_NEAREST)
+
+        p_img = p_img.transpose(2, 0, 1)
+
+        extra_dict = None
+
+        return p_img, p_gt, extra_dict","img = normalize(img, self.img_mean, self.img_std)
+crop_size = (self.config.image_height, self.config.image_width)","(img, crop_size) = (normalize(img, self.img_mean, self.img_std), (self.config.image_height, self.config.image_width))","img = zejun1
+crop_size = zejun2","(img, crop_size) = (normalize(img, self.img_mean, self.img_std), (self.config.image_height, self.config.image_width))",1
+FasterSeg,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/FasterSeg/search/dataloader.py,https://github.com/VITA-Group/FasterSeg/tree/master/search/dataloader.py,TrainPre,__call__$14,"def __call__(self, img, gt):
+        img, gt = random_mirror(img, gt)
+        if self.config.train_scale_array is not None:
+            img, gt, scale = random_scale(img, gt, self.config.train_scale_array)
+
+        img = normalize(img, self.img_mean, self.img_std)
+
+        crop_size = (self.config.image_height, self.config.image_width)
+        crop_pos = generate_random_crop_pos(img.shape[:2], crop_size)
+        p_img, _ = random_crop_pad_to_shape(img, crop_pos, crop_size, 0)
+        p_gt, _ = random_crop_pad_to_shape(gt, crop_pos, crop_size, 255)
+        p_gt = cv2.resize(p_gt, (self.config.image_width // self.config.gt_down_sampling, self.config.image_height // self.config.gt_down_sampling), interpolation=cv2.INTER_NEAREST)
+
+        p_img = p_img.transpose(2, 0, 1)
+
+        extra_dict = None
+
+        return p_img, p_gt, extra_dict","(p_img, _) = random_crop_pad_to_shape(img, crop_pos, crop_size, 0)
+(p_gt, _) = random_crop_pad_to_shape(gt, crop_pos, crop_size, 255)","(p_img, _), (p_gt, _) = random_crop_pad_to_shape(img, crop_pos, crop_size, 0), random_crop_pad_to_shape(gt, crop_pos, crop_size, 255)","(p_img, _) = zejun1
+(p_gt, _) = zejun2",Cannot refactor,-1
+nmt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nmt/nmt/gnmt_model.py,https://github.com/tensorflow/nmt/tree/master/nmt/gnmt_model.py,,gnmt_residual_fn$310,"def gnmt_residual_fn(inputs, outputs):
+  """"""Residual function that handles different inputs and outputs inner dims.
+
+  Args:
+    inputs: cell inputs, this is actual inputs concatenated with the attention
+      vector.
+    outputs: cell outputs
+
+  Returns:
+    outputs + actual inputs
+  """"""
+  def split_input(inp, out):
+    out_dim = out.get_shape().as_list()[-1]
+    inp_dim = inp.get_shape().as_list()[-1]
+    return tf.split(inp, [out_dim, inp_dim - out_dim], axis=-1)
+  actual_inputs, _ = tf.contrib.framework.nest.map_structure(
+      split_input, inputs, outputs)
+  def assert_shape_match(inp, out):
+    inp.get_shape().assert_is_compatible_with(out.get_shape())
+  tf.contrib.framework.nest.assert_same_structure(actual_inputs, outputs)
+  tf.contrib.framework.nest.map_structure(
+      assert_shape_match, actual_inputs, outputs)
+  return tf.contrib.framework.nest.map_structure(
+      lambda inp, out: inp + out, actual_inputs, outputs)","out_dim = out.get_shape().as_list()[-1]
+inp_dim = inp.get_shape().as_list()[-1]","(out_dim, inp_dim) = (out.get_shape().as_list()[-1], inp.get_shape().as_list()[-1])","out_dim = zejun1
+inp_dim = zejun2","(out_dim, inp_dim) = (out.get_shape().as_list()[-1], inp.get_shape().as_list()[-1])",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/tests/unit/modules/test_file.py,https://github.com/saltstack/salt/tree/master/tests/unit/modules/test_file.py,FilemodLineTests,test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after$1883,"def test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after(
+        self,
+    ):
+        location = before = None
+        after = ""indessed""
+        content = ""roscivs""
+        indent = ""\t\t\t   ""
+        original_lines = [""foo"", indent + after, ""bar""]
+        expected_lines = [""foo"", indent + after, indent + content, ""bar""]
+
+        actual_lines = filemod._set_line(
+            lines=original_lines,
+            content=content,
+            mode=""insert"",
+            location=location,
+            before=before,
+            after=after,
+        )
+
+        self.assertEqual(actual_lines, expected_lines)","original_lines = ['foo', indent + after, 'bar']
+expected_lines = ['foo', indent + after, indent + content, 'bar']",'Cannot refactor',"original_lines = [zejun1, zejun2, zejun4]
+expected_lines = [zejun1, zejun2, zejun3, zejun4]",Cannot refactor,-1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/tests/unit/modules/test_file.py,https://github.com/saltstack/salt/tree/master/tests/unit/modules/test_file.py,FilemodLineTests,test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after$1883,"def test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after(
+        self,
+    ):
+        location = before = None
+        after = ""indessed""
+        content = ""roscivs""
+        indent = ""\t\t\t   ""
+        original_lines = [""foo"", indent + after, ""bar""]
+        expected_lines = [""foo"", indent + after, indent + content, ""bar""]
+
+        actual_lines = filemod._set_line(
+            lines=original_lines,
+            content=content,
+            mode=""insert"",
+            location=location,
+            before=before,
+            after=after,
+        )
+
+        self.assertEqual(actual_lines, expected_lines)","expected_lines = ['foo', indent + after, indent + content, 'bar']
+actual_lines = filemod._set_line(lines=original_lines, content=content, mode='insert', location=location, before=before, after=after)","(expected_lines, actual_lines) = (['foo', indent + after, indent + content, 'bar'], filemod._set_line(lines=original_lines, content=content, mode='insert', location=location, before=before, after=after))","expected_lines = zejun1
+actual_lines = zejun2","(expected_lines, actual_lines) = (['foo', indent + after, indent + content, 'bar'], filemod._set_line(lines=original_lines, content=content, mode='insert', location=location, before=before, after=after))",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/tests/unit/modules/test_file.py,https://github.com/saltstack/salt/tree/master/tests/unit/modules/test_file.py,FilemodLineTests,test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after$1883,"def test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after(
+        self,
+    ):
+        location = before = None
+        after = ""indessed""
+        content = ""roscivs""
+        indent = ""\t\t\t   ""
+        original_lines = [""foo"", indent + after, ""bar""]
+        expected_lines = [""foo"", indent + after, indent + content, ""bar""]
+
+        actual_lines = filemod._set_line(
+            lines=original_lines,
+            content=content,
+            mode=""insert"",
+            location=location,
+            before=before,
+            after=after,
+        )
+
+        self.assertEqual(actual_lines, expected_lines)","location = before = None
+after = 'indessed'
+content = 'roscivs'
+indent = '\t\t\t   '","location = before = None; after, content, indent = 'indessed', 'roscivs', '\t\t\t   '","location = before = zejun1
+after = zejun2
+content = zejun3
+indent = zejun4",Cannot refactor,-1
+GPflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GPflow/gpflow/quadrature/gauss_hermite.py,https://github.com/GPflow/GPflow/tree/master/gpflow/quadrature/gauss_hermite.py,NDiagGHQuadrature,_build_X_W$126,"def _build_X_W(self, mean: TensorType, var: TensorType) -> Tuple[tf.Tensor, tf.Tensor]:
+        """"""
+        :param mean: Array/Tensor with shape [b1, b2, ..., bX, dim], usually [N, dim],
+            representing the mean of a dim-Variate Gaussian distribution
+        :param var: Array/Tensor with shape b1, b2, ..., bX, dim], usually [N, dim],
+            representing the variance of a dim-Variate Gaussian distribution
+        :return: points X, Tensor with shape [n_gh_total, b1, b2, ..., bX, dim],
+            usually [n_gh_total, N, dim],
+            and weights W, a Tensor with shape [n_gh_total, b1, b2, ..., bX, 1],
+            usually [n_gh_total, N, 1]
+        """"""
+
+        batch_shape_broadcast = tf.ones(tf.rank(mean) - 1, dtype=tf.int32)
+        shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+
+        # mean, var: [b1, b2, ..., bX, dim], usually [N, dim]
+        mean = tf.expand_dims(mean, 0)
+        stddev = tf.expand_dims(tf.sqrt(var), 0)
+        # mean, stddev: [1, b1, b2, ..., bX, dim], usually [1, N, dim]
+
+        Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+        dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+
+        X = mean + stddev * Z
+        W = dZ
+        # X: [n_gh_total, b1, b2, ..., bX, dim], usually [n_gh_total, N, dim]
+        # W: [n_gh_total,  1,  1, ...,  1,   1], usually [n_gh_total, N,   1]
+
+        return X, W","X = mean + stddev * Z
+W = dZ","(X, W) = (mean + stddev * Z, dZ)","X = zejun1
+W = zejun2","(X, W) = (mean + stddev * Z, dZ)",1
+GPflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GPflow/gpflow/quadrature/gauss_hermite.py,https://github.com/GPflow/GPflow/tree/master/gpflow/quadrature/gauss_hermite.py,NDiagGHQuadrature,_build_X_W$126,"def _build_X_W(self, mean: TensorType, var: TensorType) -> Tuple[tf.Tensor, tf.Tensor]:
+        """"""
+        :param mean: Array/Tensor with shape [b1, b2, ..., bX, dim], usually [N, dim],
+            representing the mean of a dim-Variate Gaussian distribution
+        :param var: Array/Tensor with shape b1, b2, ..., bX, dim], usually [N, dim],
+            representing the variance of a dim-Variate Gaussian distribution
+        :return: points X, Tensor with shape [n_gh_total, b1, b2, ..., bX, dim],
+            usually [n_gh_total, N, dim],
+            and weights W, a Tensor with shape [n_gh_total, b1, b2, ..., bX, 1],
+            usually [n_gh_total, N, 1]
+        """"""
+
+        batch_shape_broadcast = tf.ones(tf.rank(mean) - 1, dtype=tf.int32)
+        shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+
+        # mean, var: [b1, b2, ..., bX, dim], usually [N, dim]
+        mean = tf.expand_dims(mean, 0)
+        stddev = tf.expand_dims(tf.sqrt(var), 0)
+        # mean, stddev: [1, b1, b2, ..., bX, dim], usually [1, N, dim]
+
+        Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+        dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+
+        X = mean + stddev * Z
+        W = dZ
+        # X: [n_gh_total, b1, b2, ..., bX, dim], usually [n_gh_total, N, dim]
+        # W: [n_gh_total,  1,  1, ...,  1,   1], usually [n_gh_total, N,   1]
+
+        return X, W","shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+mean = tf.expand_dims(mean, 0)
+stddev = tf.expand_dims(tf.sqrt(var), 0)","shape_aux, mean, stddev = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0), tf.expand_dims(mean, 0), tf.expand_dims(tf.sqrt(var), 0)","shape_aux = zejun1
+mean = zejun2
+stddev = zejun3",Cannot refactor,-1
+GPflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GPflow/gpflow/quadrature/gauss_hermite.py,https://github.com/GPflow/GPflow/tree/master/gpflow/quadrature/gauss_hermite.py,NDiagGHQuadrature,_build_X_W$126,"def _build_X_W(self, mean: TensorType, var: TensorType) -> Tuple[tf.Tensor, tf.Tensor]:
+        """"""
+        :param mean: Array/Tensor with shape [b1, b2, ..., bX, dim], usually [N, dim],
+            representing the mean of a dim-Variate Gaussian distribution
+        :param var: Array/Tensor with shape b1, b2, ..., bX, dim], usually [N, dim],
+            representing the variance of a dim-Variate Gaussian distribution
+        :return: points X, Tensor with shape [n_gh_total, b1, b2, ..., bX, dim],
+            usually [n_gh_total, N, dim],
+            and weights W, a Tensor with shape [n_gh_total, b1, b2, ..., bX, 1],
+            usually [n_gh_total, N, 1]
+        """"""
+
+        batch_shape_broadcast = tf.ones(tf.rank(mean) - 1, dtype=tf.int32)
+        shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+
+        # mean, var: [b1, b2, ..., bX, dim], usually [N, dim]
+        mean = tf.expand_dims(mean, 0)
+        stddev = tf.expand_dims(tf.sqrt(var), 0)
+        # mean, stddev: [1, b1, b2, ..., bX, dim], usually [1, N, dim]
+
+        Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+        dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+
+        X = mean + stddev * Z
+        W = dZ
+        # X: [n_gh_total, b1, b2, ..., bX, dim], usually [n_gh_total, N, dim]
+        # W: [n_gh_total,  1,  1, ...,  1,   1], usually [n_gh_total, N,   1]
+
+        return X, W","dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+X = mean + stddev * Z","dZ, X = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype), mean + stddev * Z","dZ = zejun1
+X = zejun2",Cannot refactor,-1
+GPflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GPflow/gpflow/quadrature/gauss_hermite.py,https://github.com/GPflow/GPflow/tree/master/gpflow/quadrature/gauss_hermite.py,NDiagGHQuadrature,_build_X_W$126,"def _build_X_W(self, mean: TensorType, var: TensorType) -> Tuple[tf.Tensor, tf.Tensor]:
+        """"""
+        :param mean: Array/Tensor with shape [b1, b2, ..., bX, dim], usually [N, dim],
+            representing the mean of a dim-Variate Gaussian distribution
+        :param var: Array/Tensor with shape b1, b2, ..., bX, dim], usually [N, dim],
+            representing the variance of a dim-Variate Gaussian distribution
+        :return: points X, Tensor with shape [n_gh_total, b1, b2, ..., bX, dim],
+            usually [n_gh_total, N, dim],
+            and weights W, a Tensor with shape [n_gh_total, b1, b2, ..., bX, 1],
+            usually [n_gh_total, N, 1]
+        """"""
+
+        batch_shape_broadcast = tf.ones(tf.rank(mean) - 1, dtype=tf.int32)
+        shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+
+        # mean, var: [b1, b2, ..., bX, dim], usually [N, dim]
+        mean = tf.expand_dims(mean, 0)
+        stddev = tf.expand_dims(tf.sqrt(var), 0)
+        # mean, stddev: [1, b1, b2, ..., bX, dim], usually [1, N, dim]
+
+        Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+        dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+
+        X = mean + stddev * Z
+        W = dZ
+        # X: [n_gh_total, b1, b2, ..., bX, dim], usually [n_gh_total, N, dim]
+        # W: [n_gh_total,  1,  1, ...,  1,   1], usually [n_gh_total, N,   1]
+
+        return X, W","stddev = tf.expand_dims(tf.sqrt(var), 0)
+Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)","stddev, Z, dZ = tf.expand_dims(tf.sqrt(var), 0), tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype), tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)","stddev = zejun1
+Z = zejun2
+dZ = zejun3",Cannot refactor,-1
+airflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/airflow/tests/providers/amazon/aws/operators/test_sagemaker_endpoint.py,https://github.com/apache/airflow/tree/master/tests/providers/amazon/aws/operators/test_sagemaker_endpoint.py,TestSageMakerEndpointOperator,test_execute_with_duplicate_endpoint_creation$110,"def test_execute_with_duplicate_endpoint_creation(
+        self, mock_endpoint_update, mock_endpoint, mock_endpoint_config, mock_model, mock_client
+    ):
+        response = {
+            ""Error"": {""Code"": ""ValidationException"", ""Message"": ""Cannot create already existing endpoint.""}
+        }
+        mock_endpoint.side_effect = ClientError(error_response=response, operation_name=""CreateEndpoint"")
+        mock_endpoint_update.return_value = {
+            'EndpointArn': 'testarn',
+            'ResponseMetadata': {'HTTPStatusCode': 200},
+        }
+        self.sagemaker.execute(None)","mock_endpoint.side_effect = ClientError(error_response=response, operation_name='CreateEndpoint')
+mock_endpoint_update.return_value = {'EndpointArn': 'testarn', 'ResponseMetadata': {'HTTPStatusCode': 200}}","(mock_endpoint.side_effect, mock_endpoint_update.return_value) = (ClientError(error_response=response, operation_name='CreateEndpoint'), {'EndpointArn': 'testarn', 'ResponseMetadata': {'HTTPStatusCode': 200}})","mock_endpoint.side_effect = zejun1
+mock_endpoint_update.return_value = zejun2","(mock_endpoint.side_effect, mock_endpoint_update.return_value) = (ClientError(error_response=response, operation_name='CreateEndpoint'), {'EndpointArn': 'testarn', 'ResponseMetadata': {'HTTPStatusCode': 200}})",1
+NOFOUND
+spiderfoot,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/spiderfoot/test/unit/modules/test_sfp_ipregistry.py,https://github.com/smicallef/spiderfoot/tree/master/test/unit/modules/test_sfp_ipregistry.py,TestModuletemplate,test_handleEvent_no_api_key_should_set_errorState$37,"def test_handleEvent_no_api_key_should_set_errorState(self):
+        """"""
+        Test handleEvent(self, event)
+        """"""
+        sf = SpiderFoot(self.default_options)
+
+        module = sfp_ipregistry()
+        module.setup(sf, dict())
+
+        target_value = ""example target value""
+        target_type = ""IP_ADDRESS""
+        target = SpiderFootTarget(target_value, target_type)
+        module.setTarget(target)
+
+        event_type = ""ROOT""
+        event_data = ""example data""
+        event_module = """"
+        source_event = """"
+        evt = SpiderFootEvent(event_type, event_data, event_module, source_event)
+
+        result = module.handleEvent(evt)
+
+        self.assertIsNone(result)
+        self.assertTrue(module.errorState)","event_type = 'ROOT'
+event_data = 'example data'
+event_module = ''
+source_event = ''","(event_type, event_data, event_module, source_event) = ('ROOT', 'example data', '', '')",0
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/tests/unit/modules/test_file.py,https://github.com/saltstack/salt/tree/master/tests/unit/modules/test_file.py,FilemodLineTests,test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after$1883,"def test_if_not_location_or_before_but_after_then_line_should_be_inserted_after_after(
+        self,
+    ):
+        location = before = None
+        after = ""indessed""
+        content = ""roscivs""
+        indent = ""\t\t\t   ""
+        original_lines = [""foo"", indent + after, ""bar""]
+        expected_lines = [""foo"", indent + after, indent + content, ""bar""]
+
+        actual_lines = filemod._set_line(
+            lines=original_lines,
+            content=content,
+            mode=""insert"",
+            location=location,
+            before=before,
+            after=after,
+        )
+
+        self.assertEqual(actual_lines, expected_lines)","after = 'indessed'
+content = 'roscivs'
+indent = '\t\t\t   '","(after, content, indent) = ('indessed', 'roscivs', '\t\t\t   ')",0
+GPflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GPflow/gpflow/quadrature/gauss_hermite.py,https://github.com/GPflow/GPflow/tree/master/gpflow/quadrature/gauss_hermite.py,NDiagGHQuadrature,_build_X_W$126,"def _build_X_W(self, mean: TensorType, var: TensorType) -> Tuple[tf.Tensor, tf.Tensor]:
+        """"""
+        :param mean: Array/Tensor with shape [b1, b2, ..., bX, dim], usually [N, dim],
+            representing the mean of a dim-Variate Gaussian distribution
+        :param var: Array/Tensor with shape b1, b2, ..., bX, dim], usually [N, dim],
+            representing the variance of a dim-Variate Gaussian distribution
+        :return: points X, Tensor with shape [n_gh_total, b1, b2, ..., bX, dim],
+            usually [n_gh_total, N, dim],
+            and weights W, a Tensor with shape [n_gh_total, b1, b2, ..., bX, 1],
+            usually [n_gh_total, N, 1]
+        """"""
+
+        batch_shape_broadcast = tf.ones(tf.rank(mean) - 1, dtype=tf.int32)
+        shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+
+        # mean, var: [b1, b2, ..., bX, dim], usually [N, dim]
+        mean = tf.expand_dims(mean, 0)
+        stddev = tf.expand_dims(tf.sqrt(var), 0)
+        # mean, stddev: [1, b1, b2, ..., bX, dim], usually [1, N, dim]
+
+        Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+        dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+
+        X = mean + stddev * Z
+        W = dZ
+        # X: [n_gh_total, b1, b2, ..., bX, dim], usually [n_gh_total, N, dim]
+        # W: [n_gh_total,  1,  1, ...,  1,   1], usually [n_gh_total, N,   1]
+
+        return X, W","shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+mean = tf.expand_dims(mean, 0)","(shape_aux, mean) = (tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0), tf.expand_dims(mean, 0))",0
+GPflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GPflow/gpflow/quadrature/gauss_hermite.py,https://github.com/GPflow/GPflow/tree/master/gpflow/quadrature/gauss_hermite.py,NDiagGHQuadrature,_build_X_W$126,"def _build_X_W(self, mean: TensorType, var: TensorType) -> Tuple[tf.Tensor, tf.Tensor]:
+        """"""
+        :param mean: Array/Tensor with shape [b1, b2, ..., bX, dim], usually [N, dim],
+            representing the mean of a dim-Variate Gaussian distribution
+        :param var: Array/Tensor with shape b1, b2, ..., bX, dim], usually [N, dim],
+            representing the variance of a dim-Variate Gaussian distribution
+        :return: points X, Tensor with shape [n_gh_total, b1, b2, ..., bX, dim],
+            usually [n_gh_total, N, dim],
+            and weights W, a Tensor with shape [n_gh_total, b1, b2, ..., bX, 1],
+            usually [n_gh_total, N, 1]
+        """"""
+
+        batch_shape_broadcast = tf.ones(tf.rank(mean) - 1, dtype=tf.int32)
+        shape_aux = tf.concat([[self.n_gh_total], batch_shape_broadcast], axis=0)
+
+        # mean, var: [b1, b2, ..., bX, dim], usually [N, dim]
+        mean = tf.expand_dims(mean, 0)
+        stddev = tf.expand_dims(tf.sqrt(var), 0)
+        # mean, stddev: [1, b1, b2, ..., bX, dim], usually [1, N, dim]
+
+        Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)
+        dZ = tf.cast(tf.reshape(self.dZ, tf.concat([shape_aux, [1]], axis=0)), mean.dtype)
+
+        X = mean + stddev * Z
+        W = dZ
+        # X: [n_gh_total, b1, b2, ..., bX, dim], usually [n_gh_total, N, dim]
+        # W: [n_gh_total,  1,  1, ...,  1,   1], usually [n_gh_total, N,   1]
+
+        return X, W","stddev = tf.expand_dims(tf.sqrt(var), 0)
+Z = tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype)","(stddev, Z) = (tf.expand_dims(tf.sqrt(var), 0), tf.cast(tf.reshape(self.Z, tf.concat([shape_aux, [self.dim]], axis=0)), mean.dtype))",0

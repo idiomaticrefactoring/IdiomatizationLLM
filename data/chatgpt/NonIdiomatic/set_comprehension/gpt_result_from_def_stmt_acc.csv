@@ -1,0 +1,1985 @@
+repo_name,file_path,file_html,class_name,me_name,me_code,old_code,chatGPT_code,element_str,slice_str,truth_code
+gsutil,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/gsutil/gslib/wildcard_iterator.py,https://github.com/GoogleCloudPlatform/gsutil/tree/master/gslib/wildcard_iterator.py,CloudWildcardIterator,_GetToListFields$445,"def _GetToListFields(self, get_fields=None):
+    """"""Prepends 'items/' to the input fields and converts it to a set.
+
+    This way field sets requested for GetBucket can be used in ListBucket calls.
+    Note that the input set must contain only bucket or object fields; listing
+    fields such as prefixes or nextPageToken should be added after calling
+    this function.
+
+    Args:
+      get_fields: Iterable fields usable in GetBucket/GetObject calls.
+
+    Returns:
+      Set of fields usable in ListBuckets/ListObjects calls.
+    """"""
+    if get_fields:
+        list_fields = set()
+        for field in get_fields:
+            list_fields.add('items/' + field)
+        return list_fields","for field in get_fields:
+    list_fields.add('items/' + field)",list_fields = {'items/' + field for field in get_fields},"[""list_fields = {'items/' + field for field in get_fields}""]",1
+django-simple-history,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/django-simple-history/simple_history/management/commands/clean_old_history.py,https://github.com/jazzband/django-simple-history/tree/master/simple_history/management/commands/clean_old_history.py,Command,handle$37,"def handle(self, *args, **options):
+    self.verbosity = options['verbosity']
+    to_process = set()
+    model_strings = options.get('models', []) or args
+    if model_strings:
+        for model_pair in self._handle_model_list(*model_strings):
+            to_process.add(model_pair)
+    elif options['auto']:
+        to_process = self._auto_models()
+    else:
+        self.log(self.COMMAND_HINT)
+    self._process(to_process, days_back=options['days'], dry_run=options['dry'])","for model_pair in self._handle_model_list(*model_strings):
+    to_process.add(model_pair)",to_process = {model_pair for model_pair in self._handle_model_list(*model_strings)},['to_process = {model_pair for model_pair in self._handle_model_list(*model_strings)}'],1
+nvim-completion-manager,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nvim-completion-manager/pythonx/cm_sources/cm_tmux.py,https://github.com/roxma/nvim-completion-manager/tree/master/pythonx/cm_sources/cm_tmux.py,Source,refresh_keyword$40,"def refresh_keyword(self):
+    pat = re.compile(self._split_pattern)
+    self._words = set()
+    proc = subprocess.Popen(args=['tmux', 'list-window', '-F', '#{window_index}'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (outs, errs) = proc.communicate(timeout=15)
+    window_indices = outs.decode('utf-8')
+    logger.info('list-window: %s', window_indices)
+    panes = []
+    for win_index in window_indices.strip().split('\n'):
+        proc = subprocess.Popen(args=['tmux', 'list-panes', '-t', win_index, '-F', '#{pane_index}'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (outs, errs) = proc.communicate(timeout=15)
+        pane_ids = outs.decode('utf-8')
+        for pane_id in pane_ids.strip().split('\n'):
+            proc = subprocess.Popen(args=['tmux', 'capture-pane', '-p', '-t', '{}.{}'.format(win_index, pane_id)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            (outs, errs) = proc.communicate(timeout=15)
+            try:
+                outs = outs.decode('utf-8')
+                panes.append(outs)
+            except Exception as ex:
+                logger.exception('exception, failed to decode output, %s', ex)
+                pass
+    for pane in panes:
+        for word in re.split(pat, pane):
+            self._words.add(word)
+    logger.info('keyword refresh complete, count: %s', len(self._words))","for pane in panes:
+    for word in re.split(pat, pane):
+        self._words.add(word)","words = {word for pane in panes for word in re.split(pat, pane)}","['self._words = {word for pane in panes for word in re.split(pat, pane)}']",0
+imgaug,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/imgaug/test/augmenters/test_size.py,https://github.com/aleju/imgaug/tree/master/test/augmenters/test_size.py,TestResize,test_decrease_size_by_tuples_of_floats__one_per_side$1551,"def test_decrease_size_by_tuples_of_floats__one_per_side(self):
+    image2d = self.image2d[0:4, 0:4]
+    image3d = self.image3d[0:4, 0:4, :]
+    aug = iaa.Resize({'height': (0.76, 1.0), 'width': (0.76, 1.0)})
+    not_seen2d = set()
+    not_seen3d = set()
+    for hsize in sm.xrange(3, 4 + 1):
+        for wsize in sm.xrange(3, 4 + 1):
+            not_seen2d.add((hsize, wsize))
+    for hsize in sm.xrange(3, 4 + 1):
+        for wsize in sm.xrange(3, 4 + 1):
+            not_seen3d.add((hsize, wsize, 3))
+    possible2d = set(list(not_seen2d))
+    possible3d = set(list(not_seen3d))
+    for _ in sm.xrange(100):
+        observed2d = aug.augment_image(image2d)
+        observed3d = aug.augment_image(image3d)
+        assert observed2d.shape in possible2d
+        assert observed3d.shape in possible3d
+        if observed2d.shape in not_seen2d:
+            not_seen2d.remove(observed2d.shape)
+        if observed3d.shape in not_seen3d:
+            not_seen3d.remove(observed3d.shape)
+        if not not_seen2d and (not not_seen3d):
+            break
+    assert not not_seen2d
+    assert not not_seen3d","for hsize in sm.xrange(3, 4 + 1):
+    for wsize in sm.xrange(3, 4 + 1):
+        not_seen2d.add((hsize, wsize))","not_seen2d = {(hsize, wsize) for hsize in sm.xrange(3, 4 + 1) for wsize in sm.xrange(3, 4 + 1)}","['not_seen2d = {(hsize, wsize) for hsize in sm.xrange(3, 4 + 1) for wsize in sm.xrange(3, 4 + 1)}']",1
+imgaug,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/imgaug/test/augmenters/test_size.py,https://github.com/aleju/imgaug/tree/master/test/augmenters/test_size.py,TestResize,test_decrease_size_by_tuples_of_floats__one_per_side$1551,"def test_decrease_size_by_tuples_of_floats__one_per_side(self):
+    image2d = self.image2d[0:4, 0:4]
+    image3d = self.image3d[0:4, 0:4, :]
+    aug = iaa.Resize({'height': (0.76, 1.0), 'width': (0.76, 1.0)})
+    not_seen2d = set()
+    not_seen3d = set()
+    for hsize in sm.xrange(3, 4 + 1):
+        for wsize in sm.xrange(3, 4 + 1):
+            not_seen2d.add((hsize, wsize))
+    for hsize in sm.xrange(3, 4 + 1):
+        for wsize in sm.xrange(3, 4 + 1):
+            not_seen3d.add((hsize, wsize, 3))
+    possible2d = set(list(not_seen2d))
+    possible3d = set(list(not_seen3d))
+    for _ in sm.xrange(100):
+        observed2d = aug.augment_image(image2d)
+        observed3d = aug.augment_image(image3d)
+        assert observed2d.shape in possible2d
+        assert observed3d.shape in possible3d
+        if observed2d.shape in not_seen2d:
+            not_seen2d.remove(observed2d.shape)
+        if observed3d.shape in not_seen3d:
+            not_seen3d.remove(observed3d.shape)
+        if not not_seen2d and (not not_seen3d):
+            break
+    assert not not_seen2d
+    assert not not_seen3d","for hsize in sm.xrange(3, 4 + 1):
+    for wsize in sm.xrange(3, 4 + 1):
+        not_seen3d.add((hsize, wsize, 3))","not_seen3d = {(hsize, wsize, 3) for hsize in sm.xrange(3, 4 + 1) for wsize in sm.xrange(3, 4 + 1)}","['not_seen3d = {(hsize, wsize, 3) for hsize in sm.xrange(3, 4 + 1) for wsize in sm.xrange(3, 4 + 1)}']",1
+FARM,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/FARM/farm/file_utils.py,https://github.com/deepset-ai/FARM/tree/master/farm/file_utils.py,,read_set_from_file$301,"def read_set_from_file(filename):
+    """"""
+    Extract a de-duped collection (set) of text from a file.
+    Expected file format is one item per line.
+    """"""
+    collection = set()
+    with open(filename, 'r', encoding='utf-8') as file_:
+        for line in file_:
+            collection.add(line.rstrip())
+    return collection","for line in file_:
+    collection.add(line.rstrip())",collection = {line.rstrip() for line in file_},['collection = {line.rstrip() for line in file_}'],1
+learn-to-cluster,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/learn-to-cluster/proposals/stat_cluster.py,https://github.com/yl-1993/learn-to-cluster/tree/master/proposals/stat_cluster.py,,inst2cls$34,"def inst2cls(inst_sets, idx2lb):
+    cls_sets = []
+    for inst_set in inst_sets:
+        cls_set = set()
+        for idx in inst_set:
+            cls_set.add(idx2lb[idx])
+        cls_sets.append(cls_set)
+    return cls_sets","for inst_set in inst_sets:
+    cls_set = set()
+    for idx in inst_set:
+        cls_set.add(idx2lb[idx])
+    cls_sets.append(cls_set)",cls_sets = [{idx2lb[idx] for idx in inst_set} for inst_set in inst_sets],Cannot refactor,-1
+django-extensions,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/django-extensions/tests/management/commands/shell_plus_tests/test_utils.py,https://github.com/django-extensions/django-extensions/tree/master/tests/management/commands/shell_plus_tests/test_utils.py,AutomaticShellPlusImportsTestCase,get_all_names_for_class$18,"def get_all_names_for_class(self, model_to_find_occurrences):
+    """"""
+        Returns all names under current class is imported.
+        :param model_to_find_occurrences: class to find names
+        :return: set of names under class is imported.
+        """"""
+    result = set()
+    for (name, model_class) in self.imported_objects.items():
+        if model_class == model_to_find_occurrences:
+            result.add(name)
+    return result","for (name, model_class) in self.imported_objects.items():
+    if model_class == model_to_find_occurrences:
+        result.add(name)","result = {name for (name, model_class) in self.imported_objects.items() if model_class == model_to_find_occurrences}","['result = {name for (name, model_class) in self.imported_objects.items() if model_class == model_to_find_occurrences}']",1
+plop,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/plop/plop/viewer.py,https://github.com/bdarnell/plop/tree/master/plop/viewer.py,,profile_to_json$46,"def profile_to_json(filename):
+    root = os.path.abspath(options.datadir) + os.path.sep
+    abspath = os.path.abspath(os.path.join(root, filename))
+    assert (abspath + os.path.sep).startswith(root)
+    graph = CallGraph.load(abspath)
+    total = sum((stack.weights['calls'] for stack in graph.stacks))
+    top_stacks = graph.stacks
+    filtered_nodes = set()
+    for stack in top_stacks:
+        filtered_nodes.update(stack.nodes)
+    nodes = [dict(attrs=node.attrs, weights=node.weights, id=node.id) for node in filtered_nodes]
+    nodes = sorted(nodes, key=lambda n: -n['weights']['calls'])
+    index = dict([(node['id'], i) for (i, node) in enumerate(nodes)])
+    degrees = Counter()
+    dropped = set()
+    for edge in six.itervalues(graph.edges):
+        degrees[edge.child.id] += 1
+        degrees[edge.parent.id] += 1
+    for (node, degree) in six.iteritems(degrees):
+        if degree > 6:
+            dropped.add(node)
+    edges = [dict(source=index[edge.parent.id], target=index[edge.child.id], weights=edge.weights) for edge in six.itervalues(graph.edges) if edge.parent.id in index and edge.child.id in index and (edge.parent.id not in dropped) and (edge.child.id not in dropped)]
+    stacks = [dict(nodes=[index[n.id] for n in stack.nodes], weights=stack.weights) for stack in top_stacks]
+    return dict(nodes=nodes, edges=edges, stacks=stacks)","for (node, degree) in six.iteritems(degrees):
+    if degree > 6:
+        dropped.add(node)","dropped = {node for (node, degree) in six.iteritems(degrees) if degree > 6}","['dropped = {node for (node, degree) in six.iteritems(degrees) if degree > 6}']",1
+Paddle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Paddle/python/paddle/fluid/framework.py,https://github.com/PaddlePaddle/Paddle/tree/master/python/paddle/fluid/framework.py,IrGraph,draw$5141,"def draw(self, save_path, name, marked_nodes=None, remove_ctr_var=True):
+    """"""
+        Draw the graph. If `dot` command is installed, the drawn graph
+        will be saved as pdf file type, otherwise dot file type is used.
+
+        Args:
+            save_path(str): the save path of drawn graph.
+            name(str): the name of drawn graph.
+            marked_nodes(set(IrNode)): nodes that are needed to be marked.
+            Default value is None.
+            remove_ctr_var(bool): If it is set True, all control variable nodes
+            in the graph will be removed. Default value is True.
+        """"""
+
+    def _convert_to_pdf(dot_file_path):
+        pdf_save_path = os.path.splitext(dot_file_path)[0] + '.pdf'
+        exited_code = subprocess.call('dot -Tpdf ' + dot_file_path + ' -o ' + pdf_save_path, shell=True)
+        if exited_code != 0:
+            print('The dot command is needed for creating pdf files.')
+            print('The {} is saved as the dot filetype.'.format(dot_file_path))
+    remove_ctr_vars = set()
+    if remove_ctr_var:
+        for node in self.all_var_nodes():
+            if node.is_ctrl_var():
+                remove_ctr_vars.add(node)
+        self.safe_remove_nodes(remove_ctr_vars)
+    print('Total ops num = {}.'.format(len(self.all_op_nodes())))
+    if marked_nodes is not None:
+        if not isinstance(marked_nodes, set):
+            if isinstance(marked_nodes, Iterable):
+                marked_nodes = set(marked_nodes)
+            else:
+                marked_nodes = {marked_nodes}
+        marked_nodes = {n.node for n in marked_nodes}
+        remove_ctr_vars = {n.node for n in remove_ctr_vars}
+        marked_nodes = marked_nodes - remove_ctr_vars
+        if self.graph.has('__graphviz__marked_node__'):
+            self.graph.erase('__graphviz__marked_node__')
+        self.graph.set('__graphviz__marked_node__', marked_nodes)
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    viz_dot_path = os.path.join(save_path, name) + '.dot'
+    viz_pass = core.get_pass('graph_viz_pass')
+    viz_pass.set('graph_viz_path', viz_dot_path)
+    viz_pass.apply(self.graph)
+    _convert_to_pdf(viz_dot_path)","for node in self.all_var_nodes():
+    if node.is_ctrl_var():
+        remove_ctr_vars.add(node)",remove_ctr_vars = {node for node in self.all_var_nodes() if node.is_ctrl_var()},['remove_ctr_vars = {node for node in self.all_var_nodes() if node.is_ctrl_var()}'],1
+nltk,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nltk/nltk/test/unit/translate/test_ibm_model.py,https://github.com/nltk/nltk/tree/master/nltk/test/unit/translate/test_ibm_model.py,TestIBMModel,test_neighboring_finds_neighbor_alignments$137,"def test_neighboring_finds_neighbor_alignments(self):
+    a_info = AlignmentInfo((0, 3, 2), (None, 'des', 'œufs', 'verts'), ('UNUSED', 'green', 'eggs'), [[], [], [2], [1]])
+    ibm_model = IBMModel([])
+    neighbors = ibm_model.neighboring(a_info)
+    neighbor_alignments = set()
+    for neighbor in neighbors:
+        neighbor_alignments.add(neighbor.alignment)
+    expected_alignments = {(0, 0, 2), (0, 1, 2), (0, 2, 2), (0, 3, 0), (0, 3, 1), (0, 3, 3), (0, 2, 3), (0, 3, 2)}
+    self.assertEqual(neighbor_alignments, expected_alignments)","for neighbor in neighbors:
+    neighbor_alignments.add(neighbor.alignment)",neighbor_alignments = {neighbor.alignment for neighbor in neighbors},['neighbor_alignments = {neighbor.alignment for neighbor in neighbors}'],1
+node-gyp,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/node-gyp/gyp/pylib/gyp/generator/cmake.py,https://github.com/nodejs/node-gyp/tree/master/gyp/pylib/gyp/generator/cmake.py,,GenerateOutputForConfig$1143,"def GenerateOutputForConfig(target_list, target_dicts, data, params, config_to_use):
+    options = params['options']
+    generator_flags = params['generator_flags']
+    flavor = gyp.common.GetFlavor(params)
+    generator_dir = os.path.relpath(options.generator_output or '.')
+    output_dir = generator_flags.get('output_dir', 'out')
+    build_dir = os.path.normpath(os.path.join(generator_dir, output_dir, config_to_use))
+    toplevel_build = os.path.join(options.toplevel_dir, build_dir)
+    output_file = os.path.join(toplevel_build, 'CMakeLists.txt')
+    gyp.common.EnsureDirExists(output_file)
+    output = open(output_file, 'w')
+    output.write('cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)\n')
+    output.write('cmake_policy(VERSION 2.8.8)\n')
+    (gyp_file, project_target, _) = gyp.common.ParseQualifiedTarget(target_list[-1])
+    output.write('project(')
+    output.write(project_target)
+    output.write(')\n')
+    SetVariable(output, 'configuration', config_to_use)
+    ar = None
+    cc = None
+    cxx = None
+    make_global_settings = data[gyp_file].get('make_global_settings', [])
+    build_to_top = gyp.common.InvertRelativePath(build_dir, options.toplevel_dir)
+    for (key, value) in make_global_settings:
+        if key == 'AR':
+            ar = os.path.join(build_to_top, value)
+        if key == 'CC':
+            cc = os.path.join(build_to_top, value)
+        if key == 'CXX':
+            cxx = os.path.join(build_to_top, value)
+    ar = gyp.common.GetEnvironFallback(['AR_target', 'AR'], ar)
+    cc = gyp.common.GetEnvironFallback(['CC_target', 'CC'], cc)
+    cxx = gyp.common.GetEnvironFallback(['CXX_target', 'CXX'], cxx)
+    if ar:
+        SetVariable(output, 'CMAKE_AR', ar)
+    if cc:
+        SetVariable(output, 'CMAKE_C_COMPILER', cc)
+    if cxx:
+        SetVariable(output, 'CMAKE_CXX_COMPILER', cxx)
+    output.write('enable_language(ASM)\n')
+    if cc:
+        SetVariable(output, 'CMAKE_ASM_COMPILER', cc)
+    SetVariable(output, 'builddir', '${CMAKE_CURRENT_BINARY_DIR}')
+    SetVariable(output, 'obj', '${builddir}/obj')
+    output.write('\n')
+    output.write('set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)\n')
+    output.write('set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)\n')
+    output.write('\n')
+    if flavor != 'mac':
+        output.write('set(CMAKE_NINJA_FORCE_RESPONSE_FILE 1)\n')
+    output.write('\n')
+    namer = CMakeNamer(target_list)
+    all_qualified_targets = set()
+    for build_file in params['build_files']:
+        for qualified_target in gyp.common.AllTargets(target_list, target_dicts, os.path.normpath(build_file)):
+            all_qualified_targets.add(qualified_target)
+    for qualified_target in target_list:
+        if flavor == 'mac':
+            (gyp_file, _, _) = gyp.common.ParseQualifiedTarget(qualified_target)
+            spec = target_dicts[qualified_target]
+            gyp.xcode_emulation.MergeGlobalXcodeSettingsToSpec(data[gyp_file], spec)
+        WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use, options, generator_flags, all_qualified_targets, flavor, output)
+    output.close()","for build_file in params['build_files']:
+    for qualified_target in gyp.common.AllTargets(target_list, target_dicts, os.path.normpath(build_file)):
+        all_qualified_targets.add(qualified_target)","all_qualified_targets = {qualified_target for build_file in params['build_files'] for qualified_target in gyp.common.AllTargets(target_list, target_dicts, os.path.normpath(build_file))}","[""all_qualified_targets = {qualified_target for build_file in params['build_files'] for qualified_target in gyp.common.AllTargets(target_list, target_dicts, os.path.normpath(build_file))}""]",1
+opt_einsum,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/opt_einsum/versioneer.py,https://github.com/dgasmith/opt_einsum/tree/master//versioneer.py,,do_setup$1697,"def do_setup():
+    """"""Main VCS-independent setup function for installing Versioneer.""""""
+    root = get_root()
+    try:
+        cfg = get_config_from_root(root)
+    except (EnvironmentError, configparser.NoSectionError, configparser.NoOptionError) as e:
+        if isinstance(e, (EnvironmentError, configparser.NoSectionError)):
+            print('Adding sample versioneer config to setup.cfg', file=sys.stderr)
+            with open(os.path.join(root, 'setup.cfg'), 'a') as f:
+                f.write(SAMPLE_CONFIG)
+        print(CONFIG_ERROR, file=sys.stderr)
+        return 1
+    print(' creating %s' % cfg.versionfile_source)
+    with open(cfg.versionfile_source, 'w') as f:
+        LONG = LONG_VERSION_PY[cfg.VCS]
+        f.write(LONG % {'DOLLAR': '$', 'STYLE': cfg.style, 'TAG_PREFIX': cfg.tag_prefix, 'PARENTDIR_PREFIX': cfg.parentdir_prefix, 'VERSIONFILE_SOURCE': cfg.versionfile_source})
+    ipy = os.path.join(os.path.dirname(cfg.versionfile_source), '__init__.py')
+    if os.path.exists(ipy):
+        try:
+            with open(ipy, 'r') as f:
+                old = f.read()
+        except EnvironmentError:
+            old = ''
+        if INIT_PY_SNIPPET not in old:
+            print(' appending to %s' % ipy)
+            with open(ipy, 'a') as f:
+                f.write(INIT_PY_SNIPPET)
+        else:
+            print(' %s unmodified' % ipy)
+    else:
+        print("" %s doesn't exist, ok"" % ipy)
+        ipy = None
+    manifest_in = os.path.join(root, 'MANIFEST.in')
+    simple_includes = set()
+    try:
+        with open(manifest_in, 'r') as f:
+            for line in f:
+                if line.startswith('include '):
+                    for include in line.split()[1:]:
+                        simple_includes.add(include)
+    except EnvironmentError:
+        pass
+    if 'versioneer.py' not in simple_includes:
+        print("" appending 'versioneer.py' to MANIFEST.in"")
+        with open(manifest_in, 'a') as f:
+            f.write('include versioneer.py\n')
+    else:
+        print("" 'versioneer.py' already in MANIFEST.in"")
+    if cfg.versionfile_source not in simple_includes:
+        print("" appending versionfile_source ('%s') to MANIFEST.in"" % cfg.versionfile_source)
+        with open(manifest_in, 'a') as f:
+            f.write('include %s\n' % cfg.versionfile_source)
+    else:
+        print(' versionfile_source already in MANIFEST.in')
+    do_vcs_install(manifest_in, cfg.versionfile_source, ipy)
+    return 0","for line in f:
+    if line.startswith('include '):
+        for include in line.split()[1:]:
+            simple_includes.add(include)",simple_includes = {include for line in f for include in line.split()[1:] if line.startswith('include ')},"[""simple_includes = {include for line in f if line.startswith('include ') for include in line.split()[1:]}""]",0
+numpy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/numpy/numpy/distutils/ccompiler_opt.py,https://github.com/numpy/numpy/tree/master/numpy/distutils/ccompiler_opt.py,_Feature,feature_names$1261,"def feature_names(self, names=None, force_flags=None, macros=[]):
+    """"""
+        Returns a set of CPU feature names that supported by platform and the **C** compiler.
+
+        Parameters
+        ----------
+        names : sequence or None, optional
+            Specify certain CPU features to test it against the **C** compiler.
+            if None(default), it will test all current supported features.
+            **Note**: feature names must be in upper-case.
+
+        force_flags : list or None, optional
+            If None(default), default compiler flags for every CPU feature will
+            be used during the test.
+
+        macros : list of tuples, optional
+            A list of C macro definitions.
+        """"""
+    assert names is None or (not isinstance(names, str) and hasattr(names, '__iter__'))
+    assert force_flags is None or isinstance(force_flags, list)
+    if names is None:
+        names = self.feature_supported.keys()
+    supported_names = set()
+    for f in names:
+        if self.feature_is_supported(f, force_flags=force_flags, macros=macros):
+            supported_names.add(f)
+    return supported_names","for f in names:
+    if self.feature_is_supported(f, force_flags=force_flags, macros=macros):
+        supported_names.add(f)","supported_names = {f for f in names if self.feature_is_supported(f, force_flags=force_flags, macros=macros)}","['supported_names = {f for f in names if self.feature_is_supported(f, force_flags=force_flags, macros=macros)}']",1
+viztracer,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/viztracer/tests/test_multiprocess.py,https://github.com/gaogaotiantian/viztracer/tree/master/tests/test_multiprocess.py,TestSubprocess,check_func$256,"def check_func(data):
+    pids = set()
+    for entry in data['traceEvents']:
+        pids.add(entry['pid'])
+    self.assertEqual(len(pids), 3)","for entry in data['traceEvents']:
+    pids.add(entry['pid'])",pids = {entry['pid'] for entry in data['traceEvents']},"[""pids = {entry['pid'] for entry in data['traceEvents']}""]",1
+integrations-core,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/integrations-core/couch/tests/test_couchv2.py,https://github.com/DataDog/integrations-core/tree/master/couch/tests/test_couchv2.py,,test_only_max_dbs_are_scanned$260,"def test_only_max_dbs_are_scanned(aggregator, gauges, number_db):
+    config = deepcopy(common.NODE1)
+    config['max_dbs_per_check'] = number_db
+    check = CouchDb(common.CHECK_NAME, {}, [config])
+    check.check(config)
+    metrics = []
+    for metric_list in aggregator._metrics.values():
+        metrics.extend(metric_list)
+    db_tags = set()
+    for m in metrics:
+        for tag in m.tags:
+            if tag.startswith('db:'):
+                db_tags.add(tag)
+    assert len(db_tags) == number_db","for m in metrics:
+    for tag in m.tags:
+        if tag.startswith('db:'):
+            db_tags.add(tag)",db_tags = {tag for m in metrics for tag in m.tags if tag.startswith('db:')},"[""db_tags = {tag for m in metrics for tag in m.tags if tag.startswith('db:')}""]",1
+text_renderer,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/text_renderer/libs/font_utils.py,https://github.com/Sanster/text_renderer/tree/master/libs/font_utils.py,,check_font_chars$62,"def check_font_chars(ttf, charset):
+    """"""
+    Get font supported chars and unsupported chars
+    :param ttf: TTFont ojbect
+    :param charset: chars
+    :return: unsupported_chars, supported_chars
+    """"""
+    chars_int = set()
+    for table in ttf['cmap'].tables:
+        for (k, v) in table.cmap.items():
+            chars_int.add(k)
+    unsupported_chars = []
+    supported_chars = []
+    for c in charset:
+        if ord(c) not in chars_int:
+            unsupported_chars.append(c)
+        else:
+            supported_chars.append(c)
+    ttf.close()
+    return (unsupported_chars, supported_chars)","for table in ttf['cmap'].tables:
+    for (k, v) in table.cmap.items():
+        chars_int.add(k)","chars_int = {k for table in ttf['cmap'].tables for (k, v) in table.cmap.items()}","[""chars_int = {k for table in ttf['cmap'].tables for (k, v) in table.cmap.items()}""]",1
+Mobile-Security-Framework-MobSF,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Mobile-Security-Framework-MobSF/mobsf/MobSF/utils.py,https://github.com/MobSF/Mobile-Security-Framework-MobSF/tree/master/mobsf/MobSF/utils.py,,find_process_by$315,"def find_process_by(name):
+    """"""Return a set of process path matching name.""""""
+    proc = set()
+    for p in psutil.process_iter(attrs=['name']):
+        if name == p.info['name']:
+            proc.add(p.exe())
+    return proc","for p in psutil.process_iter(attrs=['name']):
+    if name == p.info['name']:
+        proc.add(p.exe())",proc = {p.exe() for p in psutil.process_iter(attrs=['name']) if name == p.info['name']},"[""proc = {p.exe() for p in psutil.process_iter(attrs=['name']) if name == p.info['name']}""]",1
+saleor,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/saleor/saleor/graphql/attribute/utils.py,https://github.com/saleor/saleor/tree/master/saleor/graphql/attribute/utils.py,AttributeAssignmentMixin,_resolve_attribute_nodes$99,"def _resolve_attribute_nodes(cls, qs: 'QuerySet', error_class, *, global_ids: List[str], pks: Iterable[int]):
+    """"""Retrieve attributes nodes from given global IDs.""""""
+    qs = qs.filter(pk__in=pks)
+    nodes: List[attribute_models.Attribute] = list(qs)
+    if not nodes:
+        raise ValidationError(f'Could not resolve to a node: ids={global_ids}.', code=error_class.NOT_FOUND.value)
+    nodes_pk_list = set()
+    for node in nodes:
+        nodes_pk_list.add(node.pk)
+    for (pk, global_id) in zip(pks, global_ids):
+        if pk not in nodes_pk_list:
+            raise ValidationError(f'Could not resolve {global_id!r} to Attribute', code=error_class.NOT_FOUND.value)
+    return nodes","for node in nodes:
+    nodes_pk_list.add(node.pk)",nodes_pk_list = {node.pk for node in nodes},['nodes_pk_list = {node.pk for node in nodes}'],1
+LangSrcCurise,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/LangSrcCurise/core/Subdomain_Api.py,https://github.com/LangziFun/LangSrcCurise/tree/master/core/Subdomain_Api.py,,Sec_Api$191,"def Sec_Api(domain):
+    result = set()
+    try:
+        url = 'https://api.securitytrails.com/v1/domain/{}/subdomains'.format(domain)
+        querystring = {'apikey': seckey}
+        response = requests.request('GET', url, params=querystring)
+        rest = response.json()
+        subdomains = rest['subdomains']
+        for s in subdomains:
+            result.add(s + '.' + domain)
+    except:
+        pass
+    print('[+ SecurityTrails API] SecTra接口 : {} 捕获子域名总数 : {}'.format(domain, len(result)))
+    return list(result)","for s in subdomains:
+    result.add(s + '.' + domain)",result = {s + '.' + domain for s in subdomains},"[""result = {s + '.' + domain for s in subdomains}""]",1
+textflint,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/textflint/textflint/generation/transformation/ABSA/absa_transformation.py,https://github.com/textflint/textflint/tree/master/textflint/generation/transformation/ABSA/absa_transformation.py,ABSATransformation,reverse_opinion$307,"def reverse_opinion(self, trans_words, trans_opinion_words, opinion_from, opinion_to, has_neg):
+    """"""
+        Reverse the polarity of original opinion and return the new
+        transformed opinion words.
+
+        :param list trans_words: tokenized words of transformed sentence
+        :param list trans_opinion_words: transformed opinion words
+        :param int opinion_from: start index of opinion
+        :param int opinion_to: end index of opinion
+        :param bool has_neg: whether exist negation in transformed sentence
+        """"""
+    opinion_list = trans_words[opinion_from:opinion_to]
+    opinion_words = trans_words[opinion_from:opinion_to]
+    opi = opinion_list[0]
+    trans_opinion_word = None
+    from_to = []
+    if has_neg and [opinion_from, opinion_to] not in from_to:
+        trans_opinion_word = [opinion_from, opinion_to, self.untokenize(opinion_words)]
+    elif [opinion_from, opinion_to] not in from_to:
+        opi_pos = self.get_postag(trans_words, opinion_from, opinion_to)
+        antonyms = self.get_antonyms(opi_pos)[0]
+        candidate = set()
+        for antonym in antonyms:
+            for ant_word in antonym.lemma_names(lang='eng'):
+                if ant_word != opi and '_' not in ant_word:
+                    candidate.add(ant_word)
+        refined_candidate = self.refine_candidate(trans_words, opinion_from, opinion_to, candidate)
+        if len(refined_candidate) == 0:
+            trans_opinion_word = [opinion_from, opinion_to, self.untokenize(['not', opi])]
+        else:
+            select = random.randint(0, len(refined_candidate) - 1)
+            trans_opinion_word = [opinion_from, opinion_to, self.untokenize([refined_candidate[select]])]
+    if trans_opinion_word is not None:
+        trans_opinion_words.append(trans_opinion_word)
+        from_to.append([opinion_from, opinion_to])
+        trans_words[opinion_from:opinion_to] = [trans_opinion_word[2]]
+    return (trans_words, trans_opinion_words)","for antonym in antonyms:
+    for ant_word in antonym.lemma_names(lang='eng'):
+        if ant_word != opi and '_' not in ant_word:
+            candidate.add(ant_word)",candidate = {ant_word for antonym in antonyms for ant_word in antonym.lemma_names(lang='eng') if ant_word != opi and '_' not in ant_word},"[""candidate = {ant_word for antonym in antonyms for ant_word in antonym.lemma_names(lang='eng') if ant_word != opi and '_' not in ant_word}""]",1
+pywikibot,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pywikibot/scripts/archivebot.py,https://github.com/wikimedia/pywikibot/tree/master/scripts/archivebot.py,PageArchiver,run$761,"def run(self) -> None:
+    """"""Process a single DiscussionPage object.""""""
+    if not self.page.botMayEdit():
+        return
+    whys = self.analyze_page()
+    mintoarchive = int(self.get_attr('minthreadstoarchive', 2))
+    if self.archived_threads < mintoarchive:
+        pywikibot.output('Only {} (< {}) threads are old enough. Skipping'.format(self.archived_threads, mintoarchive))
+        return
+    if whys:
+        rx = re.compile('\\{\\{%s\\s*?\\n.*?\\n\\}\\}' % template_title_regex(self.tpl).pattern, re.DOTALL)
+        if not rx.search(self.page.header):
+            raise MalformedConfigError(""Couldn't find the template in the header"")
+        pywikibot.output('Archiving {} thread(s).'.format(self.archived_threads))
+        for (title, archive) in sorted(self.archives.items()):
+            count = archive.archived_threads
+            if count == 0:
+                continue
+            self.comment_params['count'] = count
+            comment = i18n.twtranslate(self.site.code, 'archivebot-archive-summary', self.comment_params)
+            archive.update(comment)
+        self.page.header = rx.sub(self.attr2text(), self.page.header)
+        self.comment_params['count'] = self.archived_threads
+        comma = self.site.mediawiki_message('comma-separator')
+        self.comment_params['archives'] = comma.join((a.title(as_link=True) for a in self.archives.values() if a.archived_threads > 0))
+        translated_whys = set()
+        for (why, arg) in whys:
+            if why == 'duration':
+                translated_whys.add(i18n.twtranslate(self.site.code, 'archivebot-older-than', {'duration': arg, 'count': self.archived_threads}))
+        self.comment_params['why'] = comma.join(translated_whys)
+        comment = i18n.twtranslate(self.site.code, 'archivebot-page-summary', self.comment_params)
+        self.page.update(comment)","for (why, arg) in whys:
+    if why == 'duration':
+        translated_whys.add(i18n.twtranslate(self.site.code, 'archivebot-older-than', {'duration': arg, 'count': self.archived_threads}))","translated_whys = {i18n.twtranslate(self.site.code, 'archivebot-older-than', {'duration': arg, 'count': self.archived_threads}) for (why, arg) in whys if why == 'duration'}","[""translated_whys = {i18n.twtranslate(self.site.code, 'archivebot-older-than', {'duration': arg, 'count': self.archived_threads}) for (why, arg) in whys if why == 'duration'}""]",1
+networkx,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/networkx/networkx/algorithms/approximation/tests/test_treewidth.py,https://github.com/networkx/networkx/tree/master/networkx/algorithms/approximation/tests/test_treewidth.py,TestTreewidthMinFillIn,test_heuristic_abort$215,"def test_heuristic_abort(self):
+    """"""Test if min_fill_in returns None for fully connected graph""""""
+    graph = {}
+    for u in self.complete:
+        graph[u] = set()
+        for v in self.complete[u]:
+            if u != v:
+                graph[u].add(v)
+    next_node = min_fill_in_heuristic(graph)
+    if next_node is None:
+        pass
+    else:
+        assert False","for u in self.complete:
+    graph[u] = set()
+    for v in self.complete[u]:
+        if u != v:
+            graph[u].add(v)",graph = {u: {v for v in self.complete[u] if u != v} for u in self.complete},Cannot refactor,-1
+rope,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/rope/rope/refactor/importutils/module_imports.py,https://github.com/python-rope/rope/tree/master/rope/refactor/importutils/module_imports.py,_GlobalUnboundNameFinder,__init__$428,"def __init__(self, pymodule, wanted_pyobject):
+    super(_GlobalUnboundNameFinder, self).__init__(pymodule)
+    self.unbound = set()
+    self.names = set()
+    for (name, pyname) in pymodule._get_structural_attributes().items():
+        if not isinstance(pyname, (pynames.ImportedName, pynames.ImportedModule)):
+            self.names.add(name)
+    wanted_scope = wanted_pyobject.get_scope()
+    self.start = wanted_scope.get_start()
+    self.end = wanted_scope.get_end() + 1","for (name, pyname) in pymodule._get_structural_attributes().items():
+    if not isinstance(pyname, (pynames.ImportedName, pynames.ImportedModule)):
+        self.names.add(name)","entries = {name for (name, pyname) in pymodule._get_structural_attributes().items() if not isinstance(pyname, (pynames.ImportedName, pynames.ImportedModule))}","['self.names = {name for (name, pyname) in pymodule._get_structural_attributes().items() if not isinstance(pyname, (pynames.ImportedName, pynames.ImportedModule))}']",0
+goatools,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/goatools/versioneer.py,https://github.com/tanghaibao/goatools/tree/master//versioneer.py,,do_setup$1697,"def do_setup():
+    """"""Main VCS-independent setup function for installing Versioneer.""""""
+    root = get_root()
+    try:
+        cfg = get_config_from_root(root)
+    except (EnvironmentError, configparser.NoSectionError, configparser.NoOptionError) as e:
+        if isinstance(e, (EnvironmentError, configparser.NoSectionError)):
+            print('Adding sample versioneer config to setup.cfg', file=sys.stderr)
+            with open(os.path.join(root, 'setup.cfg'), 'a') as f:
+                f.write(SAMPLE_CONFIG)
+        print(CONFIG_ERROR, file=sys.stderr)
+        return 1
+    print(' creating %s' % cfg.versionfile_source)
+    with open(cfg.versionfile_source, 'w') as f:
+        LONG = LONG_VERSION_PY[cfg.VCS]
+        f.write(LONG % {'DOLLAR': '$', 'STYLE': cfg.style, 'TAG_PREFIX': cfg.tag_prefix, 'PARENTDIR_PREFIX': cfg.parentdir_prefix, 'VERSIONFILE_SOURCE': cfg.versionfile_source})
+    ipy = os.path.join(os.path.dirname(cfg.versionfile_source), '__init__.py')
+    if os.path.exists(ipy):
+        try:
+            with open(ipy, 'r') as f:
+                old = f.read()
+        except EnvironmentError:
+            old = ''
+        if INIT_PY_SNIPPET not in old:
+            print(' appending to %s' % ipy)
+            with open(ipy, 'a') as f:
+                f.write(INIT_PY_SNIPPET)
+        else:
+            print(' %s unmodified' % ipy)
+    else:
+        print("" %s doesn't exist, ok"" % ipy)
+        ipy = None
+    manifest_in = os.path.join(root, 'MANIFEST.in')
+    simple_includes = set()
+    try:
+        with open(manifest_in, 'r') as f:
+            for line in f:
+                if line.startswith('include '):
+                    for include in line.split()[1:]:
+                        simple_includes.add(include)
+    except EnvironmentError:
+        pass
+    if 'versioneer.py' not in simple_includes:
+        print("" appending 'versioneer.py' to MANIFEST.in"")
+        with open(manifest_in, 'a') as f:
+            f.write('include versioneer.py\n')
+    else:
+        print("" 'versioneer.py' already in MANIFEST.in"")
+    if cfg.versionfile_source not in simple_includes:
+        print("" appending versionfile_source ('%s') to MANIFEST.in"" % cfg.versionfile_source)
+        with open(manifest_in, 'a') as f:
+            f.write('include %s\n' % cfg.versionfile_source)
+    else:
+        print(' versionfile_source already in MANIFEST.in')
+    do_vcs_install(manifest_in, cfg.versionfile_source, ipy)
+    return 0","for line in f:
+    if line.startswith('include '):
+        for include in line.split()[1:]:
+            simple_includes.add(include)",simple_includes = {include for line in f for include in line.split()[1:] if line.startswith('include ')},"[""simple_includes = {include for line in f if line.startswith('include ') for include in line.split()[1:]}""]",0
+tuna,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/tuna/tuna/_runtime_profile.py,https://github.com/nschloe/tuna/tree/master/tuna/_runtime_profile.py,,read_runtime_profile$4,"def read_runtime_profile(prof_filename):
+    stats = pstats.Stats(prof_filename)
+    roots = set()
+    for (key, value) in stats.stats.items():
+        if not value[4] and value[3] > 1e-05:
+            roots.add(key)
+    default_roots = [('~', 0, '<built-in method builtins.exec>'), ('~', 0, '<built-in method exec>')]
+    for default_root in default_roots:
+        if default_root in stats.stats:
+            roots.add(default_root)
+    roots = list(roots)
+    children = {key: [] for key in stats.stats.keys()}
+    for (key, value) in stats.stats.items():
+        (_, _, _, _, parents) = value
+        for parent in parents:
+            children[parent].append(key)
+
+    def populate(key, parent, all_ancestors):
+        if parent is None:
+            parent_times = {}
+            (_, _, selftime, cumtime, _) = stats.stats[key]
+        else:
+            (_, _, _, _, parent_times) = stats.stats[key]
+            (_, _, selftime, cumtime) = parent_times[parent]
+        name = '{}::{}::{}'.format(*key)
+        if key in all_ancestors:
+            return {}
+        if len(parent_times) <= 1:
+            c = [populate(child, key, all_ancestors + [key]) for child in children[key]]
+            c.append({'text': [name + '::self', f'{selftime:.3} s'], 'color': 0, 'value': selftime})
+            return {'text': [name], 'color': 0, 'children': c}
+        if children[key]:
+            c = [{'text': ['Possible calls of', ', '.join(('{}::{}::{}'.format(*child) for child in children[key]))], 'color': 3, 'value': cumtime}]
+            return {'text': [name], 'color': 0, 'children': c}
+        return {'text': [name, f'{selftime:.3f}'], 'color': 0, 'value': selftime}
+    if len(roots) == 1:
+        data = populate(roots[0], None, [])
+    else:
+        assert len(roots) > 1
+        data = {'text': ['root'], 'color': 0, 'children': [populate(root, None, []) for root in roots]}
+    return data","for default_root in default_roots:
+    if default_root in stats.stats:
+        roots.add(default_root)",roots = {default_root for default_root in default_roots if default_root in stats.stats},Cannot refactor,-1
+taurus,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/taurus/bzt/modules/blazemeter/blazemeter_reporter.py,https://github.com/Blazemeter/taurus/tree/master/bzt/modules/blazemeter/blazemeter_reporter.py,BlazeMeterUploader,__get_jtls_and_more$177,"def __get_jtls_and_more(self):
+    """"""
+        Compress all files in artifacts dir to single zipfile
+        :rtype: (io.BytesIO,dict)
+        """"""
+    mfile = BytesIO()
+    listing = {}
+    logs = set()
+    for handler in self.engine.log.parent.handlers:
+        if isinstance(handler, logging.FileHandler):
+            logs.add(handler.baseFilename)
+    max_file_size = self.settings.get('artifact-upload-size-limit', 10) * 1024 * 1024
+    with zipfile.ZipFile(mfile, mode='w', compression=zipfile.ZIP_DEFLATED, allowZip64=True) as zfh:
+        for (root, _, files) in os.walk(self.engine.artifacts_dir):
+            for filename in files:
+                full_path = os.path.join(root, filename)
+                if full_path in logs:
+                    logs.remove(full_path)
+                fsize = os.path.getsize(full_path)
+                if fsize <= max_file_size:
+                    zfh.write(full_path, os.path.join(os.path.relpath(root, self.engine.artifacts_dir), filename))
+                    listing[full_path] = fsize
+                else:
+                    msg = ""File %s exceeds maximum size quota of %s and won't be included into upload""
+                    self.log.warning(msg, filename, max_file_size)
+        for filename in logs:
+            zfh.write(filename, os.path.basename(filename))
+            listing[filename] = os.path.getsize(filename)
+    return (mfile, listing)","for handler in self.engine.log.parent.handlers:
+    if isinstance(handler, logging.FileHandler):
+        logs.add(handler.baseFilename)","logs = {handler.baseFilename for handler in self.engine.log.parent.handlers if isinstance(handler, logging.FileHandler)}","['logs = {handler.baseFilename for handler in self.engine.log.parent.handlers if isinstance(handler, logging.FileHandler)}']",1
+petastorm,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/petastorm/petastorm/tests/test_predicates.py,https://github.com/uber/petastorm/tree/master/petastorm/tests/test_predicates.py,,test_and_argegarion$86,"def test_and_argegarion(all_values):
+    for values1 in [{'guid_0', 'guid_1'}, {'guid_3', 'guid_6', 'guid_20'}, {'guid_2'}]:
+        for values2 in [{'guid_2', 'guid_1'}, {'guid_5', 'guid_9'}, {'guid_2'}]:
+            test_predicate = in_reduce([in_set(values1, 'volume_guid'), in_set(values2, 'volume_guid')], all)
+            included_values = set()
+            for val in all_values:
+                if test_predicate.do_include({'volume_guid': val}):
+                    included_values.add(val)
+            assert included_values == values1.intersection(values2)","for values1 in [{'guid_0', 'guid_1'}, {'guid_3', 'guid_6', 'guid_20'}, {'guid_2'}]:
+    for values2 in [{'guid_2', 'guid_1'}, {'guid_5', 'guid_9'}, {'guid_2'}]:
+        test_predicate = in_reduce([in_set(values1, 'volume_guid'), in_set(values2, 'volume_guid')], all)
+        included_values = set()
+        for val in all_values:
+            if test_predicate.do_include({'volume_guid': val}):
+                included_values.add(val)
+        assert included_values == values1.intersection(values2)",```,Cannot refactor,-1
+mindmeld,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mindmeld/mindmeld/components/role_classifier.py,https://github.com/cisco/mindmeld/tree/master/mindmeld/components/role_classifier.py,RoleClassifier,fit$79,"def fit(self, queries=None, label_set=None, incremental_timestamp=None, load_cached=True, **kwargs):
+    """"""Trains a statistical model for role classification using the provided training examples.
+
+        Args:
+            queries (list of ProcessedQuery): The labeled queries to use as training data
+            label_set (list, optional): A label set to load. If not specified, the default
+                training set will be loaded.
+            incremental_timestamp (str, optional): The timestamp folder to cache models in
+        """"""
+    logger.info('Fitting role classifier: domain=%r, intent=%r, entity_type=%r', self.domain, self.intent, self.entity_type)
+    model_config = self._get_model_config(**kwargs)
+    label_set = label_set or model_config.train_label_set or DEFAULT_TRAIN_SET_REGEX
+    queries = self._resolve_queries(queries, label_set)
+    new_hash = self._get_model_hash(model_config, queries)
+    cached_model_path = self._resource_loader.hash_to_model_path.get(new_hash)
+    if incremental_timestamp and cached_model_path:
+        logger.info('No need to fit. Previous model is cached.')
+        if load_cached:
+            self.load(cached_model_path)
+            return True
+        return False
+    (examples, labels) = self._get_examples_and_labels(queries)
+    if examples:
+        self.roles = set()
+        for label in labels:
+            self.roles.add(label)
+        model = create_model(model_config)
+        model.initialize_resources(self._resource_loader, examples, labels)
+        model.fit(examples, labels)
+        self._model = model
+        self.config = ClassifierConfig.from_model_config(self._model.config)
+    self.hash = new_hash
+    self.ready = True
+    self.dirty = True
+    return True","for label in labels:
+    self.roles.add(label)",roles = {label for label in labels},['self.roles = {label for label in labels}'],0
+nltk,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nltk/nltk/sem/evaluate.py,https://github.com/nltk/nltk/tree/master/nltk/sem/evaluate.py,,set2rel$79,"def set2rel(s):
+    """"""
+    Convert a set containing individuals (strings or numbers) into a set of
+    unary tuples. Any tuples of strings already in the set are passed through
+    unchanged.
+
+    For example:
+      - set(['a', 'b']) => set([('a',), ('b',)])
+      - set([3, 27]) => set([('3',), ('27',)])
+
+    :type s: set
+    :rtype: set of tuple of str
+    """"""
+    new = set()
+    for elem in s:
+        if isinstance(elem, str):
+            new.add((elem,))
+        elif isinstance(elem, int):
+            new.add(str(elem))
+        else:
+            new.add(elem)
+    return new","for elem in s:
+    if isinstance(elem, str):
+        new.add((elem,))
+    elif isinstance(elem, int):
+        new.add(str(elem))
+    else:
+        new.add(elem)","new = {(elem,) if isinstance(elem, str) else str(elem) if isinstance(elem, int) else elem for elem in s}","['new = {(elem,) if isinstance(elem, str) else str(elem) if isinstance(elem, int) else elem for elem in s}']",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/sysmod.py,https://github.com/saltstack/salt/tree/master/salt/modules/sysmod.py,,list_runners$620,"def list_runners(*args):
+    """"""
+    List the runners loaded on the minion
+
+    .. versionadded:: 2014.7.0
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' sys.list_runners
+
+    Runner names can be specified as globs.
+
+    .. versionadded:: 2015.5.0
+
+    .. code-block:: bash
+
+        salt '*' sys.list_runners 'm*'
+
+    """"""
+    run_ = salt.runner.Runner(__opts__)
+    runners = set()
+    if not args:
+        for func in run_.functions:
+            runners.add(func.split('.')[0])
+        return sorted(runners)
+    for module in args:
+        if '*' in module:
+            for func in fnmatch.filter(run_.functions, module):
+                runners.add(func.split('.')[0])
+        else:
+            for func in run_.functions:
+                mod_test = func.split('.')[0]
+                if mod_test == module:
+                    runners.add(mod_test)
+    return sorted(runners)","for module in args:
+    if '*' in module:
+        for func in fnmatch.filter(run_.functions, module):
+            runners.add(func.split('.')[0])
+    else:
+        for func in run_.functions:
+            mod_test = func.split('.')[0]
+            if mod_test == module:
+                runners.add(mod_test)","runners = {func.split('.')[0] for module in args for func in fnmatch.filter(run_.functions, module)}.union({func.split('.')[0] for module in args for func in run_.functions if func.split('.')[0] == module})",Cannot refactor,-1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/sysmod.py,https://github.com/saltstack/salt/tree/master/salt/modules/sysmod.py,,list_runners$620,"def list_runners(*args):
+    """"""
+    List the runners loaded on the minion
+
+    .. versionadded:: 2014.7.0
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' sys.list_runners
+
+    Runner names can be specified as globs.
+
+    .. versionadded:: 2015.5.0
+
+    .. code-block:: bash
+
+        salt '*' sys.list_runners 'm*'
+
+    """"""
+    run_ = salt.runner.Runner(__opts__)
+    runners = set()
+    if not args:
+        for func in run_.functions:
+            runners.add(func.split('.')[0])
+        return sorted(runners)
+    for module in args:
+        if '*' in module:
+            for func in fnmatch.filter(run_.functions, module):
+                runners.add(func.split('.')[0])
+        else:
+            for func in run_.functions:
+                mod_test = func.split('.')[0]
+                if mod_test == module:
+                    runners.add(mod_test)
+    return sorted(runners)","for func in run_.functions:
+    runners.add(func.split('.')[0])",runners = {func.split('.')[0] for func in run_.functions},"[""runners = {func.split('.')[0] for func in run_.functions}""]",1
+opentelemetry-python,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/opentelemetry-python/opentelemetry-api/tests/propagators/test_composite.py,https://github.com/open-telemetry/opentelemetry-python/tree/master/opentelemetry-api/tests/propagators/test_composite.py,TestCompositePropagator,test_fields$122,"def test_fields(self):
+    propagator = CompositePropagator([self.mock_propagator_0, self.mock_propagator_1, self.mock_propagator_2])
+    mock_setter = Mock()
+    propagator.inject({}, setter=mock_setter)
+    inject_fields = set()
+    for mock_call in mock_setter.mock_calls:
+        inject_fields.add(mock_call[1][1])
+    self.assertEqual(inject_fields, propagator.fields)","for mock_call in mock_setter.mock_calls:
+    inject_fields.add(mock_call[1][1])",entries = {mock_call[1][1] for mock_call in mock_setter.mock_calls},['inject_fields = {mock_call[1][1] for mock_call in mock_setter.mock_calls}'],0
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/win_service.py,https://github.com/saltstack/salt/tree/master/salt/modules/win_service.py,,get_all$225,"def get_all():
+    """"""
+    Return all installed services
+
+    Returns:
+        list: Returns a list of all services on the system.
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' service.get_all
+    """"""
+    services = _get_services()
+    ret = set()
+    for service in services:
+        ret.add(service['ServiceName'])
+    return sorted(ret)","for service in services:
+    ret.add(service['ServiceName'])",ret = {service['ServiceName'] for service in services},"[""ret = {service['ServiceName'] for service in services}""]",1
+sympy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/sympy/sympy/solvers/polysys.py,https://github.com/sympy/sympy/tree/master/sympy/solvers/polysys.py,,solve_triangulated$302,"def solve_triangulated(polys, *gens, **args):
+    """"""
+    Solve a polynomial system using Gianni-Kalkbrenner algorithm.
+
+    The algorithm proceeds by computing one Groebner basis in the ground
+    domain and then by iteratively computing polynomial factorizations in
+    appropriately constructed algebraic extensions of the ground domain.
+
+    Parameters
+    ==========
+
+    polys: a list/tuple/set
+        Listing all the equations that are needed to be solved
+    gens: generators
+        generators of the equations in polys for which we want the
+        solutions
+    args: Keyword arguments
+        Special options for solving the equations
+
+    Returns
+    =======
+
+    List[Tuple]
+        A List of tuples. Solutions for symbols that satisfy the
+        equations listed in polys
+
+    Examples
+    ========
+
+    >>> from sympy import solve_triangulated
+    >>> from sympy.abc import x, y, z
+
+    >>> F = [x**2 + y + z - 1, x + y**2 + z - 1, x + y + z**2 - 1]
+
+    >>> solve_triangulated(F, x, y, z)
+    [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
+
+    References
+    ==========
+
+    1. Patrizia Gianni, Teo Mora, Algebraic Solution of System of
+    Polynomial Equations using Groebner Bases, AAECC-5 on Applied Algebra,
+    Algebraic Algorithms and Error-Correcting Codes, LNCS 356 247--257, 1989
+
+    """"""
+    G = groebner(polys, gens, polys=True)
+    G = list(reversed(G))
+    domain = args.get('domain')
+    if domain is not None:
+        for (i, g) in enumerate(G):
+            G[i] = g.set_domain(domain)
+    (f, G) = (G[0].ltrim(-1), G[1:])
+    dom = f.get_domain()
+    zeros = f.ground_roots()
+    solutions = set()
+    for zero in zeros:
+        solutions.add(((zero,), dom))
+    var_seq = reversed(gens[:-1])
+    vars_seq = postfixes(gens[1:])
+    for (var, vars) in zip(var_seq, vars_seq):
+        _solutions = set()
+        for (values, dom) in solutions:
+            (H, mapping) = ([], list(zip(vars, values)))
+            for g in G:
+                _vars = (var,) + vars
+                if g.has_only_gens(*_vars) and g.degree(var) != 0:
+                    h = g.ltrim(var).eval(dict(mapping))
+                    if g.degree(var) == h.degree():
+                        H.append(h)
+            p = min(H, key=lambda h: h.degree())
+            zeros = p.ground_roots()
+            for zero in zeros:
+                if not zero.is_Rational:
+                    dom_zero = dom.algebraic_field(zero)
+                else:
+                    dom_zero = dom
+                _solutions.add(((zero,) + values, dom_zero))
+        solutions = _solutions
+    solutions = list(solutions)
+    for (i, (solution, _)) in enumerate(solutions):
+        solutions[i] = solution
+    return sorted(solutions, key=default_sort_key)","for zero in zeros:
+    solutions.add(((zero,), dom))","solutions = {((zero,), dom) for zero in zeros}","['solutions = {((zero,), dom) for zero in zeros}']",1
+sympy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/sympy/sympy/solvers/polysys.py,https://github.com/sympy/sympy/tree/master/sympy/solvers/polysys.py,,solve_triangulated$302,"def solve_triangulated(polys, *gens, **args):
+    """"""
+    Solve a polynomial system using Gianni-Kalkbrenner algorithm.
+
+    The algorithm proceeds by computing one Groebner basis in the ground
+    domain and then by iteratively computing polynomial factorizations in
+    appropriately constructed algebraic extensions of the ground domain.
+
+    Parameters
+    ==========
+
+    polys: a list/tuple/set
+        Listing all the equations that are needed to be solved
+    gens: generators
+        generators of the equations in polys for which we want the
+        solutions
+    args: Keyword arguments
+        Special options for solving the equations
+
+    Returns
+    =======
+
+    List[Tuple]
+        A List of tuples. Solutions for symbols that satisfy the
+        equations listed in polys
+
+    Examples
+    ========
+
+    >>> from sympy import solve_triangulated
+    >>> from sympy.abc import x, y, z
+
+    >>> F = [x**2 + y + z - 1, x + y**2 + z - 1, x + y + z**2 - 1]
+
+    >>> solve_triangulated(F, x, y, z)
+    [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
+
+    References
+    ==========
+
+    1. Patrizia Gianni, Teo Mora, Algebraic Solution of System of
+    Polynomial Equations using Groebner Bases, AAECC-5 on Applied Algebra,
+    Algebraic Algorithms and Error-Correcting Codes, LNCS 356 247--257, 1989
+
+    """"""
+    G = groebner(polys, gens, polys=True)
+    G = list(reversed(G))
+    domain = args.get('domain')
+    if domain is not None:
+        for (i, g) in enumerate(G):
+            G[i] = g.set_domain(domain)
+    (f, G) = (G[0].ltrim(-1), G[1:])
+    dom = f.get_domain()
+    zeros = f.ground_roots()
+    solutions = set()
+    for zero in zeros:
+        solutions.add(((zero,), dom))
+    var_seq = reversed(gens[:-1])
+    vars_seq = postfixes(gens[1:])
+    for (var, vars) in zip(var_seq, vars_seq):
+        _solutions = set()
+        for (values, dom) in solutions:
+            (H, mapping) = ([], list(zip(vars, values)))
+            for g in G:
+                _vars = (var,) + vars
+                if g.has_only_gens(*_vars) and g.degree(var) != 0:
+                    h = g.ltrim(var).eval(dict(mapping))
+                    if g.degree(var) == h.degree():
+                        H.append(h)
+            p = min(H, key=lambda h: h.degree())
+            zeros = p.ground_roots()
+            for zero in zeros:
+                if not zero.is_Rational:
+                    dom_zero = dom.algebraic_field(zero)
+                else:
+                    dom_zero = dom
+                _solutions.add(((zero,) + values, dom_zero))
+        solutions = _solutions
+    solutions = list(solutions)
+    for (i, (solution, _)) in enumerate(solutions):
+        solutions[i] = solution
+    return sorted(solutions, key=default_sort_key)","for (values, dom) in solutions:
+    (H, mapping) = ([], list(zip(vars, values)))
+    for g in G:
+        _vars = (var,) + vars
+        if g.has_only_gens(*_vars) and g.degree(var) != 0:
+            h = g.ltrim(var).eval(dict(mapping))
+            if g.degree(var) == h.degree():
+                H.append(h)
+    p = min(H, key=lambda h: h.degree())
+    zeros = p.ground_roots()
+    for zero in zeros:
+        if not zero.is_Rational:
+            dom_zero = dom.algebraic_field(zero)
+        else:
+            dom_zero = dom
+        _solutions.add(((zero,) + values, dom_zero))","solutions = {((zero,) + values, dom.algebraic_field(zero)) if not zero.is_Rational else ((zero,) + values, dom) for (values, dom) in solutions for (zero, var) in [(p, var) for (var, G) in self._generators.items()] for (H, mapping) in [([], list(zip(vars, values)))] for g in G for _vars in [(var,) + vars] if g.has_only_gens(*_vars) and g.degree(var) != 0 for h in [g.ltrim(var).eval(dict(mapping))] if g.degree(var) == h.degree() for p in [min(H, key=lambda h: h.degree())] for zeros in [p.ground_roots()]}",Cannot refactor,-1
+OctoPrint,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/OctoPrint/versioneer.py,https://github.com/OctoPrint/OctoPrint/tree/master//versioneer.py,,do_setup$2137,"def do_setup():
+    root = get_root()
+    try:
+        cfg = get_config_from_root(root)
+    except (EnvironmentError, configparser.NoSectionError, configparser.NoOptionError) as e:
+        if isinstance(e, (EnvironmentError, configparser.NoSectionError)):
+            print('Adding sample versioneer config to setup.cfg', file=sys.stderr)
+            with io.open(os.path.join(root, 'setup.cfg'), 'at', encoding='utf-8') as f:
+                f.write(SAMPLE_CONFIG)
+        print(CONFIG_ERROR, file=sys.stderr)
+        return 1
+    print(' creating %s' % cfg.versionfile_source)
+    with io.open(cfg.versionfile_source, 'wt', encoding='utf-8') as f:
+        LONG = LONG_VERSION_PY[cfg.VCS]
+        f.write(LONG % {'DOLLAR': '$', 'STYLE': cfg.style, 'TAG_PREFIX': cfg.tag_prefix, 'PARENTDIR_PREFIX': cfg.parentdir_prefix, 'VERSIONFILE_SOURCE': cfg.versionfile_source, 'LOOKUP_FILE': cfg.lookupfile})
+    ipy = os.path.join(os.path.dirname(cfg.versionfile_source), '__init__.py')
+    if os.path.exists(ipy):
+        try:
+            with io.open(ipy, 'rt', encoding='utf-8') as f:
+                old = f.read()
+        except EnvironmentError:
+            old = ''
+        if 'from ._version import get_versions' not in old:
+            print(' appending to %s' % ipy)
+            with io.open(ipy, 'at', encoding='utf-8') as f:
+                f.write(INIT_PY_SNIPPET)
+        else:
+            print(' %s unmodified' % ipy)
+    else:
+        print("" %s doesn't exist, ok"" % ipy)
+        ipy = None
+    manifest_in = os.path.join(root, 'MANIFEST.in')
+    simple_includes = set()
+    try:
+        with io.open(manifest_in, 'r') as f:
+            for line in f:
+                if line.startswith('include '):
+                    for include in line.split()[1:]:
+                        simple_includes.add(include)
+    except EnvironmentError:
+        pass
+    if 'versioneer.py' not in simple_includes:
+        print("" appending 'versioneer.py' to MANIFEST.in"")
+        with io.open(manifest_in, 'at', encoding='utf-8') as f:
+            f.write('include versioneer.py\n')
+    else:
+        print("" 'versioneer.py' already in MANIFEST.in"")
+    if cfg.versionfile_source not in simple_includes:
+        print("" appending versionfile_source ('%s') to MANIFEST.in"" % cfg.versionfile_source)
+        with io.open(manifest_in, 'at', encoding='utf-8') as f:
+            f.write('include %s\n' % cfg.versionfile_source)
+    else:
+        print(' versionfile_source already in MANIFEST.in')
+    do_vcs_install(manifest_in, cfg.versionfile_source, ipy)
+    return 0","for line in f:
+    if line.startswith('include '):
+        for include in line.split()[1:]:
+            simple_includes.add(include)",simple_includes = {include for line in f for include in line.split()[1:] if line.startswith('include ')},"[""simple_includes = {include for line in f if line.startswith('include ') for include in line.split()[1:]}""]",0
+dnsviz,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dnsviz/dnsviz/analysis/status.py,https://github.com/dnsviz/dnsviz/tree/master/dnsviz/analysis/status.py,DSStatus,__init__$390,"def __init__(self, ds, ds_meta, dnskey, supported_digest_algs):
+    self.ds = ds
+    self.ds_meta = ds_meta
+    self.dnskey = dnskey
+    self.warnings = []
+    self.errors = []
+    if self.dnskey is None:
+        self.digest_valid = None
+    else:
+        self.digest_valid = crypto.validate_ds_digest(ds.digest_type, ds.digest, dnskey.message_for_ds())
+    self.validation_status = DS_STATUS_VALID
+    if self.digest_valid is None or self.ds.digest_type not in supported_digest_algs:
+        if self.dnskey is None:
+            if self.validation_status == DS_STATUS_VALID:
+                self.validation_status = DS_STATUS_INDETERMINATE_NO_DNSKEY
+        elif self.ds.digest_type in DS_DIGEST_ALGS_VALIDATION_PROHIBITED:
+            if self.validation_status == DS_STATUS_VALID:
+                self.validation_status = DS_STATUS_ALGORITHM_IGNORED
+        else:
+            if self.validation_status == DS_STATUS_VALID:
+                self.validation_status = DS_STATUS_INDETERMINATE_UNKNOWN_ALGORITHM
+            self.warnings.append(Errors.DigestAlgorithmNotSupported(algorithm=self.ds.digest_type))
+    if self.ds.digest_type in DS_DIGEST_ALGS_VALIDATION_PROHIBITED:
+        self.warnings.append(Errors.DigestAlgorithmValidationProhibited(algorithm=self.ds.digest_type))
+    if self.ds.digest_type in DS_DIGEST_ALGS_PROHIBITED:
+        self.warnings.append(Errors.DigestAlgorithmProhibited(algorithm=self.ds.digest_type))
+    elif self.ds.digest_type in DS_DIGEST_ALGS_NOT_RECOMMENDED:
+        self.warnings.append(Errors.DigestAlgorithmNotRecommended(algorithm=self.ds.digest_type))
+    if self.dnskey is not None and self.dnskey.rdata.flags & fmt.DNSKEY_FLAGS['revoke']:
+        if self.dnskey.key_tag != self.ds.key_tag:
+            if self.validation_status == DS_STATUS_VALID:
+                self.validation_status = DS_STATUS_INDETERMINATE_MATCH_PRE_REVOKE
+        else:
+            self.errors.append(Errors.DNSKEYRevokedDS())
+            if self.validation_status == DS_STATUS_VALID:
+                self.validation_status = DS_STATUS_INVALID
+    if self.digest_valid == False and self.ds.digest_type in supported_digest_algs:
+        if self.dnskey.key_tag == self.ds.key_tag:
+            if self.validation_status == DS_STATUS_VALID:
+                self.validation_status = DS_STATUS_INVALID_DIGEST
+            self.errors.append(Errors.DigestInvalid())
+    if self.ds.digest_type == 1:
+        stronger_algs_all_ds = set()
+        for ds_rdata in self.ds_meta.rrset:
+            if ds_rdata.digest_type in DS_DIGEST_ALGS_STRONGER_THAN_SHA1:
+                stronger_algs_all_ds.add(ds_rdata.digest_type)
+        stronger_algs_all_ds.intersection_update(supported_digest_algs)
+        if stronger_algs_all_ds:
+            for digest_alg in stronger_algs_all_ds:
+                if digest_alg in DS_DIGEST_ALGS_IGNORING_SHA1:
+                    if self.validation_status == DS_STATUS_VALID:
+                        self.validation_status = DS_STATUS_ALGORITHM_IGNORED
+                    self.warnings.append(Errors.DSDigestAlgorithmIgnored(algorithm=1, new_algorithm=digest_alg))
+                else:
+                    self.warnings.append(Errors.DSDigestAlgorithmMaybeIgnored(algorithm=1, new_algorithm=digest_alg))","for ds_rdata in self.ds_meta.rrset:
+    if ds_rdata.digest_type in DS_DIGEST_ALGS_STRONGER_THAN_SHA1:
+        stronger_algs_all_ds.add(ds_rdata.digest_type)",stronger_algs_all_ds = {ds_rdata.digest_type for ds_rdata in self.ds_meta.rrset if ds_rdata.digest_type in DS_DIGEST_ALGS_STRONGER_THAN_SHA1},['stronger_algs_all_ds = {ds_rdata.digest_type for ds_rdata in self.ds_meta.rrset if ds_rdata.digest_type in DS_DIGEST_ALGS_STRONGER_THAN_SHA1}'],1
+DeTTECT,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/DeTTECT/eql_yaml.py,https://github.com/rabobank-cdc/DeTTECT/tree/master//eql_yaml.py,,_get_applicable_to_yaml_values$409,"def _get_applicable_to_yaml_values(filename, type):
+    """"""
+    Get all the applicable to values, in lower case, from the provided YAML file.
+    :param filename: file path of the YAML file
+    :param type: type of YAML object to get the applicable to values from
+    :retturn: set with all applicable to values in lower case
+    """"""
+    app_to_values = set()
+    if type == FILE_TYPE_DATA_SOURCE_ADMINISTRATION:
+        (_, _, systems, _, _) = load_data_sources(filename)
+        for system in systems:
+            app_to_values.add(system['applicable_to'].lower())
+    return app_to_values","for system in systems:
+    app_to_values.add(system['applicable_to'].lower())",app_to_values = {system['applicable_to'].lower() for system in systems},"[""app_to_values = {system['applicable_to'].lower() for system in systems}""]",1
+Automatic-Udemy-Course-Enroller-GET-PAID-UDEMY-COURSES-for-FREE,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Automatic-Udemy-Course-Enroller-GET-PAID-UDEMY-COURSES-for-FREE/udemy_enroller/scrapers/tutorialbar.py,https://github.com/aapatre/Automatic-Udemy-Course-Enroller-GET-PAID-UDEMY-COURSES-for-FREE/tree/master/udemy_enroller/scrapers/tutorialbar.py,TutorialBarScraper,_filter_ad_domains$62,"def _filter_ad_domains(self, udemy_links) -> List:
+    """"""
+        Filter out any known ad domains from the links scraped
+
+        :param list udemy_links: List of urls to filter ad domains from
+        :return: A list of filtered urls
+        """"""
+    ad_links = set()
+    for link in udemy_links:
+        for ad_domain in self.AD_DOMAINS:
+            if link.startswith(ad_domain):
+                ad_links.add(link)
+    if ad_links:
+        logger.info(f'Removing ad links from courses: {ad_links}')
+    return list(set(udemy_links) - ad_links)","for link in udemy_links:
+    for ad_domain in self.AD_DOMAINS:
+        if link.startswith(ad_domain):
+            ad_links.add(link)",ad_links = {link for link in udemy_links for ad_domain in self.AD_DOMAINS if link.startswith(ad_domain)},['ad_links = {link for link in udemy_links for ad_domain in self.AD_DOMAINS if link.startswith(ad_domain)}'],1
+MozDef,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/MozDef/alerts/proxy_drop_non_standard_port.py,https://github.com/mozilla/MozDef/tree/master/alerts/proxy_drop_non_standard_port.py,AlertProxyDropNonStandardPort,onAggregation$38,"def onAggregation(self, aggreg):
+    category = 'squid'
+    tags = ['squid', 'proxy']
+    severity = 'WARNING'
+    destinations = set()
+    for event in aggreg['allevents']:
+        destinations.add(event['_source']['details']['destination'])
+    summary = 'Suspicious Proxy DROP event(s) detected from {0} to the following non-std port destination(s): {1}'.format(aggreg['value'], ','.join(sorted(destinations)))
+    return self.createAlertDict(summary, category, tags, aggreg['events'], severity)","for event in aggreg['allevents']:
+    destinations.add(event['_source']['details']['destination'])",destinations = {event['_source']['details']['destination'] for event in aggreg['allevents']},"[""destinations = {event['_source']['details']['destination'] for event in aggreg['allevents']}""]",1
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/runit.py,https://github.com/saltstack/salt/tree/master/salt/modules/runit.py,,get_svc_broken_path$274,"def get_svc_broken_path(name='*'):
+    """"""
+    Return list of broken path(s) in SERVICE_DIR that match ``name``
+
+    A path is broken if it is a broken symlink or can not be a runit service
+
+    name
+        a glob for service name. default is '*'
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' runit.get_svc_broken_path <service name>
+    """"""
+    if not SERVICE_DIR:
+        raise CommandExecutionError('Could not find service directory.')
+    ret = set()
+    for el in glob.glob(os.path.join(SERVICE_DIR, name)):
+        if not _is_svc(el):
+            ret.add(el)
+    return sorted(ret)","for el in glob.glob(os.path.join(SERVICE_DIR, name)):
+    if not _is_svc(el):
+        ret.add(el)","ret = {el for el in glob.glob(os.path.join(SERVICE_DIR, name)) if not _is_svc(el)}","['ret = {el for el in glob.glob(os.path.join(SERVICE_DIR, name)) if not _is_svc(el)}']",1
+ARL,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ARL/app/services/searchEngines.py,https://github.com/TophantTechnology/ARL/tree/master/app/services/searchEngines.py,BingSearch,match_urls$99,"def match_urls(self, html):
+    dom = pq(html)
+    result_items = dom(self.pq_query).items()
+    urls_result = [item.attr('href') for item in result_items]
+    urls = set()
+    for u in urls_result:
+        urls.add(u)
+    return list(urls)","for u in urls_result:
+    urls.add(u)",urls = {u for u in urls_result},['urls = {u for u in urls_result}'],1
+hydrus,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/hydrus/hydrus/client/networking/ClientNetworkingDomain.py,https://github.com/hydrusnetwork/hydrus/tree/master/hydrus/client/networking/ClientNetworkingDomain.py,NetworkDomainManager,STATICLinkURLClassesAndParsers$2351,"def STATICLinkURLClassesAndParsers(url_classes, parsers, existing_url_class_keys_to_parser_keys):
+    url_classes = list(url_classes)
+    NetworkDomainManager.STATICSortURLClassesDescendingComplexity(url_classes)
+    parsers = list(parsers)
+    parsers.sort(key=lambda p: p.GetName())
+    new_url_class_keys_to_parser_keys = {}
+    api_pairs = ConvertURLClassesIntoAPIPairs(url_classes)
+    api_pair_unparsable_url_classes = set()
+    for (a, b) in api_pairs:
+        api_pair_unparsable_url_classes.add(a)
+    for parser in parsers:
+        example_urls = parser.GetExampleURLs()
+        for example_url in example_urls:
+            for url_class in url_classes:
+                if url_class in api_pair_unparsable_url_classes:
+                    continue
+                if url_class.Matches(example_url):
+                    url_class_key = url_class.GetClassKey()
+                    parsable = url_class.IsParsable()
+                    linkable = url_class_key not in existing_url_class_keys_to_parser_keys and url_class_key not in new_url_class_keys_to_parser_keys
+                    if parsable and linkable:
+                        new_url_class_keys_to_parser_keys[url_class_key] = parser.GetParserKey()
+                    break
+    '\n        #\n        \n        for url_class in url_classes:\n            \n            if not url_class.IsParsable() or url_class in api_pair_unparsable_url_classes:\n                \n                continue\n                \n            \n            url_class_key = url_class.GetClassKey()\n            \n            if url_class_key in existing_url_class_keys_to_parser_keys:\n                \n                continue\n                \n            \n            for parser in parsers:\n                \n                example_urls = parser.GetExampleURLs()\n                \n                if True in ( url_class.Matches( example_url ) for example_url in example_urls ):\n                    \n                    new_url_class_keys_to_parser_keys[ url_class_key ] = parser.GetParserKey()\n                    \n                    break\n                    \n                \n            \n        '
+    return new_url_class_keys_to_parser_keys","for (a, b) in api_pairs:
+    api_pair_unparsable_url_classes.add(a)","api_pair_unparsable_url_classes = {a for (a, b) in api_pairs}","['api_pair_unparsable_url_classes = {a for (a, b) in api_pairs}']",1
+anago,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/anago/tests/test_wrapper.py,https://github.com/Hironsan/anago/tree/master/tests/test_wrapper.py,TestWrapper,test_train_vocab_init$84,"def test_train_vocab_init(self):
+    vocab = set()
+    for words in np.r_[self.x_train, self.x_test, self.x_test]:
+        for word in words:
+            vocab.add(word)
+    model = anago.Sequence(initial_vocab=vocab, embeddings=self.embeddings)
+    model.fit(self.x_train, self.y_train, self.x_test, self.y_test)","for words in np.r_[self.x_train, self.x_test, self.x_test]:
+    for word in words:
+        vocab.add(word)","vocab = {word for words in np.r_[self.x_train, self.x_test, self.x_test] for word in words}","['vocab = {word for words in np.r_[self.x_train, self.x_test, self.x_test] for word in words}']",1
+ShuiZe_0x727,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ShuiZe_0x727/Plugins/infoGather/subdomain/Sublist3r/sublist3r.py,https://github.com/0x727/ShuiZe_0x727/tree/master/Plugins/infoGather/subdomain/Sublist3r/sublist3r.py,,main$866,"def main(domain, threads, savefile, ports, silent, verbose, enable_bruteforce, engines):
+    bruteforce_list = set()
+    search_list = set()
+    if is_windows:
+        subdomains_queue = list()
+    else:
+        return []
+    if enable_bruteforce or enable_bruteforce is None:
+        enable_bruteforce = True
+    domain_check = re.compile('^(http|https)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,}$')
+    if not domain_check.match(domain):
+        if not silent:
+            print(R + 'Error: Please enter a valid domain' + W)
+        return []
+    if not domain.startswith('http://') or not domain.startswith('https://'):
+        domain = 'http://' + domain
+    parsed_domain = urlparse.urlparse(domain)
+    if not silent:
+        pass
+    if verbose and (not silent):
+        pass
+    supported_engines = {'baidu': BaiduEnum, 'yahoo': YahooEnum, 'bing': BingEnum, 'ask': AskEnum, 'netcraft': NetcraftEnum, 'dnsdumpster': DNSdumpster, 'virustotal': Virustotal, 'threatcrowd': ThreatCrowd, 'ssl': CrtSearch, 'passivedns': PassiveDNS}
+    chosenEnums = []
+    if engines is None:
+        chosenEnums = [BaiduEnum, YahooEnum, GoogleEnum, BingEnum, AskEnum, NetcraftEnum, DNSdumpster, Virustotal, ThreatCrowd, CrtSearch, PassiveDNS]
+    else:
+        engines = engines.split(',')
+        for engine in engines:
+            if engine.lower() in supported_engines:
+                chosenEnums.append(supported_engines[engine.lower()])
+    enums = [enum(domain, [], q=subdomains_queue, silent=silent, verbose=verbose) for enum in chosenEnums]
+    for enum in enums:
+        enum.start()
+    for enum in enums:
+        enum.join()
+    subdomains = set(subdomains_queue)
+    for subdomain in subdomains:
+        search_list.add(subdomain)
+    if enable_bruteforce:
+        if not silent:
+            print(G + '[-] Starting bruteforce module now using subbrute..' + W)
+        record_type = False
+        path_to_file = os.path.dirname(os.path.realpath(__file__))
+        subs = os.path.join(path_to_file, 'subbrute', 'names.txt')
+        resolvers = os.path.join(path_to_file, 'subbrute', 'resolvers.txt')
+        process_count = threads
+        output = False
+        json_output = False
+        bruteforce_list = subbrute.print_target(parsed_domain.netloc, record_type, subs, resolvers, process_count, output, json_output, search_list, verbose)
+    subdomains = search_list.union(bruteforce_list)
+    if subdomains:
+        subdomains = sorted(subdomains, key=subdomain_sorting_key)
+        if savefile:
+            write_file(savefile, subdomains)
+        if not silent:
+            print(Y + '[+] Total Unique Subdomains Found: %s' % len(subdomains) + W)
+        if ports:
+            if not silent:
+                print(G + '[-] Start port scan now for the following ports: %s%s' % (Y, ports) + W)
+            ports = ports.split(',')
+            pscan = portscan(subdomains, ports)
+            pscan.run()
+        elif not silent:
+            for subdomain in subdomains:
+                pass
+    return subdomains","for subdomain in subdomains:
+    search_list.add(subdomain)",search_list = {subdomain for subdomain in subdomains},['search_list = {subdomain for subdomain in subdomains}'],1
+prjxray,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/prjxray/fuzzers/060-bram-cascades/top.py,https://github.com/SymbiFlow/prjxray/tree/master/fuzzers/060-bram-cascades/top.py,,random_sdp_bram$120,"def random_sdp_bram(luts, name, modules, lines):
+    sdp_choices = set()
+    for width in (1, 2, 4, 8, 16, 18, 32, 36):
+        sdp_choices.add((width, (1, max_address_bits(width))))
+    for nbram in range(2, MAX_BRAM + 1):
+        sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+        sdp_choices.add((nbram * 36, (1, max_address_bits(nbram * 36))))
+        sdp_choices.add((nbram * 16, (1, max_address_bits(nbram * 16))))
+        sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+        for address_bits in range(1, 4):
+            sdp_choices.add((nbram * 16, (address_bits, address_bits)))
+    sdp_choices = sorted(sdp_choices)
+    (width, address_bits_range) = random.choice(sdp_choices)
+    address_bits = random.randint(*address_bits_range)
+    return emit_sdp_bram(luts, name, modules, lines, width, address_bits)","for width in (1, 2, 4, 8, 16, 18, 32, 36):
+    sdp_choices.add((width, (1, max_address_bits(width))))","sdp_choices = {(width, (1, max_address_bits(width))) for width in (1, 2, 4, 8, 16, 18, 32, 36)}","['sdp_choices = {(width, (1, max_address_bits(width))) for width in (1, 2, 4, 8, 16, 18, 32, 36)}']",1
+prjxray,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/prjxray/fuzzers/060-bram-cascades/top.py,https://github.com/SymbiFlow/prjxray/tree/master/fuzzers/060-bram-cascades/top.py,,random_sdp_bram$120,"def random_sdp_bram(luts, name, modules, lines):
+    sdp_choices = set()
+    for width in (1, 2, 4, 8, 16, 18, 32, 36):
+        sdp_choices.add((width, (1, max_address_bits(width))))
+    for nbram in range(2, MAX_BRAM + 1):
+        sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+        sdp_choices.add((nbram * 36, (1, max_address_bits(nbram * 36))))
+        sdp_choices.add((nbram * 16, (1, max_address_bits(nbram * 16))))
+        sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+        for address_bits in range(1, 4):
+            sdp_choices.add((nbram * 16, (address_bits, address_bits)))
+    sdp_choices = sorted(sdp_choices)
+    (width, address_bits_range) = random.choice(sdp_choices)
+    address_bits = random.randint(*address_bits_range)
+    return emit_sdp_bram(luts, name, modules, lines, width, address_bits)","for nbram in range(2, MAX_BRAM + 1):
+    sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+    sdp_choices.add((nbram * 36, (1, max_address_bits(nbram * 36))))
+    sdp_choices.add((nbram * 16, (1, max_address_bits(nbram * 16))))
+    sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+    for address_bits in range(1, 4):
+        sdp_choices.add((nbram * 16, (address_bits, address_bits)))","sdp_choices = {(nbram * size, (1, max_address_bits(nbram * size))) for nbram in range(2, MAX_BRAM + 1) for size in [32, 36, 16]} | {(nbram * 16, (address_bits, address_bits)) for nbram in range(2, MAX_BRAM + 1) for address_bits in range(1, 4)}",Cannot refactor,-1
+horovod,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/horovod/horovod/runner/util/network.py,https://github.com/horovod/horovod/tree/master/horovod/runner/util/network.py,,get_local_host_addresses$28,"def get_local_host_addresses():
+    local_addresses = set()
+    for intf_info_list in psutil.net_if_addrs().values():
+        for intf_info in intf_info_list:
+            if intf_info.family == socket.AF_INET:
+                local_addresses.add(intf_info.address)
+    return local_addresses","for intf_info_list in psutil.net_if_addrs().values():
+    for intf_info in intf_info_list:
+        if intf_info.family == socket.AF_INET:
+            local_addresses.add(intf_info.address)",local_addresses = {intf_info.address for intf_info_list in psutil.net_if_addrs().values() for intf_info in intf_info_list if intf_info.family == socket.AF_INET},['local_addresses = {intf_info.address for intf_info_list in psutil.net_if_addrs().values() for intf_info in intf_info_list if intf_info.family == socket.AF_INET}'],1
+huey,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/huey/huey/api.py,https://github.com/coleifer/huey/tree/master/huey/api.py,Huey,flush_locks$616,"def flush_locks(self, *names):
+    flushed = set()
+    locks = self._locks
+    if names:
+        lock_template = '%s.lock.%%s' % self.name
+        named_locks = (lock_template % name.strip() for name in names)
+        locks = itertools.chain(locks, named_locks)
+    for lock_key in locks:
+        if self.delete(lock_key):
+            flushed.add(lock_key.split('.lock.', 1)[-1])
+    return flushed","for lock_key in locks:
+    if self.delete(lock_key):
+        flushed.add(lock_key.split('.lock.', 1)[-1])","flushed = {lock_key.split('.lock.', 1)[-1] for lock_key in locks if self.delete(lock_key)}","[""flushed = {lock_key.split('.lock.', 1)[-1] for lock_key in locks if self.delete(lock_key)}""]",1
+meta-dataset,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/meta-dataset/meta_dataset/data/imagenet_specification_test.py,https://github.com/google-research/meta-dataset/tree/master/meta_dataset/data/imagenet_specification_test.py,GraphCopyTest,validate_copy$254,"def validate_copy(self, graph, graph_copy):
+    """"""Make sure graph_copy is a correct copy of graph.""""""
+    for n in graph:
+        wn_id = n.wn_id
+        found_wn_in_copy = False
+        for n_copy in graph_copy:
+            if n_copy.wn_id == wn_id:
+                found_wn_in_copy = True
+                break
+        self.assertTrue(found_wn_in_copy)
+    graph_parent_child_links = set()
+    for s in graph:
+        for c in s.children:
+            graph_parent_child_links.add((s.wn_id, c.wn_id))
+    for s in graph_copy:
+        for (p, c) in graph_parent_child_links:
+            for n in graph_copy:
+                if n.wn_id == c:
+                    c_node = n
+                if n.wn_id == p:
+                    p_node = n
+            self.assertIn(c_node, p_node.children)
+            self.assertIn(p_node, c_node.parents)","for s in graph:
+    for c in s.children:
+        graph_parent_child_links.add((s.wn_id, c.wn_id))","graph_parent_child_links = {(s.wn_id, c.wn_id) for s in graph for c in s.children}","['graph_parent_child_links = {(s.wn_id, c.wn_id) for s in graph for c in s.children}']",1
+astropy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/astropy/astropy/units/core.py,https://github.com/astropy/astropy/tree/master/astropy/units/core.py,UnitBase,compose$1317,"def compose(self, equivalencies=[], units=None, max_depth=2, include_prefix_units=None):
+    """"""
+        Return the simplest possible composite unit(s) that represent
+        the given unit.  Since there may be multiple equally simple
+        compositions of the unit, a list of units is always returned.
+
+        Parameters
+        ----------
+        equivalencies : list of tuple
+            A list of equivalence pairs to also list.  See
+            :ref:`astropy:unit_equivalencies`.
+            This list is in addition to possible global defaults set by, e.g.,
+            `set_enabled_equivalencies`.
+            Use `None` to turn off all equivalencies.
+
+        units : set of `~astropy.units.Unit`, optional
+            If not provided, any known units may be used to compose
+            into.  Otherwise, ``units`` is a dict, module or sequence
+            containing the units to compose into.
+
+        max_depth : int, optional
+            The maximum recursion depth to use when composing into
+            composite units.
+
+        include_prefix_units : bool, optional
+            When `True`, include prefixed units in the result.
+            Default is `True` if a sequence is passed in to ``units``,
+            `False` otherwise.
+
+        Returns
+        -------
+        units : list of `CompositeUnit`
+            A list of candidate compositions.  These will all be
+            equally simple, but it may not be possible to
+            automatically determine which of the candidates are
+            better.
+        """"""
+    if include_prefix_units is None:
+        include_prefix_units = isinstance(units, (list, tuple))
+    equivalencies = self._normalize_equivalencies(equivalencies)
+
+    def has_bases_in_common(a, b):
+        if len(a.bases) == 0 and len(b.bases) == 0:
+            return True
+        for ab in a.bases:
+            for bb in b.bases:
+                if ab == bb:
+                    return True
+        return False
+
+    def has_bases_in_common_with_equiv(unit, other):
+        if has_bases_in_common(unit, other):
+            return True
+        for (funit, tunit, a, b) in equivalencies:
+            if tunit is not None:
+                if unit._is_equivalent(funit):
+                    if has_bases_in_common(tunit.decompose(), other):
+                        return True
+                elif unit._is_equivalent(tunit):
+                    if has_bases_in_common(funit.decompose(), other):
+                        return True
+            elif unit._is_equivalent(funit):
+                if has_bases_in_common(dimensionless_unscaled, other):
+                    return True
+        return False
+
+    def filter_units(units):
+        filtered_namespace = set()
+        for tunit in units:
+            if isinstance(tunit, UnitBase) and (include_prefix_units or not isinstance(tunit, PrefixUnit)) and has_bases_in_common_with_equiv(decomposed, tunit.decompose()):
+                filtered_namespace.add(tunit)
+        return filtered_namespace
+    decomposed = self.decompose()
+    if units is None:
+        units = filter_units(self._get_units_with_same_physical_type(equivalencies))
+        if len(units) == 0:
+            units = get_current_unit_registry().non_prefix_units
+    elif isinstance(units, dict):
+        units = set(filter_units(units.values()))
+    elif inspect.ismodule(units):
+        units = filter_units(vars(units).values())
+    else:
+        units = filter_units(_flatten_units_collection(units))
+
+    def sort_results(results):
+        if not len(results):
+            return []
+        results = list(results)
+        results.sort(key=lambda x: np.abs(x.scale))
+        results.sort(key=lambda x: np.sum(np.abs(x.powers)))
+        results.sort(key=lambda x: np.sum(x.powers) < 0.0)
+        results.sort(key=lambda x: not is_effectively_unity(x.scale))
+        last_result = results[0]
+        filtered = [last_result]
+        for result in results[1:]:
+            if str(result) != str(last_result):
+                filtered.append(result)
+            last_result = result
+        return filtered
+    return sort_results(self._compose(equivalencies=equivalencies, namespace=units, max_depth=max_depth, depth=0, cached_results={}))","for tunit in units:
+    if isinstance(tunit, UnitBase) and (include_prefix_units or not isinstance(tunit, PrefixUnit)) and has_bases_in_common_with_equiv(decomposed, tunit.decompose()):
+        filtered_namespace.add(tunit)","filtered_namespace = {tunit for tunit in units if isinstance(tunit, UnitBase) and (include_prefix_units or not isinstance(tunit, PrefixUnit)) and has_bases_in_common_with_equiv(decomposed, tunit.decompose())}","['filtered_namespace = {tunit for tunit in units if isinstance(tunit, UnitBase) and (include_prefix_units or not isinstance(tunit, PrefixUnit)) and has_bases_in_common_with_equiv(decomposed, tunit.decompose())}']",1
+metaworld,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/metaworld/tests/integration/test_new_api.py,https://github.com/rlworkgroup/metaworld/tree/master/tests/integration/test_new_api.py,,test_all_ml45$111,"def test_all_ml45():
+    ml45 = ML45()
+    train_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml45.train_classes.items()}
+    train_env_rand_vecs = check_tasks_unique(ml45.train_tasks, ml45._train_classes.keys())
+    for task in ml45.train_tasks:
+        env = train_env_instances[task.env_name]
+        env.set_task(task)
+        obs = env.reset()
+        assert env.random_init == True
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+    for env in train_env_instances.values():
+        env.close()
+    del train_env_instances
+    test_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml45.test_classes.items()}
+    test_env_rand_vecs = check_tasks_unique(ml45.test_tasks, ml45._test_classes.keys())
+    for task in ml45.test_tasks:
+        env = test_env_instances[task.env_name]
+        env.set_task(task)
+        obs = env.reset()
+        assert np.all(obs[-3:] == np.array([0, 0, 0]))
+        assert env.observation_space.shape == (39,)
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+    for env in test_env_instances.values():
+        env.close()
+    train_test_rand_vecs = set()
+    for rand_vecs in train_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    for rand_vecs in test_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    assert len(train_test_rand_vecs) == (len(ml45.test_classes.keys()) + len(ml45.train_classes.keys())) * metaworld._N_GOALS
+    del test_env_instances","for rand_vecs in train_env_rand_vecs.values():
+    for rand_vec in rand_vecs:
+        train_test_rand_vecs.add(tuple(rand_vec))",train_test_rand_vecs = {tuple(rand_vec) for rand_vecs in train_env_rand_vecs.values() for rand_vec in rand_vecs},['train_test_rand_vecs = {tuple(rand_vec) for rand_vecs in train_env_rand_vecs.values() for rand_vec in rand_vecs}'],1
+metaworld,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/metaworld/tests/integration/test_new_api.py,https://github.com/rlworkgroup/metaworld/tree/master/tests/integration/test_new_api.py,,test_all_ml45$111,"def test_all_ml45():
+    ml45 = ML45()
+    train_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml45.train_classes.items()}
+    train_env_rand_vecs = check_tasks_unique(ml45.train_tasks, ml45._train_classes.keys())
+    for task in ml45.train_tasks:
+        env = train_env_instances[task.env_name]
+        env.set_task(task)
+        obs = env.reset()
+        assert env.random_init == True
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+    for env in train_env_instances.values():
+        env.close()
+    del train_env_instances
+    test_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml45.test_classes.items()}
+    test_env_rand_vecs = check_tasks_unique(ml45.test_tasks, ml45._test_classes.keys())
+    for task in ml45.test_tasks:
+        env = test_env_instances[task.env_name]
+        env.set_task(task)
+        obs = env.reset()
+        assert np.all(obs[-3:] == np.array([0, 0, 0]))
+        assert env.observation_space.shape == (39,)
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+    for env in test_env_instances.values():
+        env.close()
+    train_test_rand_vecs = set()
+    for rand_vecs in train_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    for rand_vecs in test_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    assert len(train_test_rand_vecs) == (len(ml45.test_classes.keys()) + len(ml45.train_classes.keys())) * metaworld._N_GOALS
+    del test_env_instances","for rand_vecs in test_env_rand_vecs.values():
+    for rand_vec in rand_vecs:
+        train_test_rand_vecs.add(tuple(rand_vec))",train_test_rand_vecs = {tuple(rand_vec) for rand_vecs in test_env_rand_vecs.values() for rand_vec in rand_vecs},Cannot refactor,-1
+torchgeo,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/torchgeo/torchgeo/datasets/ucmerced.py,https://github.com/microsoft/torchgeo/tree/master/torchgeo/datasets/ucmerced.py,UCMerced,__init__$105,"def __init__(self, root: str='data', split: str='train', transforms: Optional[Callable[[Dict[str, Tensor]], Dict[str, Tensor]]]=None, download: bool=False, checksum: bool=False) -> None:
+    """"""Initialize a new UC Merced dataset instance.
+
+        Args:
+            root: root directory where dataset can be found
+            split: one of ""train"", ""val"", or ""test""
+            transforms: a function/transform that takes input sample and its target as
+                entry and returns a transformed version
+            download: if True, download dataset and store it in the root directory
+            checksum: if True, check the MD5 of the downloaded files (may be slow)
+
+        Raises:
+            RuntimeError: if ``download=False`` and data is not found, or checksums
+                don't match
+        """"""
+    assert split in self.splits
+    self.root = root
+    self.transforms = transforms
+    self.download = download
+    self.checksum = checksum
+    self._verify()
+    valid_fns = set()
+    with open(os.path.join(self.root, f'uc_merced-{split}.txt')) as f:
+        for fn in f:
+            valid_fns.add(fn.strip())
+    is_in_split: Callable[[str], bool] = lambda x: os.path.basename(x) in valid_fns
+    super().__init__(root=os.path.join(root, self.base_dir), transforms=transforms, is_valid_file=is_in_split)","for fn in f:
+    valid_fns.add(fn.strip())",valid_fns = {fn.strip() for fn in f},['valid_fns = {fn.strip() for fn in f}'],1
+lite-transformer,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/lite-transformer/fairseq/file_utils.py,https://github.com/mit-han-lab/lite-transformer/tree/master/fairseq/file_utils.py,,read_set_from_file$303,"def read_set_from_file(filename):
+    """"""
+    Extract a de-duped collection (set) of text from a file.
+    Expected file format is one item per line.
+    """"""
+    collection = set()
+    with open(filename, 'r', encoding='utf-8') as file_:
+        for line in file_:
+            collection.add(line.rstrip())
+    return collection","for line in file_:
+    collection.add(line.rstrip())",collection = {line.rstrip() for line in file_},['collection = {line.rstrip() for line in file_}'],1
+mars,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mars/ci/importcheck.py,https://github.com/mars-project/mars/tree/master/ci/importcheck.py,,_check_absolute_import$42,"def _check_absolute_import(node: ast.AST) -> List[Tuple[int, int]]:
+    res = set()
+    if isinstance(node, ast.Import):
+        for import_name in node.names:
+            if import_name.name.startswith('mars.'):
+                res.add((node.lineno, node.end_lineno))
+    elif isinstance(node, ast.ImportFrom):
+        if node.level == 0 and node.module.startswith('mars.'):
+            res.add((node.lineno, node.end_lineno))
+    elif getattr(node, 'body', []):
+        for body_item in node.body:
+            res.update(_check_absolute_import(body_item))
+    return sorted(res)","for import_name in node.names:
+    if import_name.name.startswith('mars.'):
+        res.add((node.lineno, node.end_lineno))","res = {(node.lineno, node.end_lineno) for import_name in node.names if import_name.name.startswith('mars.')}","[""res = {(node.lineno, node.end_lineno) for import_name in node.names if import_name.name.startswith('mars.')}""]",1
+TextAttack,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/TextAttack/textattack/shared/attacked_text.py,https://github.com/QData/TextAttack/tree/master/textattack/shared/attacked_text.py,AttackedText,all_words_diff$241,"def all_words_diff(self, other_attacked_text):
+    """"""Returns the set of indices for which this and other_attacked_text
+        have different words.""""""
+    indices = set()
+    w1 = self.words
+    w2 = other_attacked_text.words
+    for i in range(min(len(w1), len(w2))):
+        if w1[i] != w2[i]:
+            indices.add(i)
+    return indices","for i in range(min(len(w1), len(w2))):
+    if w1[i] != w2[i]:
+        indices.add(i)","indices = {i for i in range(min(len(w1), len(w2))) if w1[i] != w2[i]}","['indices = {i for i in range(min(len(w1), len(w2))) if w1[i] != w2[i]}']",1
+angr,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/angr/angr/knowledge_plugins/key_definitions/live_definitions.py,https://github.com/angr/angr/tree/master/angr/knowledge_plugins/key_definitions/live_definitions.py,LiveDefinitions,_mo_cmp$146,"def _mo_cmp(mo_self: Union['SimMemoryObject', Set['SimMemoryObject']], mo_other: Union['SimMemoryObject', Set['SimMemoryObject']], addr: int, size: int):
+    if type(mo_self) is set and type(mo_other) is set and (len(mo_self) == 1) and (len(mo_other) == 1):
+        a = next(iter(mo_self))
+        b = next(iter(mo_other))
+        return a.object is b.object and a.endness == b.endness
+    values_self = set()
+    values_other = set()
+    if type(mo_self) is set:
+        for mo in mo_self:
+            values_self.add(mo.object)
+    else:
+        values_self.add(mo_self)
+    if type(mo_other) is set:
+        for mo in mo_other:
+            values_other.add(mo.object)
+    else:
+        values_other.add(mo_other)
+    return values_self == values_other","for mo in mo_self:
+    values_self.add(mo.object)",values_self = {mo.object for mo in mo_self},['values_self = {mo.object for mo in mo_self}'],1
+angr,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/angr/angr/knowledge_plugins/key_definitions/live_definitions.py,https://github.com/angr/angr/tree/master/angr/knowledge_plugins/key_definitions/live_definitions.py,LiveDefinitions,_mo_cmp$146,"def _mo_cmp(mo_self: Union['SimMemoryObject', Set['SimMemoryObject']], mo_other: Union['SimMemoryObject', Set['SimMemoryObject']], addr: int, size: int):
+    if type(mo_self) is set and type(mo_other) is set and (len(mo_self) == 1) and (len(mo_other) == 1):
+        a = next(iter(mo_self))
+        b = next(iter(mo_other))
+        return a.object is b.object and a.endness == b.endness
+    values_self = set()
+    values_other = set()
+    if type(mo_self) is set:
+        for mo in mo_self:
+            values_self.add(mo.object)
+    else:
+        values_self.add(mo_self)
+    if type(mo_other) is set:
+        for mo in mo_other:
+            values_other.add(mo.object)
+    else:
+        values_other.add(mo_other)
+    return values_self == values_other","for mo in mo_other:
+    values_other.add(mo.object)",values_other = {mo.object for mo in mo_other},['values_other = {mo.object for mo in mo_other}'],1
+tahoe-lafs,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/tahoe-lafs/src/allmydata/immutable/happiness_upload.py,https://github.com/tahoe-lafs/tahoe-lafs/tree/master/src/allmydata/immutable/happiness_upload.py,,share_placement$332,"def share_placement(peers, readonly_peers, shares, peers_to_shares):
+    """"""
+    Generates the allocations the upload should based on the given
+    information. We construct a dictionary of 'share_num' ->
+    'server_id' and return it to the caller. Existing allocations
+    appear as placements because attempting to place an existing
+    allocation will renew the share.
+
+    For more information on the algorithm this class implements, refer to
+    docs/specifications/servers-of-happiness.rst
+    """"""
+    if not peers:
+        return dict()
+    readonly_shares = set()
+    readonly_map = {}
+    for peer in sorted(peers_to_shares.keys()):
+        if peer in readonly_peers:
+            readonly_map.setdefault(peer, peers_to_shares[peer])
+            for share in peers_to_shares[peer]:
+                readonly_shares.add(share)
+    readonly_mappings = _calculate_mappings(readonly_peers, readonly_shares, readonly_map)
+    (used_peers, used_shares) = _extract_ids(readonly_mappings)
+    new_peers = set(peers) - used_peers
+    new_shares = shares - used_shares
+    servermap = peers_to_shares.copy()
+    for peer in sorted(peers_to_shares.keys()):
+        if peer in used_peers:
+            servermap.pop(peer, None)
+        else:
+            servermap[peer] = set(servermap[peer]) - used_shares
+            if servermap[peer] == set():
+                servermap.pop(peer, None)
+                try:
+                    new_peers.remove(peer)
+                except KeyError:
+                    pass
+    existing_mappings = _calculate_mappings(new_peers, new_shares, servermap)
+    (existing_peers, existing_shares) = _extract_ids(existing_mappings)
+    new_peers = new_peers - existing_peers - used_peers
+    new_shares = new_shares - existing_shares - used_shares
+    new_mappings = _calculate_mappings(new_peers, new_shares)
+    mappings = dict(list(readonly_mappings.items()) + list(existing_mappings.items()) + list(new_mappings.items()))
+    homeless_shares = set()
+    for share in mappings:
+        if mappings[share] is None:
+            homeless_shares.add(share)
+    if len(homeless_shares) != 0:
+        _distribute_homeless_shares(mappings, homeless_shares, {k: v for (k, v) in list(peers_to_shares.items()) if k not in readonly_peers})
+
+    def round_robin(peers):
+        while True:
+            for peer in peers:
+                yield peer
+    peer_iter = round_robin(peers - readonly_peers)
+    return {k: v.pop() if v else next(peer_iter) for (k, v) in list(mappings.items())}","for peer in sorted(peers_to_shares.keys()):
+    if peer in readonly_peers:
+        readonly_map.setdefault(peer, peers_to_shares[peer])
+        for share in peers_to_shares[peer]:
+            readonly_shares.add(share)",readonly_shares = {share for peer in sorted(peers_to_shares.keys()) if peer in readonly_peers for share in peers_to_shares[peer]},Cannot refactor,-1
+tahoe-lafs,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/tahoe-lafs/src/allmydata/immutable/happiness_upload.py,https://github.com/tahoe-lafs/tahoe-lafs/tree/master/src/allmydata/immutable/happiness_upload.py,,share_placement$332,"def share_placement(peers, readonly_peers, shares, peers_to_shares):
+    """"""
+    Generates the allocations the upload should based on the given
+    information. We construct a dictionary of 'share_num' ->
+    'server_id' and return it to the caller. Existing allocations
+    appear as placements because attempting to place an existing
+    allocation will renew the share.
+
+    For more information on the algorithm this class implements, refer to
+    docs/specifications/servers-of-happiness.rst
+    """"""
+    if not peers:
+        return dict()
+    readonly_shares = set()
+    readonly_map = {}
+    for peer in sorted(peers_to_shares.keys()):
+        if peer in readonly_peers:
+            readonly_map.setdefault(peer, peers_to_shares[peer])
+            for share in peers_to_shares[peer]:
+                readonly_shares.add(share)
+    readonly_mappings = _calculate_mappings(readonly_peers, readonly_shares, readonly_map)
+    (used_peers, used_shares) = _extract_ids(readonly_mappings)
+    new_peers = set(peers) - used_peers
+    new_shares = shares - used_shares
+    servermap = peers_to_shares.copy()
+    for peer in sorted(peers_to_shares.keys()):
+        if peer in used_peers:
+            servermap.pop(peer, None)
+        else:
+            servermap[peer] = set(servermap[peer]) - used_shares
+            if servermap[peer] == set():
+                servermap.pop(peer, None)
+                try:
+                    new_peers.remove(peer)
+                except KeyError:
+                    pass
+    existing_mappings = _calculate_mappings(new_peers, new_shares, servermap)
+    (existing_peers, existing_shares) = _extract_ids(existing_mappings)
+    new_peers = new_peers - existing_peers - used_peers
+    new_shares = new_shares - existing_shares - used_shares
+    new_mappings = _calculate_mappings(new_peers, new_shares)
+    mappings = dict(list(readonly_mappings.items()) + list(existing_mappings.items()) + list(new_mappings.items()))
+    homeless_shares = set()
+    for share in mappings:
+        if mappings[share] is None:
+            homeless_shares.add(share)
+    if len(homeless_shares) != 0:
+        _distribute_homeless_shares(mappings, homeless_shares, {k: v for (k, v) in list(peers_to_shares.items()) if k not in readonly_peers})
+
+    def round_robin(peers):
+        while True:
+            for peer in peers:
+                yield peer
+    peer_iter = round_robin(peers - readonly_peers)
+    return {k: v.pop() if v else next(peer_iter) for (k, v) in list(mappings.items())}","for share in mappings:
+    if mappings[share] is None:
+        homeless_shares.add(share)",homeless_shares = {share for share in mappings if mappings[share] is None},['homeless_shares = {share for share in mappings if mappings[share] is None}'],1
+TensorNetwork,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/TensorNetwork/tensornetwork/tests/network_test.py,https://github.com/google/TensorNetwork/tree/master/tensornetwork/tests/network_test.py,,test_get_parallel_edge$431,"def test_get_parallel_edge(backend):
+    a = tn.Node(np.ones((2,) * 5), backend=backend)
+    b = tn.Node(np.ones((2,) * 5), backend=backend)
+    edges = set()
+    for i in {0, 1, 3}:
+        edges.add(tn.connect(a[i], b[i]))
+    for e in edges:
+        assert set(tn.get_parallel_edges(e)) == edges","for i in {0, 1, 3}:
+    edges.add(tn.connect(a[i], b[i]))","edges = {tn.connect(a[i], b[i]) for i in {0, 1, 3}}","['edges = {tn.connect(a[i], b[i]) for i in {0, 1, 3}}']",1
+azure-cli,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/azure-cli/tools/automation/cli_linter/linter.py,https://github.com/Azure/azure-cli/tree/master/tools/automation/cli_linter/linter.py,Linter,__init__$16,"def __init__(self, command_loader=None, help_file_entries=None, loaded_help=None):
+    self._all_yaml_help = help_file_entries
+    self._loaded_help = loaded_help
+    self._command_loader = command_loader
+    self._parameters = {}
+    self._help_file_entries = set(help_file_entries.keys())
+    self._command_parser = command_loader.cli_ctx.invocation.parser
+    for (command_name, command) in self._command_loader.command_table.items():
+        self._parameters[command_name] = set()
+        for (name, param) in command.arguments.items():
+            self._parameters[command_name].add(name)","for (command_name, command) in self._command_loader.command_table.items():
+    self._parameters[command_name] = set()
+    for (name, param) in command.arguments.items():
+        self._parameters[command_name].add(name)","parameters = {command_name: {name for (name, param) in command.arguments.items()} for (command_name, command) in self._command_loader.command_table.items()}",Cannot refactor,-1
+aws-parallelcluster,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/aws-parallelcluster/util/rollback_s3_objects.py,https://github.com/aws/aws-parallelcluster/tree/master/util/rollback_s3_objects.py,,main$88,"def main():
+    args = _parse_args()
+    logging.info('Parsed cli args: %s', vars(args))
+    regions = set()
+    with open(args.rollback_file_path, encoding='utf-8') as rollback_file:
+        rollback_data = json.load(rollback_file)
+        for bucket in rollback_data.keys():
+            regions.add(rollback_data[bucket]['region'])
+    sts_credentials = retrieve_sts_credentials(args.credentials, PARTITION_TO_MAIN_REGION[args.partition], regions)
+    execute_rollback(args.rollback_file_path, sts_credentials, args.deploy)","for bucket in rollback_data.keys():
+    regions.add(rollback_data[bucket]['region'])",regions = {rollback_data[bucket]['region'] for bucket in rollback_data.keys()},"[""regions = {rollback_data[bucket]['region'] for bucket in rollback_data.keys()}""]",1
+devpi,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/devpi/.ci/cleanup_devpi_indices.py,https://github.com/devpi/devpi/tree/master/.ci/cleanup_devpi_indices.py,,get_release_dates$26,"def get_release_dates(baseurl, username, indexname, projectname):
+    response = session.get(baseurl + username + '/' + indexname + '/' + projectname)
+    assert response.status_code == 200
+    result = response.json()['result']
+    dates = set()
+    for value in result.values():
+        for link in value.get('+links', []):
+            for log in link.get('log', []):
+                dates.add(tuple(log['when']))
+    return dates","for value in result.values():
+    for link in value.get('+links', []):
+        for log in link.get('log', []):
+            dates.add(tuple(log['when']))","dates = {tuple(log['when']) for value in result.values() for link in value.get('+links', []) for log in link.get('log', [])}","[""dates = {tuple(log['when']) for value in result.values() for link in value.get('+links', []) for log in link.get('log', [])}""]",1
+core,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/core/homeassistant/auth/mfa_modules/notify.py,https://github.com/home-assistant/core/tree/master/homeassistant/auth/mfa_modules/notify.py,NotifyAuthModule,aync_get_available_notify_services$150,"def aync_get_available_notify_services(self) -> list[str]:
+    """"""Return list of notify services.""""""
+    unordered_services = set()
+    for service in self.hass.services.async_services().get('notify', {}):
+        if service not in self._exclude:
+            unordered_services.add(service)
+    if self._include:
+        unordered_services &= set(self._include)
+    return sorted(unordered_services)","for service in self.hass.services.async_services().get('notify', {}):
+    if service not in self._exclude:
+        unordered_services.add(service)","unordered_services = {service for service in self.hass.services.async_services().get('notify', {}) if service not in self._exclude}","[""unordered_services = {service for service in self.hass.services.async_services().get('notify', {}) if service not in self._exclude}""]",1
+viztracer,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/viztracer/tests/test_cmdline.py,https://github.com/gaogaotiantian/viztracer/tree/master/tests/test_cmdline.py,TestCommandLineBasic,test_log_async$427,"def test_log_async(self):
+
+    def check_func(data):
+        tids = set()
+        for entry in data['traceEvents']:
+            tids.add(entry['tid'])
+        self.assertGreaterEqual(len(tids), 4)
+    self.template(['viztracer', '--log_async', '-o', 'result.json', 'cmdline_test.py'], script=file_log_async, expected_output_file='result.json', check_func=check_func)","for entry in data['traceEvents']:
+    tids.add(entry['tid'])",tids = {entry['tid'] for entry in data['traceEvents']},"[""tids = {entry['tid'] for entry in data['traceEvents']}""]",1
+pyproj,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pyproj/test/test_sync.py,https://github.com/pyproj4/pyproj/tree/master/test/test_sync.py,,test_get_transform_grid_list__source_id$61,"def test_get_transform_grid_list__source_id():
+    grids = get_transform_grid_list(bbox=BBox(170, -90, -170, 90), source_id='us_noaa', include_already_downloaded=True)
+    assert len(grids) > 5
+    source_ids = set()
+    for grid in grids:
+        source_ids.add(grid['properties']['source_id'])
+    assert sorted(source_ids) == ['us_noaa']","for grid in grids:
+    source_ids.add(grid['properties']['source_id'])",source_ids = {grid['properties']['source_id'] for grid in grids},"[""source_ids = {grid['properties']['source_id'] for grid in grids}""]",1
+detection-rules,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/detection-rules/detection_rules/rule_formatter.py,https://github.com/elastic/detection-rules/tree/master/detection_rules/rule_formatter.py,,get_preserved_fmt_fields$27,"def get_preserved_fmt_fields():
+    from .rule import BaseRuleData
+    preserved_keys = set()
+    for field in dataclasses.fields(BaseRuleData):
+        if field.type in (definitions.Markdown, typing.Optional[definitions.Markdown]):
+            preserved_keys.add(field.metadata.get('data_key', field.name))
+    return preserved_keys","for field in dataclasses.fields(BaseRuleData):
+    if field.type in (definitions.Markdown, typing.Optional[definitions.Markdown]):
+        preserved_keys.add(field.metadata.get('data_key', field.name))","preserved_keys = {field.metadata.get('data_key', field.name) for field in dataclasses.fields(BaseRuleData) if field.type in (definitions.Markdown, typing.Optional[definitions.Markdown])}","[""preserved_keys = {field.metadata.get('data_key', field.name) for field in dataclasses.fields(BaseRuleData) if field.type in (definitions.Markdown, typing.Optional[definitions.Markdown])}""]",1
+opencensus-python,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/opencensus-python/opencensus/metrics/export/gauge.py,https://github.com/census-instrumentation/opencensus-python/tree/master/opencensus/metrics/export/gauge.py,Registry,get_metrics$501,"def get_metrics(self):
+    """"""Get a metric for each gauge in the registry at the current time.
+
+        :rtype: set(:class:`opencensus.metrics.export.metric.Metric`)
+        :return: A set of `Metric`s, one for each registered gauge.
+        """"""
+    now = datetime.utcnow()
+    metrics = set()
+    for gauge in self.gauges.values():
+        metrics.add(gauge.get_metric(now))
+    return metrics","for gauge in self.gauges.values():
+    metrics.add(gauge.get_metric(now))",metrics = {gauge.get_metric(now) for gauge in self.gauges.values()},['metrics = {gauge.get_metric(now) for gauge in self.gauges.values()}'],1
+aioprocessing,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/aioprocessing/aioprocessing/executor.py,https://github.com/dano/aioprocessing/tree/master/aioprocessing/executor.py,CoroBuilder,__new__$105,"def __new__(cls, clsname, bases, dct, **kwargs):
+    coro_list = dct.get('coroutines', [])
+    existing_coros = set()
+
+    def find_existing_coros(d):
+        for attr in d:
+            if attr.startswith('coro_') or attr.startswith('thread_'):
+                existing_coros.add(attr)
+    find_existing_coros(dct)
+    for b in bases:
+        b_dct = b.__dict__
+        coro_list.extend(b_dct.get('coroutines', []))
+        find_existing_coros(b_dct)
+    if _ExecutorMixin not in bases:
+        bases += (_ExecutorMixin,)
+    for func in coro_list:
+        coro_name = 'coro_{}'.format(func)
+        if coro_name not in existing_coros:
+            dct[coro_name] = cls.coro_maker(func)
+    return super().__new__(cls, clsname, bases, dct)","for attr in d:
+    if attr.startswith('coro_') or attr.startswith('thread_'):
+        existing_coros.add(attr)",existing_coros = {attr for attr in d if attr.startswith('coro_') or attr.startswith('thread_')},"[""existing_coros = {attr for attr in d if attr.startswith('coro_') or attr.startswith('thread_')}""]",1

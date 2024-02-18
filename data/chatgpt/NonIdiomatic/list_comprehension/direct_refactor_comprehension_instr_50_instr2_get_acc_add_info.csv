@@ -1,0 +1,2633 @@
+repo_name,file_path,file_html,class_name,me_name,me_code,old_code,chatGPT_code,element_str,slice_str,truth_code
+Paddle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Paddle/python/paddle/fluid/tests/unittests/test_fusion_repeated_fc_relu_op.py,https://github.com/PaddlePaddle/Paddle/tree/master/python/paddle/fluid/tests/unittests/test_fusion_repeated_fc_relu_op.py,TestFusionRepeatedFCReluOp,setUp$23,"def setUp(self):
+        self.bs = 3
+        self.ic = 9
+        self.oc = [2, 4, 3]
+        assert len(self.oc) > 1, 'Should larger than 1'
+        self.set_conf()
+        self.op_type = 'fusion_repeated_fc_relu'
+        sz = len(self.oc)
+        ics = [self.ic] + self.oc[0 : sz - 1]
+        assert len(ics) == len(self.oc)
+        weights = []
+        biases = []
+        outs = []
+
+        i = 0
+        matrix = MatrixGenerate(self.bs, ics[i], self.oc[i], 1, 1)
+        inp = np.reshape(matrix.input, [self.bs, ics[i]])
+        weights.append(
+            (
+                'W_{0}'.format(i),
+                np.reshape(matrix.weights, [ics[i], self.oc[i]]),
+            )
+        )
+        biases.append(('B_{0}'.format(i), matrix.bias))
+        outs.append(
+            np.reshape(
+                np.maximum(fc_refer(matrix, True), 0), [self.bs, self.oc[i]]
+            )
+        )
+
+        for i in range(sz - 1):
+            matrix = MatrixGenerate(self.bs, ics[i + 1], self.oc[i + 1], 1, 1)
+            matrix.input = np.reshape(outs[i], [self.bs, ics[i + 1], 1, 1])
+            out = fc_refer(matrix, True)
+            weights.append(
+                (
+                    'W_{0}'.format(i + 1),
+                    np.reshape(matrix.weights, [ics[i + 1], self.oc[i + 1]]),
+                )
+            )
+            biases.append(('B_{0}'.format(i + 1), matrix.bias))
+            outs.append(
+                np.reshape(np.maximum(out, 0), [self.bs, self.oc[i + 1]])
+            )
+
+        relu_outs = []
+        for i in range(sz - 1):
+            relu_outs.append(('ReluOut_{0}'.format(i), outs[i]))
+
+        self.inputs = {
+            'X': inp,
+            'W': weights,
+            'Bias': biases,
+        }
+
+        self.outputs = {'Out': outs[-1], 'ReluOut': relu_outs}","for i in range(sz - 1):
+    relu_outs.append(('ReluOut_{0}'.format(i), outs[i]))","relu_outs = [('ReluOut_{0}'.format(i), outs[i]) for i in range(sz - 1)]","relu_outs = [('ReluOut_{0}'.format(i), outs[i]) for i in range(sz - 1)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+airflow,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/airflow/airflow/www/views.py,https://github.com/apache/airflow/tree/master/airflow/www/views.py,Airflow,xcom$1542,"def xcom(self, session=None):
+        """"""Retrieve XCOM.""""""
+        dag_id = request.args.get('dag_id')
+        task_id = request.args.get('task_id')
+        # Carrying execution_date through, even though it's irrelevant for
+        # this context
+        execution_date = request.args.get('execution_date')
+        dttm = timezone.parse(execution_date)
+        form = DateTimeForm(data={'execution_date': dttm})
+        root = request.args.get('root', '')
+        ti_db = models.TaskInstance
+        dag = DagModel.get_dagmodel(dag_id)
+        ti = session.query(ti_db).filter(and_(ti_db.dag_id == dag_id, ti_db.task_id == task_id)).first()
+
+        if not ti:
+            flash(f""Task [{dag_id}.{task_id}] doesn't seem to exist at the moment"", ""error"")
+            return redirect(url_for('Airflow.index'))
+
+        xcomlist = (
+            session.query(XCom)
+            .filter(XCom.dag_id == dag_id, XCom.task_id == task_id, XCom.execution_date == dttm)
+            .all()
+        )
+
+        attributes = []
+        for xcom in xcomlist:
+            if not xcom.key.startswith('_'):
+                attributes.append((xcom.key, xcom.value))
+
+        title = ""XCom""
+        return self.render_template(
+            'airflow/xcom.html',
+            attributes=attributes,
+            task_id=task_id,
+            execution_date=execution_date,
+            form=form,
+            root=root,
+            dag=dag,
+            title=title,
+        )","for xcom in xcomlist:
+    if not xcom.key.startswith('_'):
+        attributes.append((xcom.key, xcom.value))","attributes = [(xcom.key, xcom.value) for xcom in xcomlist if not xcom.key.startswith('_')]","attributes = [(xcom.key, xcom.value) for xcom in xcomlist if not xcom.key.startswith('_')]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+galaxy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/galaxy/lib/galaxy/containers/docker_model.py,https://github.com/ansible/galaxy/tree/master/lib/galaxy/containers/docker_model.py,DockerContainer,ports$132,"def ports(self):
+        # {
+        #     ""NetworkSettings"" : {
+        #         ""Ports"" : {
+        #             ""3306/tcp"" : [
+        #                 {
+        #                     ""HostIp"" : ""127.0.0.1"",
+        #                     ""HostPort"" : ""3306""
+        #                 }
+        #             ]
+        rval = []
+        try:
+            port_mappings = self.inspect['NetworkSettings']['Ports']
+        except KeyError:
+            log.warning(""Failed to get ports for container %s from `docker inspect` output at ""
+                        ""['NetworkSettings']['Ports']: %s: %s"", self.id, exc_info=True)
+            return None
+        for port_name in port_mappings:
+            for binding in port_mappings[port_name]:
+                rval.append(ContainerPort(
+                    int(port_name.split('/')[0]),
+                    port_name.split('/')[1],
+                    self.address,
+                    int(binding['HostPort']),
+                ))
+        return rval","for port_name in port_mappings:
+    for binding in port_mappings[port_name]:
+        rval.append(ContainerPort(int(port_name.split('/')[0]), port_name.split('/')[1], self.address, int(binding['HostPort'])))","rval = [ContainerPort(int(port_name.split('/')[0]), port_name.split('/')[1], self.address, int(binding['HostPort'])) for port_name in port_mappings for binding in port_mappings[port_name]]","rval = [ContainerPort(int(port_name.split('/')[0]), port_name.split('/')[1], self.address, int(binding['HostPort'])) for port_name in port_mappings for binding in port_mappings[port_name]]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+Paddle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Paddle/python/paddle/fluid/tests/unittests/mkldnn/test_matmul_v2_mkldnn_op.py,https://github.com/PaddlePaddle/Paddle/tree/master/python/paddle/fluid/tests/unittests/mkldnn/test_matmul_v2_mkldnn_op.py,,create_bf16_test_class$318,"def create_bf16_test_class(parent):
+    @OpTestTool.skip_if_not_cpu_bf16()
+    class TestMatMulV2Bf16OneDNNOp(parent):
+        def set_inputs(self, x, y):
+            self.inputs = {
+                'X': convert_float_to_uint16(x),
+                'Y': convert_float_to_uint16(y),
+            }
+            self.x_fp32 = x
+            self.y_fp32 = y
+
+        def set_dtype_attr(self):
+            self.attrs['mkldnn_data_type'] = ""bfloat16""
+
+        def test_check_output(self):
+            self.check_output_with_place(core.CPUPlace())
+
+        def test_check_grad(self):
+            self.calculate_grads()
+            self.check_grad_with_place(
+                core.CPUPlace(),
+                [""X"", ""Y""],
+                ""Out"",
+                user_defined_grads=[self.dx, self.dy],
+                user_defined_grad_outputs=[convert_float_to_uint16(self.dout)],
+            )
+
+        def matmul_grad(self, x, transpose_x, y, transpose_y):
+            x = (
+                np.transpose(x, self.shape_transpose_axes[x.ndim])
+                if transpose_x
+                else x
+            )
+            y = (
+                np.transpose(y, self.shape_transpose_axes[y.ndim])
+                if transpose_y
+                else y
+            )
+
+            return np.matmul(x, y)
+
+        def calculate_grads(self):
+            self.shape_transpose_axes = {
+                2: [1, 0],
+                3: [0, 2, 1],
+                4: [0, 1, 3, 2],
+                5: [0, 1, 2, 4, 3],
+                6: [0, 1, 2, 3, 5, 4],
+            }
+
+            # expand vector so it will be a valid matrix for multiplication
+            if self.x_fp32.ndim == 1:
+                self.x_fp32 = np.expand_dims(self.x_fp32, axis=0)
+            if self.y_fp32.ndim == 1:
+                self.y_fp32 = np.expand_dims(self.y_fp32, axis=1)
+
+            x_transpose_axes = self.shape_transpose_axes[self.x_fp32.ndim]
+            y_transpose_axes = self.shape_transpose_axes[self.y_fp32.ndim]
+
+            x = (
+                np.transpose(self.x_fp32, x_transpose_axes)
+                if self.attrs['trans_x'] is True
+                else self.x_fp32
+            )
+            y = (
+                np.transpose(self.y_fp32, y_transpose_axes)
+                if self.attrs['trans_y'] is True
+                else self.y_fp32
+            )
+
+            dout = np.matmul(x, y)
+
+            x_shape = x.shape
+            y_shape = y.shape
+
+            if x.ndim <= 2 or y.ndim <= 2:
+                is_broadcast = False
+            elif x.ndim != y.ndim:
+                is_broadcast = True
+            else:
+                is_broadcast = x.shape[0:-2] != y.shape[0:-2]
+
+            if self.attrs['trans_x'] is True and self.attrs['trans_y'] is True:
+                self.dx = self.matmul_grad(self.y_fp32, True, dout, True)
+                self.dy = self.matmul_grad(dout, True, self.x_fp32, True)
+            elif (
+                self.attrs['trans_x'] is True and self.attrs['trans_y'] is False
+            ):
+                self.dx = self.matmul_grad(self.y_fp32, False, dout, True)
+                self.dy = self.matmul_grad(self.x_fp32, False, dout, False)
+            elif (
+                self.attrs['trans_x'] is False and self.attrs['trans_y'] is True
+            ):
+                self.dx = self.matmul_grad(dout, False, self.y_fp32, False)
+                self.dy = self.matmul_grad(dout, True, self.x_fp32, False)
+            else:
+                self.dx = self.matmul_grad(dout, False, self.y_fp32, True)
+                self.dy = self.matmul_grad(self.x_fp32, True, dout, False)
+
+            if is_broadcast:
+                x_reduce_axis = []
+                y_reduce_axis = []
+                for index, (first, second) in enumerate(
+                    zip(x_shape[0:-2], self.dx.shape[0:-2])
+                ):
+                    if first != second:
+                        x_reduce_axis.append(index)
+
+                for index, (first, second) in enumerate(
+                    zip(y_shape[0:-2], self.dy.shape[0:-2])
+                ):
+                    if first != second:
+                        y_reduce_axis.append(index)
+
+                if x_reduce_axis:
+                    self.dx = self.dx.sum(
+                        axis=tuple(x_reduce_axis), keepdims=True
+                    )
+                if y_reduce_axis:
+                    self.dy = self.dy.sum(
+                        axis=tuple(y_reduce_axis), keepdims=True
+                    )
+
+            # after multiplying with vector one dimension is deleted from tensor
+            if len(x_shape) == 2 and x_shape[0] == 1:
+                dout = dout.sum(axis=-2)
+            if len(y_shape) == 2 and y_shape[1] == 1:
+                dout = dout.sum(axis=-1)
+
+            self.dout = dout
+
+    cls_name = ""{0}_{1}"".format(parent.__name__, ""BF16"")
+    TestMatMulV2Bf16OneDNNOp.__name__ = cls_name
+    globals()[cls_name] = TestMatMulV2Bf16OneDNNOp","for (index, (first, second)) in enumerate(zip(x_shape[0:-2], self.dx.shape[0:-2])):
+    if first != second:
+        x_reduce_axis.append(index)",,"x_reduce_axis = [index for (index, (first, second)) in enumerate(zip(x_shape[0:-2], self.dx.shape[0:-2])) if first != second]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+Paddle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Paddle/python/paddle/fluid/tests/unittests/mkldnn/test_matmul_v2_mkldnn_op.py,https://github.com/PaddlePaddle/Paddle/tree/master/python/paddle/fluid/tests/unittests/mkldnn/test_matmul_v2_mkldnn_op.py,,create_bf16_test_class$318,"def create_bf16_test_class(parent):
+    @OpTestTool.skip_if_not_cpu_bf16()
+    class TestMatMulV2Bf16OneDNNOp(parent):
+        def set_inputs(self, x, y):
+            self.inputs = {
+                'X': convert_float_to_uint16(x),
+                'Y': convert_float_to_uint16(y),
+            }
+            self.x_fp32 = x
+            self.y_fp32 = y
+
+        def set_dtype_attr(self):
+            self.attrs['mkldnn_data_type'] = ""bfloat16""
+
+        def test_check_output(self):
+            self.check_output_with_place(core.CPUPlace())
+
+        def test_check_grad(self):
+            self.calculate_grads()
+            self.check_grad_with_place(
+                core.CPUPlace(),
+                [""X"", ""Y""],
+                ""Out"",
+                user_defined_grads=[self.dx, self.dy],
+                user_defined_grad_outputs=[convert_float_to_uint16(self.dout)],
+            )
+
+        def matmul_grad(self, x, transpose_x, y, transpose_y):
+            x = (
+                np.transpose(x, self.shape_transpose_axes[x.ndim])
+                if transpose_x
+                else x
+            )
+            y = (
+                np.transpose(y, self.shape_transpose_axes[y.ndim])
+                if transpose_y
+                else y
+            )
+
+            return np.matmul(x, y)
+
+        def calculate_grads(self):
+            self.shape_transpose_axes = {
+                2: [1, 0],
+                3: [0, 2, 1],
+                4: [0, 1, 3, 2],
+                5: [0, 1, 2, 4, 3],
+                6: [0, 1, 2, 3, 5, 4],
+            }
+
+            # expand vector so it will be a valid matrix for multiplication
+            if self.x_fp32.ndim == 1:
+                self.x_fp32 = np.expand_dims(self.x_fp32, axis=0)
+            if self.y_fp32.ndim == 1:
+                self.y_fp32 = np.expand_dims(self.y_fp32, axis=1)
+
+            x_transpose_axes = self.shape_transpose_axes[self.x_fp32.ndim]
+            y_transpose_axes = self.shape_transpose_axes[self.y_fp32.ndim]
+
+            x = (
+                np.transpose(self.x_fp32, x_transpose_axes)
+                if self.attrs['trans_x'] is True
+                else self.x_fp32
+            )
+            y = (
+                np.transpose(self.y_fp32, y_transpose_axes)
+                if self.attrs['trans_y'] is True
+                else self.y_fp32
+            )
+
+            dout = np.matmul(x, y)
+
+            x_shape = x.shape
+            y_shape = y.shape
+
+            if x.ndim <= 2 or y.ndim <= 2:
+                is_broadcast = False
+            elif x.ndim != y.ndim:
+                is_broadcast = True
+            else:
+                is_broadcast = x.shape[0:-2] != y.shape[0:-2]
+
+            if self.attrs['trans_x'] is True and self.attrs['trans_y'] is True:
+                self.dx = self.matmul_grad(self.y_fp32, True, dout, True)
+                self.dy = self.matmul_grad(dout, True, self.x_fp32, True)
+            elif (
+                self.attrs['trans_x'] is True and self.attrs['trans_y'] is False
+            ):
+                self.dx = self.matmul_grad(self.y_fp32, False, dout, True)
+                self.dy = self.matmul_grad(self.x_fp32, False, dout, False)
+            elif (
+                self.attrs['trans_x'] is False and self.attrs['trans_y'] is True
+            ):
+                self.dx = self.matmul_grad(dout, False, self.y_fp32, False)
+                self.dy = self.matmul_grad(dout, True, self.x_fp32, False)
+            else:
+                self.dx = self.matmul_grad(dout, False, self.y_fp32, True)
+                self.dy = self.matmul_grad(self.x_fp32, True, dout, False)
+
+            if is_broadcast:
+                x_reduce_axis = []
+                y_reduce_axis = []
+                for index, (first, second) in enumerate(
+                    zip(x_shape[0:-2], self.dx.shape[0:-2])
+                ):
+                    if first != second:
+                        x_reduce_axis.append(index)
+
+                for index, (first, second) in enumerate(
+                    zip(y_shape[0:-2], self.dy.shape[0:-2])
+                ):
+                    if first != second:
+                        y_reduce_axis.append(index)
+
+                if x_reduce_axis:
+                    self.dx = self.dx.sum(
+                        axis=tuple(x_reduce_axis), keepdims=True
+                    )
+                if y_reduce_axis:
+                    self.dy = self.dy.sum(
+                        axis=tuple(y_reduce_axis), keepdims=True
+                    )
+
+            # after multiplying with vector one dimension is deleted from tensor
+            if len(x_shape) == 2 and x_shape[0] == 1:
+                dout = dout.sum(axis=-2)
+            if len(y_shape) == 2 and y_shape[1] == 1:
+                dout = dout.sum(axis=-1)
+
+            self.dout = dout
+
+    cls_name = ""{0}_{1}"".format(parent.__name__, ""BF16"")
+    TestMatMulV2Bf16OneDNNOp.__name__ = cls_name
+    globals()[cls_name] = TestMatMulV2Bf16OneDNNOp","for (index, (first, second)) in enumerate(zip(y_shape[0:-2], self.dy.shape[0:-2])):
+    if first != second:
+        y_reduce_axis.append(index)",,"y_reduce_axis = [index for (index, (first, second)) in enumerate(zip(y_shape[0:-2], self.dy.shape[0:-2])) if first != second]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+pigar,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pigar/pigar/unpack.py,https://github.com/damnever/pigar/tree/master/pigar/unpack.py,Archive,_safe_extractall$67,"def _safe_extractall(self, to_path='.'):
+        unsafe = []
+        for name in self.names:
+            if not self.is_safe(name):
+                unsafe.append(name)
+        if unsafe:
+            raise ValueError(""unsafe to unpack: {}"".format(unsafe))
+        self._file.extractall(to_path)","for name in self.names:
+    if not self.is_safe(name):
+        unsafe.append(name)",unsafe = [name for name in self.names if not self.is_safe(name)],unsafe = [name for name in self.names if not self.is_safe(name)],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+bili2.0,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bili2.0/substance/substance_raffle_sql.py,https://github.com/yjqiang/bili2.0/tree/master/substance/substance_raffle_sql.py,SubstanceRaffleJoinedTable,select_all$138,"def select_all(self):
+        results = []
+        for row in self.conn.execute('SELECT * FROM substanceraffle_joined'):
+            results.append(self.as_bili_data(row))
+        return results","for row in self.conn.execute('SELECT * FROM substanceraffle_joined'):
+    results.append(self.as_bili_data(row))",,results = [self.as_bili_data(row) for row in self.conn.execute('SELECT * FROM substanceraffle_joined')],0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+not-youtube-dl,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/not-youtube-dl/youtube_dl/extractor/tagesschau.py,https://github.com/scastillo/not-youtube-dl/tree/master/youtube_dl/extractor/tagesschau.py,TagesschauIE,_real_extract$265,"def _real_extract(self, url):
+        mobj = re.match(self._VALID_URL, url)
+        video_id = mobj.group('id') or mobj.group('path')
+        display_id = video_id.lstrip('-')
+
+        webpage = self._download_webpage(url, display_id)
+
+        title = self._html_search_regex(
+            r'<span[^>]*class=""headline""[^>]*>(.+?)</span>',
+            webpage, 'title', default=None) or self._og_search_title(webpage)
+
+        DOWNLOAD_REGEX = r'(?s)<p>Wir bieten dieses (?P<kind>Video|Audio) in folgenden Formaten zum Download an:</p>\s*<div class=""controls"">(?P<links>.*?)</div>\s*<p>'
+
+        webpage_type = self._og_search_property('type', webpage, default=None)
+        if webpage_type == 'website':  # Article
+            entries = []
+            for num, (entry_title, media_kind, download_text) in enumerate(re.findall(
+                    r'(?s)<p[^>]+class=""infotext""[^>]*>\s*(?:<a[^>]+>)?\s*<strong>(.+?)</strong>.*?</p>.*?%s' % DOWNLOAD_REGEX,
+                    webpage), 1):
+                entries.append({
+                    'id': '%s-%d' % (display_id, num),
+                    'title': '%s' % entry_title,
+                    'formats': self._extract_formats(download_text, media_kind),
+                })
+            if len(entries) > 1:
+                return self.playlist_result(entries, display_id, title)
+            formats = entries[0]['formats']
+        else:  # Assume single video
+            download_text = self._search_regex(
+                DOWNLOAD_REGEX, webpage, 'download links', group='links')
+            media_kind = self._search_regex(
+                DOWNLOAD_REGEX, webpage, 'media kind', default='Video', group='kind')
+            formats = self._extract_formats(download_text, media_kind)
+        thumbnail = self._og_search_thumbnail(webpage)
+        description = self._html_search_regex(
+            r'(?s)<p class=""teasertext"">(.*?)</p>',
+            webpage, 'description', default=None)
+
+        self._sort_formats(formats)
+
+        return {
+            'id': display_id,
+            'title': title,
+            'thumbnail': thumbnail,
+            'formats': formats,
+            'description': description,
+        }","for (num, (entry_title, media_kind, download_text)) in enumerate(re.findall('(?s)<p[^>]+class=""infotext""[^>]*>\\s*(?:<a[^>]+>)?\\s*<strong>(.+?)</strong>.*?</p>.*?%s' % DOWNLOAD_REGEX, webpage), 1):
+    entries.append({'id': '%s-%d' % (display_id, num), 'title': '%s' % entry_title, 'formats': self._extract_formats(download_text, media_kind)})",,"entries = [{'id': '%s-%d' % (display_id, num), 'title': '%s' % entry_title, 'formats': self._extract_formats(download_text, media_kind)} for (num, (entry_title, media_kind, download_text)) in enumerate(re.findall('(?s)<p[^>]+class=""infotext""[^>]*>\\s*(?:<a[^>]+>)?\\s*<strong>(.+?)</strong>.*?</p>.*?%s' % DOWNLOAD_REGEX, webpage), 1)]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+pandera,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pandera/pandera/strategies.py,https://github.com/pandera-dev/pandera/tree/master/pandera/strategies.py,,dataframe_strategy$933,"def dataframe_strategy(
+    pandera_dtype: Optional[DataType] = None,
+    strategy: Optional[SearchStrategy] = None,
+    *,
+    columns: Optional[Dict] = None,
+    checks: Optional[Sequence] = None,
+    unique: Optional[List[str]] = None,
+    index: Optional[IndexComponent] = None,
+    size: Optional[int] = None,
+    n_regex_columns: int = 1,
+):
+    """"""Strategy to generate a pandas DataFrame.
+
+    :param pandera_dtype: :class:`pandera.dtypes.DataType` instance.
+    :param strategy: if specified, this will raise a BaseStrategyOnlyError,
+        since it cannot be chained to a prior strategy.
+    :param columns: a dictionary where keys are column names and values
+        are :class:`~pandera.schema_components.Column` objects.
+    :param checks: sequence of :class:`~pandera.checks.Check` s to constrain
+        the values of the data at the dataframe level.
+    :param unique: a list of column names that should be jointly unique.
+    :param index: Index or MultiIndex schema component.
+    :param size: number of elements in the Series.
+    :param n_regex_columns: number of regex columns to generate.
+    :returns: ``hypothesis`` strategy.
+    """"""
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    if n_regex_columns < 1:
+        raise ValueError(
+            ""`n_regex_columns` must be a positive integer, found: ""
+            f""{n_regex_columns}""
+        )
+    if strategy:
+        raise BaseStrategyOnlyError(
+            ""The dataframe strategy is a base strategy. You cannot specify ""
+            ""the strategy argument to chain it to a parent strategy.""
+        )
+
+    columns = {} if columns is None else columns
+    checks = [] if checks is None else checks
+
+    def undefined_check_strategy(strategy, check, column=None):
+        """"""Strategy for checks with undefined strategies.""""""
+
+        def _element_wise_check_fn(element):
+            return check._check_fn(element)
+
+        def _column_check_fn(dataframe):
+            return check(dataframe[column]).check_passed
+
+        def _dataframe_check_fn(dataframe):
+            return check(dataframe).check_passed
+
+        if check.element_wise:
+            check_fn = _element_wise_check_fn
+            warning_type = ""Element-wise""
+        elif column is None:
+            check_fn = _dataframe_check_fn
+            warning_type = ""Dataframe""
+        else:
+            check_fn = _column_check_fn
+            warning_type = ""Column""
+
+        warnings.warn(
+            f""{warning_type} check doesn't have a defined strategy. ""
+            ""Falling back to filtering drawn values based on the check ""
+            ""definition. This can considerably slow down data-generation.""
+        )
+
+        return strategy.filter(check_fn)
+
+    def make_row_strategy(col, checks):
+        strategy = None
+        for check in checks:
+            if hasattr(check, ""strategy""):
+                strategy = check.strategy(col.dtype, strategy)
+            else:
+                strategy = undefined_check_strategy(
+                    strategy=(
+                        pandas_dtype_strategy(col.dtype)
+                        if strategy is None
+                        else strategy
+                    ),
+                    check=check,
+                )
+        if strategy is None:
+            strategy = pandas_dtype_strategy(col.dtype)
+        return strategy
+
+    @composite
+    def _dataframe_strategy(draw):
+        row_strategy_checks = []
+        undefined_strat_df_checks = []
+        for check in checks:
+            if hasattr(check, ""strategy"") or check.element_wise:
+                # we can apply element-wise checks defined at the dataframe
+                # level to the row strategy
+                row_strategy_checks.append(check)
+            else:
+                undefined_strat_df_checks.append(check)
+
+        # expand column set to generate column names for columns where
+        # regex=True.
+        expanded_columns = {}
+        for col_name, column in columns.items():
+            if unique and col_name in unique:
+                # if the column is in the set of columns specified in `unique`,
+                # make the column strategy independently unique. This is
+                # technically stricter than it should be, since the list of
+                # columns in `unique` are required to be jointly unique, but
+                # this is a simple solution that produces synthetic data that
+                # fulfills the uniqueness constraints of the dataframe.
+                column = deepcopy(column)
+                column.unique = True
+            if not column.regex:
+                expanded_columns[col_name] = column
+            else:
+                regex_columns = draw(
+                    st.lists(
+                        st.from_regex(column.name, fullmatch=True),
+                        min_size=n_regex_columns,
+                        max_size=n_regex_columns,
+                        unique=True,
+                    )
+                )
+                for regex_col in regex_columns:
+                    expanded_columns[regex_col] = deepcopy(column).set_name(
+                        regex_col
+                    )
+
+        # collect all non-element-wise column checks with undefined strategies
+        undefined_strat_column_checks: Dict[str, list] = defaultdict(list)
+        for col_name, column in expanded_columns.items():
+            undefined_strat_column_checks[col_name].extend(
+                check
+                for check in column.checks
+                if not hasattr(check, ""strategy"") and not check.element_wise
+            )
+
+        # override the column datatype with dataframe-level datatype if
+        # specified
+        col_dtypes = {
+            col_name: str(col.dtype)
+            if pandera_dtype is None
+            else str(pandera_dtype)
+            for col_name, col in expanded_columns.items()
+        }
+        nullable_columns = {
+            col_name: col.nullable
+            for col_name, col in expanded_columns.items()
+        }
+
+        row_strategy = None
+        if row_strategy_checks:
+            row_strategy = st.fixed_dictionaries(
+                {
+                    col_name: make_row_strategy(col, row_strategy_checks)
+                    for col_name, col in expanded_columns.items()
+                }
+            )
+
+        strategy = pdst.data_frames(
+            columns=[
+                column.strategy_component()
+                for column in expanded_columns.values()
+            ],
+            rows=row_strategy,
+            index=pdst.range_indexes(
+                min_size=0 if size is None else size, max_size=size
+            ),
+        )
+
+        # this is a hack to convert np.str_ data values into native python str.
+        string_columns = []
+        for col_name, col_dtype in col_dtypes.items():
+            if col_dtype in {""object"", ""str""} or col_dtype.startswith(
+                ""string""
+            ):
+                string_columns.append(col_name)
+
+        if string_columns:
+            # pylint: disable=cell-var-from-loop,undefined-loop-variable
+            strategy = strategy.map(
+                lambda df: df.assign(
+                    **{
+                        col_name: df[col_name].map(str)
+                        for col_name in string_columns
+                    }
+                )
+            )
+
+        strategy = strategy.map(
+            lambda df: df if df.empty else df.astype(col_dtypes)
+        )
+
+        if size is not None and size > 0 and any(nullable_columns.values()):
+            strategy = null_dataframe_masks(strategy, nullable_columns)
+
+        if index is not None:
+            strategy = set_pandas_index(strategy, index)
+
+        for check in undefined_strat_df_checks:
+            strategy = undefined_check_strategy(strategy, check)
+
+        for col_name, column_checks in undefined_strat_column_checks.items():
+            for check in column_checks:  # type: ignore
+                strategy = undefined_check_strategy(
+                    strategy, check, column=col_name
+                )
+
+        return draw(strategy)
+
+    return _dataframe_strategy()","for (col_name, col_dtype) in col_dtypes.items():
+    if col_dtype in {'object', 'str'} or col_dtype.startswith('string'):
+        string_columns.append(col_name)","string_columns = [col_name for (col_name, col_dtype) in col_dtypes.items() if col_dtype in {'object', 'str'} or col_dtype.startswith('string')]","string_columns = [col_name for (col_name, col_dtype) in col_dtypes.items() if col_dtype in {'object', 'str'} or col_dtype.startswith('string')]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+mmocr,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mmocr/mmocr/datasets/pipelines/dbnet_transforms.py,https://github.com/open-mmlab/mmocr/tree/master/mmocr/datasets/pipelines/dbnet_transforms.py,ImgAug,may_augment_bbox$110,"def may_augment_bbox(self, aug, ori_shape, bboxes):
+        imgaug_bboxes = []
+        for bbox in bboxes:
+            x1, y1, x2, y2 = bbox
+            imgaug_bboxes.append(
+                imgaug.BoundingBox(x1=x1, y1=y1, x2=x2, y2=y2))
+        imgaug_bboxes = aug.augment_bounding_boxes([
+            imgaug.BoundingBoxesOnImage(imgaug_bboxes, shape=ori_shape)
+        ])[0].clip_out_of_image()
+
+        new_bboxes = []
+        for box in imgaug_bboxes.bounding_boxes:
+            new_bboxes.append(
+                np.array([box.x1, box.y1, box.x2, box.y2], dtype=np.float32))
+
+        return new_bboxes","for box in imgaug_bboxes.bounding_boxes:
+    new_bboxes.append(np.array([box.x1, box.y1, box.x2, box.y2], dtype=np.float32))","new_bboxes = [np.array([box.x1, box.y1, box.x2, box.y2], dtype=np.float32) for box in imgaug_bboxes.bounding_boxes]","new_bboxes = [np.array([box.x1, box.y1, box.x2, box.y2], dtype=np.float32) for box in imgaug_bboxes.bounding_boxes]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+muzic,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/muzic/pdaugment/midi_preprocess/steps/track_separate.py,https://github.com/microsoft/muzic/tree/master/pdaugment/midi_preprocess/steps/track_separate.py,,remove_empty_track$13,"def remove_empty_track(midi_file):
+    '''
+    1. read pretty midi data
+    2. remove empty track,
+    also remove track with fewer than 10% notes of the track
+    with most notes
+    ********
+    Return: pretty_midi object, pypianoroll object
+    '''
+    try:
+        pretty_midi_data = pretty_midi.PrettyMIDI(midi_file)
+    except Exception as e:
+        print(f'exceptions in reading the file {midi_file}')
+        return None, None
+
+    #     print('I00:', pretty_midi_data.instruments)
+    pypiano_data = pypianoroll.Multitrack()
+
+    try:
+        pypiano_data.parse_pretty_midi(pretty_midi_data, skip_empty_tracks=False)
+    except Exception as e:
+        print(f'exceptions for pypianoroll in reading the file {midi_file}')
+        return None, None
+
+    drum_idx = []
+    for i, instrument in enumerate(pretty_midi_data.instruments):
+        if instrument.is_drum:
+            drum_idx.append(i)
+
+    note_count = [np.count_nonzero(np.any(track.pianoroll, axis=1)) \
+                  for track in pypiano_data.tracks]
+
+    empty_indices = np.array(note_count) < 10
+    remove_indices = np.arange(len(pypiano_data.tracks))[empty_indices]
+
+    for index in sorted(remove_indices, reverse=True):
+        del pypiano_data.tracks[index]
+        del pretty_midi_data.instruments[index]
+    return pretty_midi_data, pypiano_data","for (i, instrument) in enumerate(pretty_midi_data.instruments):
+    if instrument.is_drum:
+        drum_idx.append(i)","drum_idx = [i for (i, instrument) in enumerate(pretty_midi_data.instruments) if instrument.is_drum]","drum_idx = [i for (i, instrument) in enumerate(pretty_midi_data.instruments) if instrument.is_drum]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+neural_sp,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/neural_sp/neural_sp/datasets/token_converter/character.py,https://github.com/hirofumi0810/neural_sp/tree/master/neural_sp/datasets/token_converter/character.py,Char2idx,__init__$19,"def __init__(self, dict_path, nlsyms=False, remove_space=False, remove_list=[]):
+        self.remove_space = remove_space
+        self.remove_list = remove_list
+
+        # Load a dictionary file
+        self.token2idx = {'<blank>': 0}
+        with codecs.open(dict_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                c, idx = line.strip().split(' ')
+                if c in remove_list:
+                    continue
+                self.token2idx[c] = int(idx)
+        self.vocab = len(self.token2idx.keys())
+
+        self.nlsyms_list = []
+        if nlsyms and os.path.isfile(nlsyms):
+            with codecs.open(nlsyms, 'r', encoding='utf-8') as f:
+                for line in f:
+                    self.nlsyms_list.append(line.strip())","for line in f:
+    self.nlsyms_list.append(line.strip())",self.nlsyms_list = [line.strip() for line in f],self.nlsyms_list = [line.strip() for line in f],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+dm-haiku,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dm-haiku/haiku/_src/nets/resnet.py,https://github.com/deepmind/dm-haiku/tree/master/haiku/_src/nets/resnet.py,BlockGroup,__init__$203,"def __init__(
+      self,
+      channels: int,
+      num_blocks: int,
+      stride: Union[int, Sequence[int]],
+      bn_config: Mapping[str, FloatStrOrBool],
+      resnet_v2: bool,
+      bottleneck: bool,
+      use_projection: bool,
+      name: Optional[str] = None,
+  ):
+    super().__init__(name=name)
+
+    block_cls = BlockV2 if resnet_v2 else BlockV1
+
+    self.blocks = []
+    for i in range(num_blocks):
+      self.blocks.append(
+          block_cls(channels=channels,
+                    stride=(1 if i else stride),
+                    use_projection=(i == 0 and use_projection),
+                    bottleneck=bottleneck,
+                    bn_config=bn_config,
+                    name=""block_%d"" % (i)))","for i in range(num_blocks):
+    self.blocks.append(block_cls(channels=channels, stride=1 if i else stride, use_projection=i == 0 and use_projection, bottleneck=bottleneck, bn_config=bn_config, name='block_%d' % i))",,"self.blocks = [block_cls(channels=channels, stride=1 if i else stride, use_projection=i == 0 and use_projection, bottleneck=bottleneck, bn_config=bn_config, name='block_%d' % i) for i in range(num_blocks)]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+astropy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/astropy/astropy/io/votable/exceptions.py,https://github.com/astropy/astropy/tree/master/astropy/io/votable/exceptions.py,,_get_warning_and_exception_classes$1520,"def _get_warning_and_exception_classes(prefix):
+    classes = []
+    for key, val in globals().items():
+        if re.match(prefix + ""[0-9]{2}"", key):
+            classes.append((key, val))
+    classes.sort()
+    return classes","for (key, val) in globals().items():
+    if re.match(prefix + '[0-9]{2}', key):
+        classes.append((key, val))","classes = [(key, val) for (key, val) in globals().items() if re.match(prefix + '[0-9]{2}', key)]","classes = [(key, val) for (key, val) in globals().items() if re.match(prefix + '[0-9]{2}', key)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+RATDecoders,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/RATDecoders/malwareconfig/yarascanner.py,https://github.com/kevthehermit/RATDecoders/tree/master/malwareconfig/yarascanner.py,YaraScanner,yara_scan$17,"def yara_scan(self, raw_data):
+        matches = self.compiled_rules.match(data=raw_data)
+        rule_list = []
+
+        for match in matches:
+            rule_list.append(match.rule)
+        self.rule_list = rule_list","for match in matches:
+    rule_list.append(match.rule)",rule_list = [match.rule for match in matches],rule_list = [match.rule for match in matches],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+moto,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/moto/moto/ec2/responses/instances.py,https://github.com/spulec/moto/tree/master/moto/ec2/responses/instances.py,InstanceResponse,_security_grp_instance_attribute_handler$281,"def _security_grp_instance_attribute_handler(self):
+        new_security_grp_list = []
+        for key, value in self.querystring.items():
+            if ""GroupId."" in key:
+                new_security_grp_list.append(self.querystring.get(key)[0])
+
+        instance_id = self._get_param(""InstanceId"")
+        if self.is_not_dryrun(""ModifyInstanceSecurityGroups""):
+            self.ec2_backend.modify_instance_security_groups(
+                instance_id, new_security_grp_list
+            )
+            return EC2_MODIFY_INSTANCE_ATTRIBUTE","for (key, value) in self.querystring.items():
+    if 'GroupId.' in key:
+        new_security_grp_list.append(self.querystring.get(key)[0])","new_security_grp_list = [self.querystring.get(key)[0] for (key, value) in self.querystring.items() if 'GroupId.' in key]","new_security_grp_list = [self.querystring.get(key)[0] for (key, value) in self.querystring.items() if 'GroupId.' in key]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+diff-match-patch,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/diff-match-patch/python3/diff_match_patch.py,https://github.com/google/diff-match-patch/tree/master/python3/diff_match_patch.py,diff_match_patch,diff_charsToLines$444,"def diff_charsToLines(self, diffs, lineArray):
+    """"""Rehydrate the text in a diff from a string of line hashes to real lines
+    of text.
+
+    Args:
+      diffs: Array of diff tuples.
+      lineArray: Array of unique strings.
+    """"""
+    for i in range(len(diffs)):
+      text = []
+      for char in diffs[i][1]:
+        text.append(lineArray[ord(char)])
+      diffs[i] = (diffs[i][0], """".join(text))","for char in diffs[i][1]:
+    text.append(lineArray[ord(char)])",text = [lineArray[ord(char)] for char in diffs[i][1]],text = [lineArray[ord(char)] for char in diffs[i][1]],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+amazing-qr,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/amazing-qr/amzqr/amzqr.py,https://github.com/x-hw/amazing-qr/tree/master/amzqr/amzqr.py,,combine$51,"def combine(ver, qr_name, bg_name, colorized, contrast, brightness, save_dir, save_name=None):
+        from amzqr.mylibs.constant import alig_location
+        from PIL import ImageEnhance, ImageFilter
+        
+        qr = Image.open(qr_name)
+        qr = qr.convert('RGBA') if colorized else qr
+        
+        bg0 = Image.open(bg_name).convert('RGBA')
+        bg0 = ImageEnhance.Contrast(bg0).enhance(contrast)
+        bg0 = ImageEnhance.Brightness(bg0).enhance(brightness)
+
+        if bg0.size[0] < bg0.size[1]:
+            bg0 = bg0.resize((qr.size[0]-24, (qr.size[0]-24)*int(bg0.size[1]/bg0.size[0])))
+        else:
+            bg0 = bg0.resize(((qr.size[1]-24)*int(bg0.size[0]/bg0.size[1]), qr.size[1]-24))    
+            
+        bg = bg0 if colorized else bg0.convert('1')
+        
+        aligs = []
+        if ver > 1:
+            aloc = alig_location[ver-2]
+            for a in range(len(aloc)):
+                for b in range(len(aloc)):
+                    if not ((a==b==0) or (a==len(aloc)-1 and b==0) or (a==0 and b==len(aloc)-1)):
+                        for i in range(3*(aloc[a]-2), 3*(aloc[a]+3)):
+                            for j in range(3*(aloc[b]-2), 3*(aloc[b]+3)):
+                                aligs.append((i,j))
+
+        for i in range(qr.size[0]-24):
+            for j in range(qr.size[1]-24):
+                if not ((i in (18,19,20)) or (j in (18,19,20)) or (i<24 and j<24) or (i<24 and j>qr.size[1]-49) or (i>qr.size[0]-49 and j<24) or ((i,j) in aligs) or (i%3==1 and j%3==1) or (bg0.getpixel((i,j))[3]==0)):
+                    qr.putpixel((i+12,j+12), bg.getpixel((i,j)))
+        
+        qr_name = os.path.join(save_dir, os.path.splitext(os.path.basename(bg_name))[0] + '_qrcode.png') if not save_name else os.path.join(save_dir, save_name)
+        qr.resize((qr.size[0]*3, qr.size[1]*3)).save(qr_name)
+        return qr_name","for a in range(len(aloc)):
+    for b in range(len(aloc)):
+        if not (a == b == 0 or (a == len(aloc) - 1 and b == 0) or (a == 0 and b == len(aloc) - 1)):
+            for i in range(3 * (aloc[a] - 2), 3 * (aloc[a] + 3)):
+                for j in range(3 * (aloc[b] - 2), 3 * (aloc[b] + 3)):
+                    aligs.append((i, j))","aligs = [(i, j) for a in range(len(aloc)) for b in range(len(aloc)) if not (a == b == 0 or (a == len(aloc) - 1 and b == 0) or (a == 0 and b == len(aloc) - 1)) for i in range(3 * (aloc[a] - 2), 3 * (aloc[a] + 3)) for j in range(3 * (aloc[b] - 2), 3 * (aloc[b] + 3))]","aligs = [(i, j) for a in range(len(aloc)) for b in range(len(aloc)) if not (a == b == 0 or (a == len(aloc) - 1 and b == 0) or (a == 0 and b == len(aloc) - 1)) for i in range(3 * (aloc[a] - 2), 3 * (aloc[a] + 3)) for j in range(3 * (aloc[b] - 2), 3 * (aloc[b] + 3))]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+frappe,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/frappe/frappe/core/doctype/user/user.py,https://github.com/frappe/frappe/tree/master/frappe/core/doctype/user/user.py,User,after_rename$453,"def after_rename(self, old_name, new_name, merge=False):
+		tables = frappe.db.get_tables()
+		for tab in tables:
+			desc = frappe.db.get_table_columns_description(tab)
+			has_fields = []
+			for d in desc:
+				if d.get(""name"") in [""owner"", ""modified_by""]:
+					has_fields.append(d.get(""name""))
+			for field in has_fields:
+				frappe.db.sql(
+					""""""UPDATE `%s`
+					SET `%s` = %s
+					WHERE `%s` = %s""""""
+					% (tab, field, ""%s"", field, ""%s""),
+					(new_name, old_name),
+				)
+
+		if frappe.db.exists(""Notification Settings"", old_name):
+			frappe.rename_doc(""Notification Settings"", old_name, new_name, force=True, show_alert=False)
+
+		# set email
+		frappe.db.set_value(""User"", new_name, ""email"", new_name)","for d in desc:
+    if d.get('name') in ['owner', 'modified_by']:
+        has_fields.append(d.get('name'))","has_fields = [d.get('name') for d in desc if d.get('name') in ['owner', 'modified_by']]","has_fields = [d.get('name') for d in desc if d.get('name') in ['owner', 'modified_by']]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+satpy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/satpy/satpy/readers/viirs_compact.py,https://github.com/pytroll/satpy/tree/master/satpy/readers/viirs_compact.py,VIIRSCompactFileHandler,expand_angle_and_nav$285,"def expand_angle_and_nav(self, arrays):
+        """"""Expand angle and navigation datasets.""""""
+        res = []
+        for array in arrays:
+            res.append(da.map_blocks(expand, array[:, :, np.newaxis], self.expansion_coefs,
+                                     scans=self.scans, scan_size=self.scan_size,
+                                     dtype=array.dtype, drop_axis=2, chunks=self.expansion_coefs.chunks[:-1]))
+        return res","for array in arrays:
+    res.append(da.map_blocks(expand, array[:, :, np.newaxis], self.expansion_coefs, scans=self.scans, scan_size=self.scan_size, dtype=array.dtype, drop_axis=2, chunks=self.expansion_coefs.chunks[:-1]))",,"res = [da.map_blocks(expand, array[:, :, np.newaxis], self.expansion_coefs, scans=self.scans, scan_size=self.scan_size, dtype=array.dtype, drop_axis=2, chunks=self.expansion_coefs.chunks[:-1]) for array in arrays]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+LibreASR,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/LibreASR/libreasr/lib/learner.py,https://github.com/iceychris/LibreASR/tree/master/libreasr/lib/learner.py,ASRLearner,from_config$173,"def from_config(conf, db, m):
+        cbs = [
+            CudaCallback(),
+            TerminateOnNaNCallback(),
+            SaveModelCallback(),
+            ReduceLROnPlateau(patience=1, min_lr=1e-5, factor=1.5),
+        ]
+        optim = conf[""training""][""optimizer""].lower()
+        if optim == ""ranger"":
+            opt_func = ranger
+        elif optim == ""ranger_adabelief"":
+            opt_func = ranger_adabelief
+        elif optim == ""adam"":
+            opt_func = Adam
+        elif optim == ""lamb"":
+            opt_func = Lamb
+        elif optim == ""apollo"":
+            from fastai2.optimizer import OptimWrapper
+
+            def of(param_groups, **kwargs):
+                lr_init = 1e-4
+                lr = 1e-3
+                warmup = 10  # 1000
+                wd = 4e-4
+                apollo = Apollo(param_groups, lr=lr, warmup=warmup)
+                new_pgs = []
+                for pg in param_groups:
+                    new_pgs.append(
+                        {
+                            ""params"": pg,
+                            ""lr"": lr,
+                            ""wd"": wd,
+                            ""mom"": 0.99,
+                            ""eps"": 1e-4,
+                            ""beta"": 0.9,
+                            ""init_lr"": lr_init,
+                            ""base_lr"": lr,
+                            ""warmup"": warmup,
+                        }
+                    )
+                apollo.param_groups = new_pgs
+                opt = OptimWrapper(apollo)
+                return opt
+
+            opt_func = of
+        elif optim == ""adahessian"":
+            opt_func = AdaHessian
+            cbs.append(HutchinsonTraceCallback())
+
+            @patch
+            def _backward(self: Learner):
+                if self.opt._hutch_iter % HESSIAN_EVERY == 0:
+                    self.loss.backward(create_graph=True)
+                else:
+                    self.loss.backward()
+
+        else:
+            raise Exception(""No such optimizer"")
+        acnb = conf[""accumulate_n_batches""]
+        if acnb > 1 and not optim == ""adahessian"":
+            cbs.append(GradAccumCallback(num_batches=acnb))
+        extra_cbs = []
+        if conf[""mp""]:
+            extra_cbs.append(MixedPrecision(clip=conf[""mp_clip""]))
+            _ = m.half()
+        if conf[""tensorboard""]:
+            _tb = partial(
+                Tensorboard,
+                wandb=conf[""wandb""],
+                test=True,
+                tests_per_epoch=conf[""tests_per_epoch""],
+                mp=conf[""mp""],
+            )()
+            extra_cbs.append(_tb)
+        learn = Learner(
+            db,
+            m,
+            loss_func=get_loss_func(
+                ""rnnt"",
+                conf[""cuda""][""device""],
+                conf[""model""][""encoder""][""reduction_factor""],
+                debug=False,
+                perf=False,
+                div_by_len=False,
+                entropy_loss=False,
+            ),
+            opt_func=opt_func,
+            splitter=partial(transducer_splitter, adahessian=(optim == ""adahessian"")),
+            cbs=cbs,
+        )
+        learn.extra_cbs = extra_cbs
+        if conf[""mp""]:
+            # dirty fix
+            learn.dls.device = torch.device(""cuda:0"")
+        return learn","for pg in param_groups:
+    new_pgs.append({'params': pg, 'lr': lr, 'wd': wd, 'mom': 0.99, 'eps': 0.0001, 'beta': 0.9, 'init_lr': lr_init, 'base_lr': lr, 'warmup': warmup})","new_pgs = [{'params': pg, 'lr': lr, 'wd': wd, 'mom': 0.99, 'eps': 0.0001, 'beta': 0.9, 'init_lr': lr_init, 'base_lr': lr, 'warmup': warmup} for pg in param_groups]","new_pgs = [{'params': pg, 'lr': lr, 'wd': wd, 'mom': 0.99, 'eps': 0.0001, 'beta': 0.9, 'init_lr': lr_init, 'base_lr': lr, 'warmup': warmup} for pg in param_groups]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+shinysdr,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/shinysdr/shinysdr/telemetry.py,https://github.com/kpreid/shinysdr/tree/master/shinysdr/telemetry.py,TelemetryStore,__flush_expired$203,"def __flush_expired(self):
+        current_time = self.__time_source.seconds()
+        deletes = []
+        for object_id, expiry in six.iteritems(self.__expiry_times):
+            if expiry <= current_time:
+                deletes.append(object_id)
+        for object_id in deletes:
+            del self.__objects[object_id]
+            del self.__expiry_times[object_id]
+            if object_id in self.__interesting_objects:
+                del self.__interesting_objects[object_id]
+
+        self.__maybe_schedule_flush()","for (object_id, expiry) in six.iteritems(self.__expiry_times):
+    if expiry <= current_time:
+        deletes.append(object_id)","deletes = [object_id for (object_id, expiry) in six.iteritems(self.__expiry_times) if expiry <= current_time]","deletes = [object_id for (object_id, expiry) in six.iteritems(self.__expiry_times) if expiry <= current_time]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+Metis,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Metis/app/dao/time_series_detector/train_op.py,https://github.com/Tencent/Metis/tree/master/app/dao/time_series_detector/train_op.py,TrainOperation,query_train_source$87,"def query_train_source(self):
+        command = ""select distinct source from train_task""
+        num = self.__cur.execute(command)
+        source_list = []
+        query_res = self.__cur.fetchmany(num)
+        for row in query_res:
+            source_list.append(row[0])
+        return OP_SUCCESS, {
+            ""source"": source_list
+        }","for row in query_res:
+    source_list.append(row[0])",source_list = [row[0] for row in query_res],source_list = [row[0] for row in query_res],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+MB-Lab,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/MB-Lab/algorithms.py,https://github.com/animate1978/MB-Lab/tree/master//algorithms.py,,collect_existing_meshes$611,"def collect_existing_meshes():
+    existing_mesh_names = []
+    for mesh in bpy.data.meshes:
+        existing_mesh_names.append(mesh.name)
+    return existing_mesh_names","for mesh in bpy.data.meshes:
+    existing_mesh_names.append(mesh.name)",existing_mesh_names = [mesh.name for mesh in bpy.data.meshes],existing_mesh_names = [mesh.name for mesh in bpy.data.meshes],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+pybossa,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pybossa/test/test_jobs/test_engage_old_users.py,https://github.com/Scifabric/pybossa/tree/master/test/test_jobs/test_engage_old_users.py,TestEngageUsers,test_get_inactive_users_jobs_with_users$42,"def test_get_inactive_users_jobs_with_users(self):
+        """"""Test JOB get with users returns empty list.""""""
+        TaskRunFactory.create()
+        jobs_generator = get_inactive_users_jobs()
+        jobs = []
+        for job in jobs_generator:
+            jobs.append(job)
+
+        msg = ""There should not be any job.""
+        assert len(jobs) == 0,  msg","for job in jobs_generator:
+    jobs.append(job)",jobs = [job for job in jobs_generator],jobs = [job for job in jobs_generator],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+AlgorithmsAndDataStructure,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/AlgorithmsAndDataStructure/Python/Algorithms/OperatingSystem/bankers_algorithm.py,https://github.com/codePerfectPlus/AlgorithmsAndDataStructure/tree/master/Python/Algorithms/OperatingSystem/bankers_algorithm.py,,isSafe$22,"def isSafe(P, R, processes, available_array, max_R, alloted):
+    need = []
+    for i in range(P):
+        temp = []
+        for j in range(R):
+            temp.append(0)
+        need.append(temp)
+
+    calculateNeed(P, R, need, max_R, alloted)
+
+    # mark all processes as unfinished
+    finish = [0] * P
+
+    # safe sequence array
+    safeSeq = [0] * P
+
+    # make a copy of available resources
+    work = [0] * R
+    for i in range(R):
+        work[i] = available_array[i]
+
+    # while all processes not finished or system not in safe state
+    count = 0
+    while(count < P):
+        # find an unfinished process whose
+        # needs can be satisfied
+        found = False
+        for p in range(P):
+
+            if(finish[p] == 0):
+
+                for j in range(R):
+                    if(need[p][j] > work[j]):
+                        break
+
+                if(j == R - 1):
+
+                    for k in range(R):
+                        work[k] += alloted[p][k]
+                    safeSeq[count] = p
+                    count += 1
+
+                    finish[p] = 1
+                    found = True
+        if found is False:
+            print(""System not in safe state"")
+            return False
+
+    print(""System is in safe state"")
+    print(""Safe Sequence is: "")
+    print(*safeSeq)
+    return True","for j in range(R):
+    temp.append(0)",temp = [0 for j in range(R)],temp = [0 for j in range(R)],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+lemur,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/lemur/lemur/certificates/utils.py,https://github.com/Netflix/lemur/tree/master/lemur/certificates/utils.py,,get_sans_from_csr$19,"def get_sans_from_csr(data):
+    """"""
+    Fetches SubjectAlternativeNames from CSR.
+    Works with any kind of SubjectAlternativeName
+    :param data: PEM-encoded string with CSR
+    :return: List of LemurAPI-compatible subAltNames
+    """"""
+    sub_alt_names = []
+    try:
+        request = x509.load_pem_x509_csr(data.encode(""utf-8""), default_backend())
+    except Exception:
+        raise ValidationError(""CSR presented is not valid."")
+
+    try:
+        alt_names = request.extensions.get_extension_for_class(
+            x509.SubjectAlternativeName
+        )
+        for alt_name in alt_names.value:
+            sub_alt_names.append(
+                {""nameType"": type(alt_name).__name__, ""value"": alt_name.value}
+            )
+    except x509.ExtensionNotFound:
+        pass
+
+    return sub_alt_names","for alt_name in alt_names.value:
+    sub_alt_names.append({'nameType': type(alt_name).__name__, 'value': alt_name.value})","sub_alt_names = [{'nameType': type(alt_name).__name__, 'value': alt_name.value} for alt_name in alt_names.value]","sub_alt_names = [{'nameType': type(alt_name).__name__, 'value': alt_name.value} for alt_name in alt_names.value]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+DG-Net,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/DG-Net/reIDmodel.py,https://github.com/NVlabs/DG-Net/tree/master//reIDmodel.py,PCB,forward$219,"def forward(self, x):
+        x = self.model.conv1(x)
+        x = self.model.bn1(x)
+        x = self.model.relu(x)
+        x = self.model.maxpool(x)
+        
+        x = self.model.layer1(x)
+        x = self.model.layer2(x)
+        x = self.model.layer3(x)
+        x = self.model.layer4(x)
+        x = self.avgpool(x)
+        f = x
+        f = f.view(f.size(0),f.size(1)*self.part)
+        x = self.dropout(x)
+        part = {}
+        predict = {}
+        # get part feature batchsize*2048*4
+        for i in range(self.part):
+            part[i] = x[:,:,i].contiguous()
+            part[i] = part[i].view(x.size(0), x.size(1))
+            name = 'classifier'+str(i)
+            c = getattr(self,name)
+            predict[i] = c(part[i])
+
+        y=[]
+        for i in range(self.part):
+            y.append(predict[i])
+
+        return f, y","for i in range(self.part):
+    y.append(predict[i])",y = [predict[i] for i in range(self.part)],y = [predict[i] for i in range(self.part)],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+stacker,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/stacker/stacker/lookups/handlers/dynamodb.py,https://github.com/cloudtools/stacker/tree/master/stacker/lookups/handlers/dynamodb.py,,_convert_ddb_list_to_list$180,"def _convert_ddb_list_to_list(conversion_list):
+    """"""Given a dynamodb list, it will return a python list without the dynamodb
+        datatypes
+
+    Args:
+        conversion_list (dict): a dynamodb list which includes the
+            datatypes
+
+    Returns:
+        list: Returns a sanitized list without the dynamodb datatypes
+    """"""
+    ret_list = []
+    for v in conversion_list:
+        for v1 in v:
+            ret_list.append(v[v1])
+    return ret_list","for v in conversion_list:
+    for v1 in v:
+        ret_list.append(v[v1])",,ret_list = [v[v1] for v in conversion_list for v1 in v],0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+django-haystack,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/django-haystack/haystack/backends/solr_backend.py,https://github.com/django-haystack/django-haystack/tree/master/haystack/backends/solr_backend.py,SolrSearchBackend,extract_spelling_suggestions$592,"def extract_spelling_suggestions(self, raw_results):
+        # There are many different formats for Legacy, 6.4, and 6.5 e.g.
+        # https://issues.apache.org/jira/browse/SOLR-3029 and depending on the
+        # version and configuration the response format may be a dict of dicts,
+        # a list of dicts, or a list of strings.
+
+        collations = raw_results.spellcheck.get(""collations"", None)
+        suggestions = raw_results.spellcheck.get(""suggestions"", None)
+
+        # We'll collect multiple suggestions here. For backwards
+        # compatibility with older versions of Haystack we'll still return
+        # only a single suggestion but in the future we can expose all of
+        # them.
+
+        spelling_suggestions = []
+
+        if collations:
+            if isinstance(collations, dict):
+                # Solr 6.5
+                collation_values = collations[""collation""]
+                if isinstance(collation_values, str):
+                    collation_values = [collation_values]
+                elif isinstance(collation_values, dict):
+                    # spellcheck.collateExtendedResults changes the format to a dictionary:
+                    collation_values = [collation_values[""collationQuery""]]
+            elif isinstance(collations[1], dict):
+                # Solr 6.4
+                collation_values = collations
+            else:
+                # Older versions of Solr
+                collation_values = collations[-1:]
+
+            for i in collation_values:
+                # Depending on the options the values are either simple strings or dictionaries:
+                spelling_suggestions.append(
+                    i[""collationQuery""] if isinstance(i, dict) else i
+                )
+        elif suggestions:
+            if isinstance(suggestions, dict):
+                for i in suggestions.values():
+                    for j in i[""suggestion""]:
+                        if isinstance(j, dict):
+                            spelling_suggestions.append(j[""word""])
+                        else:
+                            spelling_suggestions.append(j)
+            elif isinstance(suggestions[0], str) and isinstance(suggestions[1], dict):
+                # Solr 6.4 uses a list of paired (word, dictionary) pairs:
+                for suggestion in suggestions:
+                    if isinstance(suggestion, dict):
+                        for i in suggestion[""suggestion""]:
+                            if isinstance(i, dict):
+                                spelling_suggestions.append(i[""word""])
+                            else:
+                                spelling_suggestions.append(i)
+            else:
+                # Legacy Solr
+                spelling_suggestions.append(suggestions[-1])
+
+        return spelling_suggestions","for i in collation_values:
+    spelling_suggestions.append(i['collationQuery'] if isinstance(i, dict) else i)","spelling_suggestions = [i['collationQuery'] if isinstance(i, dict) else i for i in collation_values]","spelling_suggestions = [i['collationQuery'] if isinstance(i, dict) else i for i in collation_values]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+nova,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nova/nova/tests/unit/scheduler/test_filters.py,https://github.com/openstack/nova/tree/master/nova/tests/unit/scheduler/test_filters.py,FiltersTestCase,test_filter_all_recursive_yields$59,"def test_filter_all_recursive_yields(self, mock_filter_one):
+        # Test filter_all() allows generators from previous filter_all()s.
+        # filter_all() yields results.  We want to make sure that we can
+        # call filter_all() with generators returned from previous calls
+        # to filter_all().
+        filter_obj_list = ['obj1', 'obj2', 'obj3']
+        spec_obj = objects.RequestSpec()
+        base_filter = filters.BaseFilter()
+
+        # The order that _filter_one is going to get called gets
+        # confusing because we will be recursively yielding things..
+        # We are going to simulate the first call to filter_all()
+        # returning False for 'obj2'.  So, 'obj1' will get yielded
+        # 'total_iterations' number of times before the first filter_all()
+        # call gets to processing 'obj2'.  We then return 'False' for it.
+        # After that, 'obj3' gets yielded 'total_iterations' number of
+        # times.
+        mock_results = []
+        total_iterations = 200
+        for x in range(total_iterations):
+            mock_results.append(True)
+        mock_results.append(False)
+        for x in range(total_iterations):
+            mock_results.append(True)
+        mock_filter_one.side_effect = mock_results
+
+        objs = iter(filter_obj_list)
+        for x in range(total_iterations):
+            # Pass in generators returned from previous calls.
+            objs = base_filter.filter_all(objs, spec_obj)
+        self.assertTrue(inspect.isgenerator(objs))
+        self.assertEqual(['obj1', 'obj3'], list(objs))","for x in range(total_iterations):
+    mock_results.append(True)",mock_results = [True for x in range(total_iterations)],mock_results = [True for x in range(total_iterations)],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+data-driven-web-apps-with-flask,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/data-driven-web-apps-with-flask/app/ch11_migrations/starter/pypi_org/bin/load_data.py,https://github.com/talkpython/data-driven-web-apps-with-flask/tree/master/app/ch11_migrations/starter/pypi_org/bin/load_data.py,,get_file_names$350,"def get_file_names(data_path: str) -> List[str]:
+    files = []
+    for f in os.listdir(data_path):
+        if f.endswith('.json'):
+            files.append(
+                os.path.abspath(os.path.join(data_path, f))
+            )
+
+    files.sort()
+    return files","for f in os.listdir(data_path):
+    if f.endswith('.json'):
+        files.append(os.path.abspath(os.path.join(data_path, f)))","files = [os.path.abspath(os.path.join(data_path, f)) for f in os.listdir(data_path) if f.endswith('.json')]","files = [os.path.abspath(os.path.join(data_path, f)) for f in os.listdir(data_path) if f.endswith('.json')]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+forseti-security,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/forseti-security/tests/scanner/scanners/forwarding_rule_rules_scanner_test.py,https://github.com/forseti-security/forseti-security/tree/master/tests/scanner/scanners/forwarding_rule_rules_scanner_test.py,ForwardingRuleScannerTest,test_forwarding_rules_scanner_all_match$31,"def test_forwarding_rules_scanner_all_match(self):
+        rules_local_path = get_datafile_path(__file__,
+            'forward_rule_test_1.yaml')
+        scanner = forwarding_rule_scanner.ForwardingRuleScanner(
+            {}, {}, mock.MagicMock(), '', '', rules_local_path)
+
+        project_id = ""abc-123""
+
+        gcp_forwarding_rules_resource_data = [
+            {
+                ""id"": ""46"",
+                ""creationTimestamp"": ""2017-06-01 04:19:37"",
+                ""name"": ""abc-123"",
+                ""description"": """",
+                ""region"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1"",
+                ""IPAddress"": ""198.51.100.99"",
+                ""IPProtocol"": ""UDP"",
+                ""portRange"": ""4500-4500"",
+                ""ports"": [],
+                ""target"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1/abc-123/abc-123"",
+                ""loadBalancingScheme"": ""EXTERNAL"",
+            },
+            {
+                ""id"": ""23"",
+                ""creationTimestamp"": ""2017-06-01 04:19:37"",
+                ""name"": ""abc-123"",
+                ""description"": """",
+                ""region"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1"",
+                ""IPAddress"": ""198.51.100.23"",
+                ""IPProtocol"": ""TCP"",
+                ""ports"": [8080],
+                ""target"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1/abc-123/abc-123"",
+                ""loadBalancingScheme"": ""INTERNAL"",
+            },
+            {
+                ""id"": ""46"",
+                ""creationTimestamp"": ""2017-06-01 04:19:37"",
+                ""name"": ""abc-123"",
+                ""description"": """",
+                ""region"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1"",
+                ""IPAddress"": ""198.51.100.46"",
+                ""IPProtocol"":  ""ESP"",
+                ""ports"": [],
+                ""target"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1/abc-123/abc-123"",
+                ""loadBalancingScheme"":  ""EXTERNAL"",
+            },
+            {
+                ""id"": ""46"",
+                ""creationTimestamp"": ""2017-06-01 04:19:37"",
+                ""name"": ""abc-123"",
+                ""description"": """",
+                ""region"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1"",
+                ""IPAddress"": ""198.51.100.35"",
+                ""IPProtocol"":  ""TCP"",
+                ""portRange"": ""4500-4500"",
+                ""target"": ""https://www.googleapis.com/compute/v1/projects/abc-123/regions/asia-east1/abc-123/abc-123"",
+                ""loadBalancingScheme"":  ""EXTERNAL"",
+            }
+        ]
+        gcp_forwarding_rules_resource_objs = []
+        for gcp_forwarding_rule_resource_data in gcp_forwarding_rules_resource_data:
+            gcp_forwarding_rules_resource_objs.append(
+                fr.ForwardingRule.from_dict(
+                    project_id, '', gcp_forwarding_rule_resource_data))
+
+        violations = scanner._find_violations(gcp_forwarding_rules_resource_objs)
+        self.assertEqual(0, len(violations))","for gcp_forwarding_rule_resource_data in gcp_forwarding_rules_resource_data:
+    gcp_forwarding_rules_resource_objs.append(fr.ForwardingRule.from_dict(project_id, '', gcp_forwarding_rule_resource_data))","gcp_forwarding_rules_resource_objs = [fr.ForwardingRule.from_dict(project_id, '', gcp_forwarding_rule_resource_data) for gcp_forwarding_rule_resource_data in gcp_forwarding_rules_resource_data]","gcp_forwarding_rules_resource_objs = [fr.ForwardingRule.from_dict(project_id, '', gcp_forwarding_rule_resource_data) for gcp_forwarding_rule_resource_data in gcp_forwarding_rules_resource_data]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+openstates-scrapers,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/openstates-scrapers/scrapers_next/md/people.py,https://github.com/openstates/openstates-scrapers/tree/master/scrapers_next/md/people.py,PersonDetail,parse_address_block$7,"def parse_address_block(self, block):
+        state = ""address""
+        # group lines by type
+        values = {""address"": [], ""phone"": [], ""fax"": []}
+        for line in block.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith(""Phone""):
+                state = ""phone""
+            elif line.startswith(""Fax""):
+                state = ""fax""
+
+            values[state].append(line)
+
+        # postprocess values
+
+        phones = []
+        for line in values[""phone""]:
+            for match in re.findall(r""\d{3}-\d{3}-\d{4}"", line):
+                phones.append(match)
+
+        faxes = []
+        for line in values[""fax""]:
+            for match in re.findall(r""\d{3}-\d{3}-\d{4}"", line):
+                faxes.append(match)
+
+        return {
+            ""address"": ""; "".join(values[""address""]),
+            ""phones"": phones,
+            ""faxes"": faxes,
+        }","for line in values['phone']:
+    for match in re.findall('\\d{3}-\\d{3}-\\d{4}', line):
+        phones.append(match)","phones = [match for line in values['phone'] for match in re.findall('\\d{3}-\\d{3}-\\d{4}', line)]","phones = [match for line in values['phone'] for match in re.findall('\\d{3}-\\d{3}-\\d{4}', line)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+openstates-scrapers,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/openstates-scrapers/scrapers_next/md/people.py,https://github.com/openstates/openstates-scrapers/tree/master/scrapers_next/md/people.py,PersonDetail,parse_address_block$7,"def parse_address_block(self, block):
+        state = ""address""
+        # group lines by type
+        values = {""address"": [], ""phone"": [], ""fax"": []}
+        for line in block.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith(""Phone""):
+                state = ""phone""
+            elif line.startswith(""Fax""):
+                state = ""fax""
+
+            values[state].append(line)
+
+        # postprocess values
+
+        phones = []
+        for line in values[""phone""]:
+            for match in re.findall(r""\d{3}-\d{3}-\d{4}"", line):
+                phones.append(match)
+
+        faxes = []
+        for line in values[""fax""]:
+            for match in re.findall(r""\d{3}-\d{3}-\d{4}"", line):
+                faxes.append(match)
+
+        return {
+            ""address"": ""; "".join(values[""address""]),
+            ""phones"": phones,
+            ""faxes"": faxes,
+        }","for line in values['fax']:
+    for match in re.findall('\\d{3}-\\d{3}-\\d{4}', line):
+        faxes.append(match)","faxes = [match for line in values['fax'] for match in re.findall('\\d{3}-\\d{3}-\\d{4}', line)]","faxes = [match for line in values['fax'] for match in re.findall('\\d{3}-\\d{3}-\\d{4}', line)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+espresso,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/espresso/tests/test_dictionary.py,https://github.com/freewym/espresso/tree/master/tests/test_dictionary.py,TestDictionary,test_finalize$18,"def test_finalize(self):
+        txt = [
+            ""A B C D"",
+            ""B C D"",
+            ""C D"",
+            ""D"",
+        ]
+        ref_ids1 = list(
+            map(
+                torch.IntTensor,
+                [
+                    [4, 5, 6, 7, 2],
+                    [5, 6, 7, 2],
+                    [6, 7, 2],
+                    [7, 2],
+                ],
+            )
+        )
+        ref_ids2 = list(
+            map(
+                torch.IntTensor,
+                [
+                    [7, 6, 5, 4, 2],
+                    [6, 5, 4, 2],
+                    [5, 4, 2],
+                    [4, 2],
+                ],
+            )
+        )
+
+        # build dictionary
+        d = Dictionary()
+        for line in txt:
+            d.encode_line(line, add_if_not_exist=True)
+
+        def get_ids(dictionary):
+            ids = []
+            for line in txt:
+                ids.append(dictionary.encode_line(line, add_if_not_exist=False))
+            return ids
+
+        def assertMatch(ids, ref_ids):
+            for toks, ref_toks in zip(ids, ref_ids):
+                self.assertEqual(toks.size(), ref_toks.size())
+                self.assertEqual(0, (toks != ref_toks).sum().item())
+
+        ids = get_ids(d)
+        assertMatch(ids, ref_ids1)
+
+        # check finalized dictionary
+        d.finalize()
+        finalized_ids = get_ids(d)
+        assertMatch(finalized_ids, ref_ids2)
+
+        # write to disk and reload
+        with tempfile.NamedTemporaryFile(mode=""w"") as tmp_dict:
+            d.save(tmp_dict.name)
+            d = Dictionary.load(tmp_dict.name)
+            reload_ids = get_ids(d)
+            assertMatch(reload_ids, ref_ids2)
+            assertMatch(finalized_ids, reload_ids)","for line in txt:
+    ids.append(dictionary.encode_line(line, add_if_not_exist=False))","ids = [dictionary.encode_line(line, add_if_not_exist=False) for line in txt]","ids = [dictionary.encode_line(line, add_if_not_exist=False) for line in txt]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+reid-strong-baseline,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/reid-strong-baseline/utils/re_ranking.py,https://github.com/michuanhaohao/reid-strong-baseline/tree/master/utils/re_ranking.py,,re_ranking$29,"def re_ranking(probFea, galFea, k1, k2, lambda_value, local_distmat=None, only_local=False):
+    # if feature vector is numpy, you should use 'torch.tensor' transform it to tensor
+    query_num = probFea.size(0)
+    all_num = query_num + galFea.size(0)
+    if only_local:
+        original_dist = local_distmat
+    else:
+        feat = torch.cat([probFea,galFea])
+        print('using GPU to compute original distance')
+        distmat = torch.pow(feat,2).sum(dim=1, keepdim=True).expand(all_num,all_num) + \
+                      torch.pow(feat, 2).sum(dim=1, keepdim=True).expand(all_num, all_num).t()
+        distmat.addmm_(1,-2,feat,feat.t())
+        original_dist = distmat.cpu().numpy()
+        del feat
+        if not local_distmat is None:
+            original_dist = original_dist + local_distmat
+    gallery_num = original_dist.shape[0]
+    original_dist = np.transpose(original_dist / np.max(original_dist, axis=0))
+    V = np.zeros_like(original_dist).astype(np.float16)
+    initial_rank = np.argsort(original_dist).astype(np.int32)
+
+    print('starting re_ranking')
+    for i in range(all_num):
+        # k-reciprocal neighbors
+        forward_k_neigh_index = initial_rank[i, :k1 + 1]
+        backward_k_neigh_index = initial_rank[forward_k_neigh_index, :k1 + 1]
+        fi = np.where(backward_k_neigh_index == i)[0]
+        k_reciprocal_index = forward_k_neigh_index[fi]
+        k_reciprocal_expansion_index = k_reciprocal_index
+        for j in range(len(k_reciprocal_index)):
+            candidate = k_reciprocal_index[j]
+            candidate_forward_k_neigh_index = initial_rank[candidate, :int(np.around(k1 / 2)) + 1]
+            candidate_backward_k_neigh_index = initial_rank[candidate_forward_k_neigh_index,
+                                               :int(np.around(k1 / 2)) + 1]
+            fi_candidate = np.where(candidate_backward_k_neigh_index == candidate)[0]
+            candidate_k_reciprocal_index = candidate_forward_k_neigh_index[fi_candidate]
+            if len(np.intersect1d(candidate_k_reciprocal_index, k_reciprocal_index)) > 2 / 3 * len(
+                    candidate_k_reciprocal_index):
+                k_reciprocal_expansion_index = np.append(k_reciprocal_expansion_index, candidate_k_reciprocal_index)
+
+        k_reciprocal_expansion_index = np.unique(k_reciprocal_expansion_index)
+        weight = np.exp(-original_dist[i, k_reciprocal_expansion_index])
+        V[i, k_reciprocal_expansion_index] = weight / np.sum(weight)
+    original_dist = original_dist[:query_num, ]
+    if k2 != 1:
+        V_qe = np.zeros_like(V, dtype=np.float16)
+        for i in range(all_num):
+            V_qe[i, :] = np.mean(V[initial_rank[i, :k2], :], axis=0)
+        V = V_qe
+        del V_qe
+    del initial_rank
+    invIndex = []
+    for i in range(gallery_num):
+        invIndex.append(np.where(V[:, i] != 0)[0])
+
+    jaccard_dist = np.zeros_like(original_dist, dtype=np.float16)
+
+    for i in range(query_num):
+        temp_min = np.zeros(shape=[1, gallery_num], dtype=np.float16)
+        indNonZero = np.where(V[i, :] != 0)[0]
+        indImages = [invIndex[ind] for ind in indNonZero]
+        for j in range(len(indNonZero)):
+            temp_min[0, indImages[j]] = temp_min[0, indImages[j]] + np.minimum(V[i, indNonZero[j]],
+                                                                               V[indImages[j], indNonZero[j]])
+        jaccard_dist[i] = 1 - temp_min / (2 - temp_min)
+
+    final_dist = jaccard_dist * (1 - lambda_value) + original_dist * lambda_value
+    del original_dist
+    del V
+    del jaccard_dist
+    final_dist = final_dist[:query_num, query_num:]
+    return final_dist","for i in range(gallery_num):
+    invIndex.append(np.where(V[:, i] != 0)[0])",,"invIndex = [np.where(V[:, i] != 0)[0] for i in range(gallery_num)]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+Paddle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Paddle/python/paddle/tensor/search.py,https://github.com/PaddlePaddle/Paddle/tree/master/python/paddle/tensor/search.py,,nonzero$383,"def nonzero(x, as_tuple=False):
+    """"""
+    Return a tensor containing the indices of all non-zero elements of the `input`
+    tensor. If as_tuple is True, return a tuple of 1-D tensors, one for each dimension
+    in `input`, each containing the indices (in that dimension) of all non-zero elements
+    of `input`. Given a n-Dimensional `input` tensor with shape [x_1, x_2, ..., x_n], If
+    as_tuple is False, we can get a output tensor with shape [z, n], where `z` is the
+    number of all non-zero elements in the `input` tensor. If as_tuple is True, we can get
+    a 1-D tensor tuple of length `n`, and the shape of each 1-D tensor is [z, 1].
+
+    Args:
+        x (Tensor): The input tensor variable.
+        as_tuple (bool, optional): Return type, Tensor or tuple of Tensor.
+
+    Returns:
+        Tensor. The data type is int64.
+
+    Examples:
+
+        .. code-block:: python
+
+            import paddle
+
+            x1 = paddle.to_tensor([[1.0, 0.0, 0.0],
+                                   [0.0, 2.0, 0.0],
+                                   [0.0, 0.0, 3.0]])
+            x2 = paddle.to_tensor([0.0, 1.0, 0.0, 3.0])
+            out_z1 = paddle.nonzero(x1)
+            print(out_z1)
+            #[[0 0]
+            # [1 1]
+            # [2 2]]
+            out_z1_tuple = paddle.nonzero(x1, as_tuple=True)
+            for out in out_z1_tuple:
+                print(out)
+            #[[0]
+            # [1]
+            # [2]]
+            #[[0]
+            # [1]
+            # [2]]
+            out_z2 = paddle.nonzero(x2)
+            print(out_z2)
+            #[[1]
+            # [3]]
+            out_z2_tuple = paddle.nonzero(x2, as_tuple=True)
+            for out in out_z2_tuple:
+                print(out)
+            #[[1]
+            # [3]]
+
+    """"""
+    list_out = []
+    shape = x.shape
+    rank = len(shape)
+
+    if in_dygraph_mode():
+        outs = _C_ops.nonzero(x)
+    elif paddle.in_dynamic_mode():
+        outs = _legacy_C_ops.where_index(x)
+    else:
+        helper = LayerHelper(""where_index"", **locals())
+
+        outs = helper.create_variable_for_type_inference(
+            dtype=core.VarDesc.VarType.INT64
+        )
+
+        helper.append_op(
+            type='where_index', inputs={'Condition': x}, outputs={'Out': [outs]}
+        )
+
+    if not as_tuple:
+        return outs
+    elif rank == 1:
+        return tuple([outs])
+    else:
+        for i in range(rank):
+            list_out.append(
+                paddle.slice(outs, axes=[1], starts=[i], ends=[i + 1])
+            )
+        return tuple(list_out)","for i in range(rank):
+    list_out.append(paddle.slice(outs, axes=[1], starts=[i], ends=[i + 1]))",,"list_out = [paddle.slice(outs, axes=[1], starts=[i], ends=[i + 1]) for i in range(rank)]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+football,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/football/gfootball/env/football_env_core.py,https://github.com/google-research/football/tree/master/gfootball/env/football_env_core.py,FootballEnvCore,sticky_actions_state$378,"def sticky_actions_state(self, left_team, player_id):
+    result = []
+    for a in self._sticky_actions:
+      result.append(
+          self._env.sticky_action_state(a._backend_action, left_team,
+                                        player_id))
+    return np.uint8(result)","for a in self._sticky_actions:
+    result.append(self._env.sticky_action_state(a._backend_action, left_team, player_id))",,"result = [self._env.sticky_action_state(a._backend_action, left_team, player_id) for a in self._sticky_actions]",0,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+zvt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/zvt/zvt/contract/register.py,https://github.com/zvtvz/zvt/tree/master/zvt/contract/register.py,,register_schema$42,"def register_schema(providers: List[str],
+                    db_name: str,
+                    schema_base: DeclarativeMeta,
+                    entity_type: str = None):
+    """"""
+    function for register schema,please declare them before register
+
+    :param providers: the supported providers for the schema
+    :type providers:
+    :param db_name: database name for the schema
+    :type db_name:
+    :param schema_base:
+    :type schema_base:
+    :param entity_type: the schema related entity_type
+    :type entity_type:
+    :return:
+    :rtype:
+    """"""
+    schemas = []
+    for item in schema_base.registry.mappers:
+        cls = item.class_
+        if type(cls) == DeclarativeMeta:
+            # register provider to the schema
+            for provider in providers:
+                if issubclass(cls, Mixin):
+                    cls.register_provider(provider)
+
+            if zvt_context.dbname_map_schemas.get(db_name):
+                schemas = zvt_context.dbname_map_schemas[db_name]
+            zvt_context.schemas.append(cls)
+            if entity_type:
+                add_to_map_list(the_map=zvt_context.entity_map_schemas, key=entity_type, value=cls)
+            schemas.append(cls)
+
+    zvt_context.dbname_map_schemas[db_name] = schemas
+
+    for provider in providers:
+        if provider not in zvt_context.providers:
+            zvt_context.providers.append(provider)
+
+        if not zvt_context.provider_map_dbnames.get(provider):
+            zvt_context.provider_map_dbnames[provider] = []
+        zvt_context.provider_map_dbnames[provider].append(db_name)
+        zvt_context.dbname_map_base[db_name] = schema_base
+
+        # create the db & table
+        engine = get_db_engine(provider, db_name=db_name)
+        schema_base.metadata.create_all(engine)
+
+        session_fac = get_db_session_factory(provider, db_name=db_name)
+        session_fac.configure(bind=engine)
+
+    for provider in providers:
+        engine = get_db_engine(provider, db_name=db_name)
+
+        # create index for 'timestamp','entity_id','code','report_period','updated_timestamp
+        for table_name, table in iter(schema_base.metadata.tables.items()):
+            index_list = []
+            with engine.connect() as con:
+                rs = con.execute(""PRAGMA INDEX_LIST('{}')"".format(table_name))
+                for row in rs:
+                    index_list.append(row[1])
+
+            logger.debug('engine:{},table:{},index:{}'.format(engine, table_name, index_list))
+
+            for col in ['timestamp', 'entity_id', 'code', 'report_period', 'created_timestamp', 'updated_timestamp']:
+                if col in table.c:
+                    column = eval('table.c.{}'.format(col))
+                    index_name = '{}_{}_index'.format(table_name, col)
+                    if index_name not in index_list:
+                        index = sqlalchemy.schema.Index(index_name, column)
+                        index.create(engine)
+            for cols in [('timestamp', 'entity_id'), ('timestamp', 'code')]:
+                if (cols[0] in table.c) and (col[1] in table.c):
+                    column0 = eval('table.c.{}'.format(col[0]))
+                    column1 = eval('table.c.{}'.format(col[1]))
+                    index_name = '{}_{}_{}_index'.format(table_name, col[0], col[1])
+                    if index_name not in index_list:
+                        index = sqlalchemy.schema.Index(index_name, column0,
+                                                        column1)
+                        index.create(engine)","for row in rs:
+    index_list.append(row[1])",index_list = [row[1] for row in rs],index_list = [row[1] for row in rs],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+bubbles,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bubbles/bubbles/backends/sql/ops.py,https://github.com/Stiivi/bubbles/tree/master/bubbles/backends/sql/ops.py,,_$435,"def _(ctx, master, details, joins):
+    """"""Creates left inner master-detail join (star schema) where `master` is an
+    iterator if the ""bigger"" table `details` are details. `joins` is a list of
+    tuples `(master, detail)` where the master is index of master key and
+    detail is index of detail key to be matched.
+
+    If `inner` is `True` then inner join is performed. That means that only
+    rows from master that have corresponding details are returned.
+
+    .. warning::
+
+        all detail iterators are consumed and result is held in memory. Do not
+        use for large datasets.
+    """"""
+    # TODO: update documentation
+
+    if not details:
+        raise ArgumentError(""No details provided, nothing to join"")
+
+    if not joins:
+        raise ArgumentError(""No joins specified"")
+
+    if len(details) != len(joins):
+        raise ArgumentError(""For every detail there should be a join ""
+                            ""(%d:%d)."" % (len(details), len(joins)))
+
+    if not all(master.can_compose(detail) for detail in details):
+        raise RetryOperation([""rows"", ""rows[]""], reason=""Can not compose"")
+
+    out_fields = master.fields.clone()
+
+    master_stmt = master.sql_statement().alias(""master"")
+    selection = list(master_stmt.columns)
+
+    joined = master_stmt
+    i = 0
+    for detail, join in zip(details, joins):
+        alias = ""detail%s"" % i
+        det_stmt = detail.sql_statement().alias(alias)
+        master_key = join[""master""]
+        detail_key = join[""detail""]
+
+        onclause = master_stmt.c[master_key] == det_stmt.c[detail_key]
+        # Skip detail key in the output
+
+        for field, col in zip(detail.fields, det_stmt.columns):
+            if str(field) != str(detail_key):
+                selection.append(col)
+                out_fields.append(field.clone())
+
+        joined = sql.expression.join(joined,
+                                     det_stmt,
+                                     onclause=onclause)
+
+    aliased = []
+    for col, field in zip(selection, out_fields):
+        aliased.append(col.label(field.name))
+
+    select = sql.expression.select(aliased,
+                                from_obj=joined,
+                                use_labels=True)
+
+    return master.clone_statement(statement=select, fields=out_fields)","for (col, field) in zip(selection, out_fields):
+    aliased.append(col.label(field.name))","aliased = [col.label(field.name) for (col, field) in zip(selection, out_fields)]","aliased = [col.label(field.name) for (col, field) in zip(selection, out_fields)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+meta-dataset,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/meta-dataset/meta_dataset/learners/experimental/optimization_learners.py,https://github.com/google-research/meta-dataset/tree/master/meta_dataset/learners/experimental/optimization_learners.py,ExperimentalOptimizationLearner,detailed_forward_pass$328,"def detailed_forward_pass(self, data):
+    """"""Returns all information from a forward pass of the `OptimizationLearner`.
+
+    Args:
+      data: A `meta_dataset.providers.Episode` containing the data for the
+        episode.
+
+    Returns:
+      A `collections.NamedTuple` that contains the results of the forward pass.
+    """"""
+    # Loop initialization.
+    init_loop_variables = self.task_parameters
+    init_loop_variable_refs = [
+        v.experimental_ref() for v in init_loop_variables
+    ]
+
+    # Construct ops for data-dependent episodic initialization.
+    episodic_init_ops = self.episodic_init_ops(
+        labels=data.support_labels,
+        embeddings=self.embedding_fn(data.support_images, training=True),
+        task_parameters=init_loop_variables,
+    )
+
+    def _forward_pass(iteration_idx_, variables_mapping_, images_,
+                      onehot_labels_):
+      """"""Helper function to compute the outputs of a forward pass.""""""
+
+      with self.embedding_fn.reparameterize(variables_mapping_):
+        # TODO(eringrant): Implement non-transductive batch normalization (i.e.,
+        # pass the support set statistics through the query set forward pass.
+        embeddings_ = self.embedding_fn(images_, training=True)
+
+      # TODO(eringrant): `head_fn` is an attribute of the subclass.
+      with self.head_fn.reparameterize(variables_mapping_):
+        predictions_ = self.head_fn(embeddings_)[:, :data.way]
+
+      accuracy_ = tf.reduce_mean(
+          input_tensor=self.compute_accuracy(
+              onehot_labels=onehot_labels_, predictions=predictions_))
+
+      inner_objective_ = self.inner_objective(
+          onehot_labels=onehot_labels_,
+          predictions=predictions_,
+          iteration_idx=iteration_idx_)
+
+      outer_objective_ = self.outer_objective(
+          onehot_labels=onehot_labels_,
+          predictions=predictions_,
+      )
+
+      return ForwardPass(
+          embeddings=embeddings_,
+          predictions=predictions_,
+          inner_objective_value=inner_objective_,
+          outer_objective_value=outer_objective_,
+          accuracy=accuracy_,
+      )
+
+    def _objective_fn(loop_variables_, iteration_idx_):
+      """"""Evaluate the support set objective given `loop_variables_`.""""""
+
+      # Get attribute paths for the loop_variables.
+      loop_variables_mapping_ = dict(
+          zip(init_loop_variable_refs, loop_variables_))
+
+      adaptation_support_results = _forward_pass(
+          iteration_idx_=iteration_idx_,
+          variables_mapping_=loop_variables_mapping_,
+          images_=data.support_images,
+          onehot_labels_=data.onehot_support_labels)
+
+      return adaptation_support_results.inner_objective_value
+
+    def _e_step(loop_variables_):
+      """"""Evaluate expectations given `loop_variables_`.""""""
+
+      # Get attribute paths for the loop_variables.
+      loop_variables_dict_ = dict(zip(init_loop_variable_refs, loop_variables_))
+
+      with self.embedding_fn.reparameterize(loop_variables_dict_):
+        # TODO(eringrant): training to True for normalization with batch stats.
+        # Figure out the appropriate way to pass this around.
+        train_embeddings_ = self.embedding_fn(data.train_images, training=True)
+
+      class_embeddings_ = learner_base.class_specific_data(
+          data.onehot_train_labels, train_embeddings_, self.logit_dim)
+
+      def _compute_responsibilities(examples_, class_idx):
+        train_predictions_ = tf.squeeze(
+            self.head_fn(
+                embeddings=examples_, components=True, class_idx=[class_idx]),
+            axis=1)
+        return tf.nn.softmax(train_predictions_, axis=-1)
+
+      with self.head_fn.reparameterize(loop_variables_dict_):
+        class_responsibilities_ = [
+            _compute_responsibilities(embeddings_, class_idx=i)
+            for i, embeddings_ in enumerate(class_embeddings_)
+        ]
+
+      return class_embeddings_, class_responsibilities_
+
+    def _m_step(preupdate_vars, all_embeddings_, all_responsibilities_):
+      """"""Compute parameter estimates given `loop_variables_`.""""""
+
+      means, log_scales, logits = zip(*map(
+          reparameterizable_distributions.fit_gaussian_mixture, all_embeddings_,
+          all_responsibilities_, itertools.repeat(self.head_fn.damping)))
+
+      def flatten(x):
+        return list(itertools.chain.from_iterable(x))
+
+      means = flatten(means)
+      log_scales = flatten(log_scales)
+      logits = flatten(logits)
+
+      if not self.head_fn.estimate_loc:
+        means = [None for _ in means]
+
+      if not self.head_fn.estimate_scale:
+        log_scales = [None for _ in log_scales]
+
+      if not self.head_fn.estimate_logits:
+        logits = [None for _ in logits]
+
+      updated_vars = means + log_scales + logits
+
+      # Replace constant variables.
+      # TODO(eringrant): This interface differs from just excluding these
+      # variables from `task_variables`.
+      no_none_updated_vars = []
+      for preupdate_var, updated_var in zip(preupdate_vars, updated_vars):
+        if updated_var is None:
+          no_none_updated_vars.append(preupdate_var)
+        else:
+          no_none_updated_vars.append(updated_var)
+
+      # TODO(eringrant): This assumes an ordering of mean, log_scales,
+      # mixing_logits.
+      return no_none_updated_vars
+
+    # Loop body.
+    with tf.control_dependencies(episodic_init_ops):
+
+      # Inner loop of expectation maximization.
+      num_em_steps = getattr(self, 'num_em_steps', 0)
+      if num_em_steps > 0:
+        loop_variables = em_loop(
+            num_updates=self.num_em_steps,
+            e_step=_e_step,
+            m_step=_m_step,
+            variables=loop_variables)
+
+      # Inner loop of gradient-based optimization.
+      num_optimizer_steps = (
+          self.num_update_steps + (self.additional_evaluation_update_steps
+                                   if not self.is_training else 0))
+      if num_optimizer_steps > 0:
+        # pylint: disable=no-value-for-parameter
+        final_loop_variables = optimizer_loop(
+            num_updates=num_optimizer_steps,
+            objective_fn=_objective_fn,
+            update_fn=self.update_fn,
+            variables=init_loop_variables,
+            first_order=self.first_order,
+            clip_grad_norm=self.clip_grad_norm,
+        )
+        # pylint: enable=no-value-for-parameter
+
+      # If no inner loop adaptation is performed, ensure the episodic
+      # initialization is still part of the graph via a control dependency.
+      if num_optimizer_steps + num_em_steps == 0:
+        loop_variables = [tf.identity(v) for v in init_loop_variables]
+
+    # Get variable references to use when remapping the loop_variables.
+    init_loop_variables_mapping = dict(
+        zip(init_loop_variable_refs, init_loop_variables))
+    final_loop_variables_mapping = dict(
+        zip(init_loop_variable_refs, final_loop_variables))
+
+    # Collect statistics about the inner optimization.
+    with tf.compat.v1.name_scope('pre-adaptation'):
+      with tf.compat.v1.name_scope('support'):
+        pre_adaptation_support_results = _forward_pass(
+            iteration_idx_=0,
+            variables_mapping_=init_loop_variables_mapping,
+            images_=data.support_images,
+            onehot_labels_=data.onehot_support_labels)
+
+      with tf.compat.v1.name_scope('query'):
+        pre_adaptation_query_results = _forward_pass(
+            iteration_idx_=0,
+            variables_mapping_=init_loop_variables_mapping,
+            images_=data.query_images,
+            onehot_labels_=data.onehot_query_labels)
+
+    with tf.compat.v1.name_scope('post-adaptation'):
+      with tf.compat.v1.name_scope('support'):
+        post_adaptation_support_results = _forward_pass(
+            iteration_idx_=num_optimizer_steps,
+            variables_mapping_=final_loop_variables_mapping,
+            images_=data.support_images,
+            onehot_labels_=data.onehot_support_labels,
+        )
+
+      with tf.compat.v1.name_scope('query'):
+        post_adaptation_query_results = _forward_pass(
+            iteration_idx_=num_optimizer_steps,
+            variables_mapping_=final_loop_variables_mapping,
+            images_=data.query_images,
+            onehot_labels_=data.onehot_query_labels,
+        )
+
+    def _support_module_objective_fn(module_variables_, module_variable_refs_):
+      """"""Evaluate the query set objective given `module_variables_`.""""""
+      # Use the values of the parameters at convergence as the default value.
+      variables_mapping_ = final_loop_variables_mapping.copy()
+
+      # Loop over and replace the module-specific variables.
+      for module_variable_ref, module_variable in zip(module_variable_refs_,
+                                                      module_variables_):
+        variables_mapping_[module_variable_ref] = module_variable
+
+      adaptation_query_results = _forward_pass(
+          iteration_idx_=num_optimizer_steps,
+          variables_mapping_=variables_mapping_,
+          images_=data.support_images,
+          onehot_labels_=data.onehot_support_labels,
+      )
+
+      return adaptation_query_results.inner_objective_value
+
+    def _query_module_objective_fn(module_variables_, module_variable_refs_):
+      """"""Evaluate the query set objective given `module_variables_`.""""""
+      # Use the values of the parameters at convergence as the default value.
+      variables_mapping_ = final_loop_variables_mapping.copy()
+
+      # Loop over and replace the module-specific variables.
+      for module_variable_ref, module_variable in zip(module_variable_refs_,
+                                                      module_variables_):
+        variables_mapping_[module_variable_ref] = module_variable
+
+      adaptation_query_results = _forward_pass(
+          iteration_idx_=num_optimizer_steps,
+          variables_mapping_=variables_mapping_,
+          images_=data.query_images,
+          onehot_labels_=data.onehot_query_labels)
+
+      return adaptation_query_results.inner_objective_value
+
+    return Adaptation(
+        pre_adaptation_support_results=pre_adaptation_support_results,
+        post_adaptation_support_results=post_adaptation_support_results,
+        pre_adaptation_query_results=pre_adaptation_query_results,
+        post_adaptation_query_results=post_adaptation_query_results,
+        objective_fn=_objective_fn,
+        support_module_objective_fn=_support_module_objective_fn,
+        query_module_objective_fn=_query_module_objective_fn,
+        forward_pass_fn=_forward_pass,
+        init_loop_variables_mapping=init_loop_variables_mapping,
+        final_loop_variables_mapping=final_loop_variables_mapping,
+    )","for (preupdate_var, updated_var) in zip(preupdate_vars, updated_vars):
+    if updated_var is None:
+        no_none_updated_vars.append(preupdate_var)
+    else:
+        no_none_updated_vars.append(updated_var)","no_none_updated_vars = [preupdate_var if updated_var is None else updated_var for (preupdate_var, updated_var) in zip(preupdate_vars, updated_vars)]","no_none_updated_vars = [preupdate_var if updated_var is None else updated_var for (preupdate_var, updated_var) in zip(preupdate_vars, updated_vars)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+nanodet,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/nanodet/nanodet/data/dataset/xml_dataset.py,https://github.com/RangiLyu/nanodet/tree/master/nanodet/data/dataset/xml_dataset.py,XMLDataset,xml_to_coco$61,"def xml_to_coco(self, ann_path):
+        """"""
+        convert xml annotations to coco_api
+        :param ann_path:
+        :return:
+        """"""
+        logging.info(""loading annotations into memory..."")
+        tic = time.time()
+        ann_file_names = get_file_list(ann_path, type="".xml"")
+        logging.info(""Found {} annotation files."".format(len(ann_file_names)))
+        image_info = []
+        categories = []
+        annotations = []
+        for idx, supercat in enumerate(self.class_names):
+            categories.append(
+                {""supercategory"": supercat, ""id"": idx + 1, ""name"": supercat}
+            )
+        ann_id = 1
+        for idx, xml_name in enumerate(ann_file_names):
+            tree = ET.parse(os.path.join(ann_path, xml_name))
+            root = tree.getroot()
+            file_name = root.find(""filename"").text
+            width = int(root.find(""size"").find(""width"").text)
+            height = int(root.find(""size"").find(""height"").text)
+            info = {
+                ""file_name"": file_name,
+                ""height"": height,
+                ""width"": width,
+                ""id"": idx + 1,
+            }
+            image_info.append(info)
+            for _object in root.findall(""object""):
+                category = _object.find(""name"").text
+                if category not in self.class_names:
+                    logging.warning(
+                        ""WARNING! {} is not in class_names! ""
+                        ""Pass this box annotation."".format(category)
+                    )
+                    continue
+                for cat in categories:
+                    if category == cat[""name""]:
+                        cat_id = cat[""id""]
+                xmin = int(_object.find(""bndbox"").find(""xmin"").text)
+                ymin = int(_object.find(""bndbox"").find(""ymin"").text)
+                xmax = int(_object.find(""bndbox"").find(""xmax"").text)
+                ymax = int(_object.find(""bndbox"").find(""ymax"").text)
+                w = xmax - xmin
+                h = ymax - ymin
+                if w < 0 or h < 0:
+                    logging.warning(
+                        ""WARNING! Find error data in file {}! Box w and ""
+                        ""h should > 0. Pass this box annotation."".format(xml_name)
+                    )
+                    continue
+                coco_box = [max(xmin, 0), max(ymin, 0), min(w, width), min(h, height)]
+                ann = {
+                    ""image_id"": idx + 1,
+                    ""bbox"": coco_box,
+                    ""category_id"": cat_id,
+                    ""iscrowd"": 0,
+                    ""id"": ann_id,
+                    ""area"": coco_box[2] * coco_box[3],
+                }
+                annotations.append(ann)
+                ann_id += 1
+
+        coco_dict = {
+            ""images"": image_info,
+            ""categories"": categories,
+            ""annotations"": annotations,
+        }
+        logging.info(
+            ""Load {} xml files and {} boxes"".format(len(image_info), len(annotations))
+        )
+        logging.info(""Done (t={:0.2f}s)"".format(time.time() - tic))
+        return coco_dict","for (idx, supercat) in enumerate(self.class_names):
+    categories.append({'supercategory': supercat, 'id': idx + 1, 'name': supercat})","categories = [{'supercategory': supercat, 'id': idx + 1, 'name': supercat} for (idx, supercat) in enumerate(self.class_names)]","categories = [{'supercategory': supercat, 'id': idx + 1, 'name': supercat} for (idx, supercat) in enumerate(self.class_names)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+GAM,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/GAM/src/gam/gapi/vault.py,https://github.com/jay0lee/GAM/tree/master/src/gam/gapi/vault.py,,printExports$851,"def printExports():
+    v = buildGAPIObject()
+    todrive = False
+    csvRows = []
+    initialTitles = ['matterId', 'id', 'name', 'createTime', 'status']
+    titles = initialTitles[:]
+    matters = []
+    matterIds = []
+    i = 3
+    while i < len(sys.argv):
+        myarg = sys.argv[i].lower().replace('_', '')
+        if myarg == 'todrive':
+            todrive = True
+            i += 1
+        elif myarg in ['matter', 'matters']:
+            matters = sys.argv[i + 1].split(',')
+            i += 2
+        else:
+            controlflow.invalid_argument_exit(myarg, 'gam print exports')
+    if not matters:
+        fields = 'matters(matterId),nextPageToken'
+        matters_results = gapi.get_all_pages(v.matters(),
+                                             'list',
+                                             'matters',
+                                             view='BASIC',
+                                             state='OPEN',
+                                             fields=fields)
+        for matter in matters_results:
+            matterIds.append(matter['matterId'])
+    else:
+        for matter in matters:
+            matterIds.append(getMatterItem(v, matter))
+    for matterId in matterIds:
+        sys.stderr.write(f'Retrieving exports for matter {matterId}\n')
+        exports = gapi.get_all_pages(v.matters().exports(),
+                                     'list',
+                                     'exports',
+                                     matterId=matterId)
+        for export in exports:
+            display.add_row_titles_to_csv_file(
+                utils.flatten_json(export, flattened={'matterId': matterId}),
+                csvRows, titles)
+    display.sort_csv_titles(initialTitles, titles)
+    display.write_csv_file(csvRows, titles, 'Vault Exports', todrive)","for matter in matters_results:
+    matterIds.append(matter['matterId'])",matterIds = [matter['matterId'] for matter in matters_results],matterIds = [matter['matterId'] for matter in matters_results],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+dataprep,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dataprep/dataprep/eda/distribution/render.py,https://github.com/sfu-db/dataprep/tree/master/dataprep/eda/distribution/render.py,,geo_viz$661,"def geo_viz(
+    df: pd.DataFrame,
+    plot_width: int,
+    y: Optional[str] = None,
+) -> Panel:
+    """"""
+    Render a geo plot visualization
+    """"""
+    # pylint: disable=too-many-arguments,too-many-locals,too-many-statements
+    # pylint: disable=too-many-function-args
+
+    # title = f""{y} by {x}""
+
+    minimum = min(df[y])
+    maximum = max(df[y])
+
+    # no_name=[]
+    value = {}
+    names = NAME_DICT.keys()
+    for i in range(df[y].shape[0]):
+        if df.index[i].lower().strip() in names:
+            value[NAME_DICT[df.index[i].lower().strip()]] = df[y][i]
+        # else:
+        #     no_name.append(df.index[i])
+
+    temp_list = []
+    for itr in range(len(MAPS[""name""])):
+        temp_list.append(value.get(MAPS[""fip""][itr], ""unknown""))
+    MAPS[""value""] = temp_list
+
+    mapper = LinearColorMapper(
+        palette=YlGnBu[33:233], low=minimum, high=maximum, nan_color=""#cccccc""
+    )
+    tools = ""pan,wheel_zoom,box_zoom,reset,hover""
+
+    fig = Figure(
+        plot_width=plot_width,
+        plot_height=plot_width // 10 * 7,
+        tools=tools,
+        tooltips=[
+            (""Name"", ""@name""),
+            (y, ""@value""),
+            (""(Long, Lat)"", ""($x, $y)""),
+        ],
+    )
+    fig.grid.grid_line_color = None
+    fig.hover.point_policy = ""follow_mouse""
+    fig.background_fill_color = ""white""
+    fig.x_range = Range1d(start=-180, end=180)
+    fig.y_range = Range1d(start=-90, end=90)
+    fig.patches(
+        ""xs"",
+        ""ys"",
+        line_color=""white"",
+        source=MAPS,
+        fill_color={""field"": ""value"", ""transform"": mapper},
+        line_width=0.5,
+    )
+
+    color_bar = ColorBar(
+        color_mapper=mapper,
+        major_label_text_font_size=""7px"",
+        ticker=BasicTicker(desired_num_ticks=11),
+        formatter=PrintfTickFormatter(format=""%10.2f""),
+        label_standoff=6,
+        border_line_color=None,
+        location=(0, 0),
+    )
+    if minimum < maximum:
+        fig.add_layout(color_bar, ""right"")
+
+    return Panel(child=row(fig), title=""World Map"")","for itr in range(len(MAPS['name'])):
+    temp_list.append(value.get(MAPS['fip'][itr], 'unknown'))","temp_list = [value.get(MAPS['fip'][itr], 'unknown') for itr in range(len(MAPS['name']))]","temp_list = [value.get(MAPS['fip'][itr], 'unknown') for itr in range(len(MAPS['name']))]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+my_first_tic_tac_toe,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/my_first_tic_tac_toe/codegenerator/generate_ttt.py,https://github.com/asweigart/my_first_tic_tac_toe/tree/master/codegenerator/generate_ttt.py,,chooseRandomMoveFromList$61,"def chooseRandomMoveFromList(board, movesList):
+    # Returns a valid move from the passed list on the passed board.
+    # Returns None if there is no valid move.
+    possibleMoves = []
+    for i in movesList:
+        if isSpaceFree(board, i):
+            possibleMoves.append(i)
+
+    if len(possibleMoves) != 0:
+        return random.choice(possibleMoves)
+    else:
+        return None","for i in movesList:
+    if isSpaceFree(board, i):
+        possibleMoves.append(i)","possibleMoves = [i for i in movesList if isSpaceFree(board, i)]","possibleMoves = [i for i in movesList if isSpaceFree(board, i)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+alibi,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/alibi/alibi/explainers/shap_wrappers.py,https://github.com/SeldonIO/alibi/tree/master/alibi/explainers/shap_wrappers.py,TreeShap,_build_explanation$1476,"def _build_explanation(self,
+                           X: Union[np.ndarray, pd.DataFrame, 'catboost.Pool'],
+                           shap_output: List[np.ndarray],
+                           expected_value: List[float],
+                           **kwargs) -> Explanation:
+
+        """"""
+        Create an explanation object. If output summarisation is required and all inputs necessary for this operation
+        are passed, the raw shap values are summed first so that a single shap value is returned for each categorical
+        variable, as opposed to a shap value per dimension of categorical variable encoding. Similarly, the
+        shap interaction values are summed such that they represent the interaction between categorical variables as
+        opposed to levels of categorical variables. If the interaction option has been specified during `explain`,
+        this method computes the shap values given the interactions prior to creating the response.
+
+        Parameters
+        ----------
+        X
+            Instances to be explained.
+        shap_output
+            If `explain` is callled with ``interactions=True`` then the list contains arrays of dimensionality
+            `n_instances x n_features x n_features` of shap interaction values. Otherwise, it contains arrays of
+            dimension `n_instances x n_features` representing shap values. The length of the list equals the number of
+            model outputs.
+        expected_value
+            A list containing the expected value of the prediction for each class. Its length is equal to that of
+            `shap_output`.
+
+        Returns
+        -------
+        explanation
+            An `Explanation` object containing the shap values and prediction in the `data` field, along with a
+            `meta` field containing additional data. See usage at `TreeSHAP examples`_ for details.
+
+            .. _TreeSHAP examples:
+               https://docs.seldon.io/projects/alibi/en/stable/methods/TreeSHAP.html
+
+        """"""
+
+        y = kwargs.get('y')
+        if y is None:
+            y = np.array([])
+        cat_vars_start_idx = kwargs.get('cat_vars_start_idx', ())  # type: Sequence[int]
+        cat_vars_enc_dim = kwargs.get('cat_vars_enc_dim', ())  # type: Sequence[int]
+        summarise_result = kwargs.get('summarise_result', False)  # type: bool
+
+        # check if interactions were computed
+        if len(shap_output[0].shape) == 3:
+            shap_interaction_values = shap_output
+            # shap values are the sum over all shap interaction values for each instance
+            shap_values = [interactions.sum(axis=2) for interactions in shap_output]
+        else:
+            shap_interaction_values = [np.array([])]
+            shap_values = shap_output  # type: ignore
+        if summarise_result:
+            self._check_result_summarisation(summarise_result, cat_vars_start_idx, cat_vars_enc_dim)
+        if self.summarise_result:
+            summarised_shap = []
+            for shap_array in shap_values:
+                summarised_shap.append(sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim))  # type: ignore
+            shap_values = summarised_shap
+            if shap_interaction_values[0].size != 0:
+                summarised_shap_interactions = []
+                for shap_array in shap_interaction_values:
+                    summarised_shap_interactions.append(
+                        sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim)
+                    )
+                shap_interaction_values = summarised_shap_interactions
+
+        # NB: Can't get the raw prediction from model when model_output = 'log_loss` as shap library does
+        # not support this (issue raised). We may be able to support this if there's a compelling need.
+        # NB: raw output of a regression or classification task will not work for pyspark (predict not implemented)
+        if self.model_output == 'log_loss':
+            loss = self._explainer.model.predict(X, y, tree_limit=self.tree_limit)
+            raw_predictions = []  # type: Any
+        else:
+            loss = []
+            raw_predictions = self._explainer.model.predict(X, tree_limit=self.tree_limit)
+            # flatten array of predictions if the trailing dimension is 1
+            if raw_predictions.shape[-1] == 1:
+                raw_predictions = raw_predictions.squeeze(-1)
+
+        # predicted class
+        argmax_pred = []  # type: Any
+        if self.task != 'regression':
+            if not isinstance(raw_predictions, list):
+                if self.scalar_output:
+                    if self.model_output == 'raw':
+                        probas = expit(raw_predictions)
+                    else:
+                        probas = raw_predictions
+                    argmax_pred = (probas > 0.5).astype(int)
+                else:
+                    argmax_pred = np.argmax(np.atleast_2d(raw_predictions), axis=1)
+
+        importances = rank_by_importance(shap_values, feature_names=self.feature_names)  # type: ignore
+
+        if self._explainer.model.model_type == 'catboost':
+            import catboost  # noqa: F811
+            if isinstance(X, catboost.Pool):
+                X = X.get_features()
+        # output explanation dictionary
+        data = copy.deepcopy(DEFAULT_DATA_TREE_SHAP)
+        data.update(
+            shap_values=shap_values,
+            shap_interaction_values=shap_interaction_values,
+            expected_value=expected_value,
+            categorical_names=self.categorical_names,
+            feature_names=self.feature_names,
+        )
+        data['raw'].update(
+            raw_prediction=raw_predictions,
+            loss=loss,
+            prediction=argmax_pred,
+            instances=np.array(X),
+            labels=y,
+            importances=importances,
+        )
+
+        self._update_metadata({""summarise_result"": self.summarise_result}, params=True)
+
+        return Explanation(meta=copy.deepcopy(self.meta), data=data)","for shap_array in shap_values:
+    summarised_shap.append(sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim))","summarised_shap = [sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim) for shap_array in shap_values]","summarised_shap = [sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim) for shap_array in shap_values]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+alibi,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/alibi/alibi/explainers/shap_wrappers.py,https://github.com/SeldonIO/alibi/tree/master/alibi/explainers/shap_wrappers.py,TreeShap,_build_explanation$1476,"def _build_explanation(self,
+                           X: Union[np.ndarray, pd.DataFrame, 'catboost.Pool'],
+                           shap_output: List[np.ndarray],
+                           expected_value: List[float],
+                           **kwargs) -> Explanation:
+
+        """"""
+        Create an explanation object. If output summarisation is required and all inputs necessary for this operation
+        are passed, the raw shap values are summed first so that a single shap value is returned for each categorical
+        variable, as opposed to a shap value per dimension of categorical variable encoding. Similarly, the
+        shap interaction values are summed such that they represent the interaction between categorical variables as
+        opposed to levels of categorical variables. If the interaction option has been specified during `explain`,
+        this method computes the shap values given the interactions prior to creating the response.
+
+        Parameters
+        ----------
+        X
+            Instances to be explained.
+        shap_output
+            If `explain` is callled with ``interactions=True`` then the list contains arrays of dimensionality
+            `n_instances x n_features x n_features` of shap interaction values. Otherwise, it contains arrays of
+            dimension `n_instances x n_features` representing shap values. The length of the list equals the number of
+            model outputs.
+        expected_value
+            A list containing the expected value of the prediction for each class. Its length is equal to that of
+            `shap_output`.
+
+        Returns
+        -------
+        explanation
+            An `Explanation` object containing the shap values and prediction in the `data` field, along with a
+            `meta` field containing additional data. See usage at `TreeSHAP examples`_ for details.
+
+            .. _TreeSHAP examples:
+               https://docs.seldon.io/projects/alibi/en/stable/methods/TreeSHAP.html
+
+        """"""
+
+        y = kwargs.get('y')
+        if y is None:
+            y = np.array([])
+        cat_vars_start_idx = kwargs.get('cat_vars_start_idx', ())  # type: Sequence[int]
+        cat_vars_enc_dim = kwargs.get('cat_vars_enc_dim', ())  # type: Sequence[int]
+        summarise_result = kwargs.get('summarise_result', False)  # type: bool
+
+        # check if interactions were computed
+        if len(shap_output[0].shape) == 3:
+            shap_interaction_values = shap_output
+            # shap values are the sum over all shap interaction values for each instance
+            shap_values = [interactions.sum(axis=2) for interactions in shap_output]
+        else:
+            shap_interaction_values = [np.array([])]
+            shap_values = shap_output  # type: ignore
+        if summarise_result:
+            self._check_result_summarisation(summarise_result, cat_vars_start_idx, cat_vars_enc_dim)
+        if self.summarise_result:
+            summarised_shap = []
+            for shap_array in shap_values:
+                summarised_shap.append(sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim))  # type: ignore
+            shap_values = summarised_shap
+            if shap_interaction_values[0].size != 0:
+                summarised_shap_interactions = []
+                for shap_array in shap_interaction_values:
+                    summarised_shap_interactions.append(
+                        sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim)
+                    )
+                shap_interaction_values = summarised_shap_interactions
+
+        # NB: Can't get the raw prediction from model when model_output = 'log_loss` as shap library does
+        # not support this (issue raised). We may be able to support this if there's a compelling need.
+        # NB: raw output of a regression or classification task will not work for pyspark (predict not implemented)
+        if self.model_output == 'log_loss':
+            loss = self._explainer.model.predict(X, y, tree_limit=self.tree_limit)
+            raw_predictions = []  # type: Any
+        else:
+            loss = []
+            raw_predictions = self._explainer.model.predict(X, tree_limit=self.tree_limit)
+            # flatten array of predictions if the trailing dimension is 1
+            if raw_predictions.shape[-1] == 1:
+                raw_predictions = raw_predictions.squeeze(-1)
+
+        # predicted class
+        argmax_pred = []  # type: Any
+        if self.task != 'regression':
+            if not isinstance(raw_predictions, list):
+                if self.scalar_output:
+                    if self.model_output == 'raw':
+                        probas = expit(raw_predictions)
+                    else:
+                        probas = raw_predictions
+                    argmax_pred = (probas > 0.5).astype(int)
+                else:
+                    argmax_pred = np.argmax(np.atleast_2d(raw_predictions), axis=1)
+
+        importances = rank_by_importance(shap_values, feature_names=self.feature_names)  # type: ignore
+
+        if self._explainer.model.model_type == 'catboost':
+            import catboost  # noqa: F811
+            if isinstance(X, catboost.Pool):
+                X = X.get_features()
+        # output explanation dictionary
+        data = copy.deepcopy(DEFAULT_DATA_TREE_SHAP)
+        data.update(
+            shap_values=shap_values,
+            shap_interaction_values=shap_interaction_values,
+            expected_value=expected_value,
+            categorical_names=self.categorical_names,
+            feature_names=self.feature_names,
+        )
+        data['raw'].update(
+            raw_prediction=raw_predictions,
+            loss=loss,
+            prediction=argmax_pred,
+            instances=np.array(X),
+            labels=y,
+            importances=importances,
+        )
+
+        self._update_metadata({""summarise_result"": self.summarise_result}, params=True)
+
+        return Explanation(meta=copy.deepcopy(self.meta), data=data)","for shap_array in shap_interaction_values:
+    summarised_shap_interactions.append(sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim))","summarised_shap_interactions = [sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim) for shap_array in shap_interaction_values]","summarised_shap_interactions = [sum_categories(shap_array, cat_vars_start_idx, cat_vars_enc_dim) for shap_array in shap_interaction_values]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+dulwich,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dulwich/dulwich/objectspec.py,https://github.com/dulwich/dulwich/tree/master/dulwich/objectspec.py,,scan_for_short_id$194,"def scan_for_short_id(object_store, prefix):
+    """"""Scan an object store for a short id.""""""
+    # TODO(jelmer): This could short-circuit looking for objects
+    # starting with a certain prefix.
+    ret = []
+    for object_id in object_store:
+        if object_id.startswith(prefix):
+            ret.append(object_store[object_id])
+    if not ret:
+        raise KeyError(prefix)
+    if len(ret) == 1:
+        return ret[0]
+    raise AmbiguousShortId(prefix, ret)","for object_id in object_store:
+    if object_id.startswith(prefix):
+        ret.append(object_store[object_id])",ret = [object_store[object_id] for object_id in object_store if object_id.startswith(prefix)],ret = [object_store[object_id] for object_id in object_store if object_id.startswith(prefix)],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+mifthtools,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mifthtools/blender/addons/2.7/super_grouper/grouper_main.py,https://github.com/mifth/mifthtools/tree/master/blender/addons/2.7/super_grouper/grouper_main.py,,generate_id$351,"def generate_id():
+    # Generate unique id
+    other_ids = []
+    for scene in bpy.data.scenes:
+        if scene != bpy.context.scene and scene.name.endswith(SCENE_SGR) is False:
+            for s_group in scene.super_groups:
+                other_ids.append(s_group.unique_id)
+
+    while True:
+        uni_numb = None
+        uniq_id_temp = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                               for _ in range(10))
+        if uniq_id_temp not in other_ids:
+            uni_numb = uniq_id_temp
+            break
+
+    other_ids = None  # clean
+    return uni_numb","for scene in bpy.data.scenes:
+    if scene != bpy.context.scene and scene.name.endswith(SCENE_SGR) is False:
+        for s_group in scene.super_groups:
+            other_ids.append(s_group.unique_id)",other_ids = [s_group.unique_id for scene in bpy.data.scenes if scene != bpy.context.scene and scene.name.endswith(SCENE_SGR) is False for s_group in scene.super_groups],other_ids = [s_group.unique_id for scene in bpy.data.scenes if scene != bpy.context.scene and scene.name.endswith(SCENE_SGR) is False for s_group in scene.super_groups],1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+AutoDL-Projects,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/AutoDL-Projects/exps/NATS-Bench/draw-fig2_5.py,https://github.com/D-X-Y/AutoDL-Projects/tree/master/exps/NATS-Bench/draw-fig2_5.py,,calculate_correlation$517,"def calculate_correlation(*vectors):
+    matrix = []
+    for i, vectori in enumerate(vectors):
+        x = []
+        for j, vectorj in enumerate(vectors):
+            # x.append(np.corrcoef(vectori, vectorj)[0,1])
+            x.append(compute_kendalltau(vectori, vectorj))
+        matrix.append(x)
+    return np.array(matrix)","for (j, vectorj) in enumerate(vectors):
+    x.append(compute_kendalltau(vectori, vectorj))","x = [compute_kendalltau(vectori, vectorj) for (j, vectorj) in enumerate(vectors)]","x = [compute_kendalltau(vectori, vectorj) for (j, vectorj) in enumerate(vectors)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+open-paperless,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/open-paperless/mayan/apps/navigation/templatetags/navigation_tags.py,https://github.com/zhoubear/open-paperless/tree/master/mayan/apps/navigation/templatetags/navigation_tags.py,,get_menus_links$17,"def get_menus_links(context, names, source=None):
+    result = []
+
+    for name in names.split(','):
+        for links in Menu.get(name=name).resolve(context=context):
+            if links:
+                result.append(links)
+
+    return result","for name in names.split(','):
+    for links in Menu.get(name=name).resolve(context=context):
+        if links:
+            result.append(links)","result = [links for name in names.split(',') for links in Menu.get(name=name).resolve(context=context) if links]","result = [links for name in names.split(',') for links in Menu.get(name=name).resolve(context=context) if links]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42,"def timesince(dt, default=""just now""):
+    """"""
+    Returns string representing 'time since' e.g.
+    3 days ago, 5 hours ago etc.
+
+    >>> now = datetime.datetime.now()
+    >>> timesince(now)
+    'just now'
+    >>> timesince(now - datetime.timedelta(seconds=1))
+    '1 second ago'
+    >>> timesince(now - datetime.timedelta(seconds=2))
+    '2 seconds ago'
+    >>> timesince(now - datetime.timedelta(seconds=60))
+    '1 minute ago'
+    >>> timesince(now - datetime.timedelta(seconds=61))
+    '1 minute and 1 second ago'
+    >>> timesince(now - datetime.timedelta(seconds=62))
+    '1 minute and 2 seconds ago'
+    >>> timesince(now - datetime.timedelta(seconds=120))
+    '2 minutes ago'
+    >>> timesince(now - datetime.timedelta(seconds=121))
+    '2 minutes and 1 second ago'
+    >>> timesince(now - datetime.timedelta(seconds=122))
+    '2 minutes and 2 seconds ago'
+    >>> timesince(now - datetime.timedelta(seconds=3599))
+    '59 minutes and 59 seconds ago'
+    >>> timesince(now - datetime.timedelta(seconds=3600))
+    '1 hour ago'
+    >>> timesince(now - datetime.timedelta(seconds=3601))
+    '1 hour and 1 second ago'
+    >>> timesince(now - datetime.timedelta(seconds=3602))
+    '1 hour and 2 seconds ago'
+    >>> timesince(now - datetime.timedelta(seconds=3660))
+    '1 hour and 1 minute ago'
+    >>> timesince(now - datetime.timedelta(seconds=3661))
+    '1 hour and 1 minute ago'
+    >>> timesince(now - datetime.timedelta(seconds=3720))
+    '1 hour and 2 minutes ago'
+    >>> timesince(now - datetime.timedelta(seconds=3721))
+    '1 hour and 2 minutes ago'
+    >>> timesince(datetime.timedelta(seconds=3721))
+    '1 hour and 2 minutes ago'
+    """"""
+    if isinstance(dt, datetime.timedelta):
+        diff = dt
+    else:
+        now = datetime.datetime.now()
+        diff = abs(now - dt)
+
+    periods = (
+        (diff.days / 365, ""year"", ""years""),
+        (diff.days % 365 / 30, ""month"", ""months""),
+        (diff.days % 30 / 7, ""week"", ""weeks""),
+        (diff.days % 7, ""day"", ""days""),
+        (diff.seconds / 3600, ""hour"", ""hours""),
+        (diff.seconds % 3600 / 60, ""minute"", ""minutes""),
+        (diff.seconds % 60, ""second"", ""seconds""),
+    )
+
+    output = []
+    for period, singular, plural in periods:
+        if int(period):
+            if int(period) == 1:
+                output.append(f""{int(period)} {singular}"")
+            else:
+                output.append(f""{int(period)} {plural}"")
+
+    if output:
+        return f""{' and '.join(output[:2])} ago""
+
+    return default","for (period, singular, plural) in periods:
+    if int(period):
+        if int(period) == 1:
+            output.append(f'{int(period)} {singular}')
+        else:
+            output.append(f'{int(period)} {plural}')","output = [f'{int(period)} {singular}' if int(period) == 1 else f'{int(period)} {plural}' for (period, singular, plural) in periods if int(period)]","output = [f'{int(period)} {singular}' if int(period) == 1 else f'{int(period)} {plural}' for (period, singular, plural) in periods if int(period)]",1,bCNC,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/bCNC/bCNC/lib/python_utils/formatters.py,https://github.com/vlachoudis/bCNC/tree/master/bCNC/lib/python_utils/formatters.py,,timesince$42
+NOFOUND

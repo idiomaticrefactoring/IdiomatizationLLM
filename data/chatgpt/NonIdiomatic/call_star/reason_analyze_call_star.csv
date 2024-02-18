@@ -1,0 +1,3270 @@
+repo_name,file_path,file_html,class_name,me_name,me_code,old_code,chatGPT_code,element_str,slice_str,truth_code,,,
+find_or_refactor_wrong,,,,,,,,,,,,,
+dask,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dask/dask/array/tests/test_slicing.py,https://github.com/dask/dask/tree/master/dask/array/tests/test_slicing.py,,test_slicing_consistent_names$559,"def test_slicing_consistent_names():
+    x = np.arange(100).reshape((10, 10))
+    a = da.from_array(x, chunks=(5, 5))
+    assert same_keys(a[0], a[0])
+    assert same_keys(a[:, [1, 2, 3]], a[:, [1, 2, 3]])
+    assert same_keys(a[:, 5:2:-1], a[:, 5:2:-1])
+    assert same_keys(a[0, ...], a[0, ...])
+    assert same_keys(a[...], a[...])
+    assert same_keys(a[[1, 3, 5]], a[[1, 3, 5]])
+    assert same_keys(a[-11:11], a[:])
+    assert same_keys(a[-11:-9], a[:1])
+    assert same_keys(a[-1], a[9])
+    assert same_keys(a[0::-1], a[0:-11:-1])","a[-1], a[9]",*a[-1:9:-1],"iterable_zj[-1], iterable_zj[9]",*a[-1:9:-1],*a[-1:19:10],0,0,
+qiskit-terra,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/qiskit-terra/test/python/transpiler/test_lookahead_swap.py,https://github.com/Qiskit/qiskit-terra/tree/master/test/python/transpiler/test_lookahead_swap.py,TestLookaheadSwap,test_lookahead_swap_hang_in_min_case$225,"def test_lookahead_swap_hang_in_min_case(self):
+        """"""Verify LookaheadSwap does not stall in minimal case.""""""
+        # ref: https://github.com/Qiskit/qiskit-terra/issues/2171
+
+        qr = QuantumRegister(14, ""q"")
+        qc = QuantumCircuit(qr)
+        qc.cx(qr[0], qr[13])
+        qc.cx(qr[1], qr[13])
+        qc.cx(qr[1], qr[0])
+        qc.cx(qr[13], qr[1])
+        dag = circuit_to_dag(qc)
+
+        cmap = CouplingMap(FakeMelbourne().configuration().coupling_map)
+
+        out = LookaheadSwap(cmap, search_depth=4, search_width=4).run(dag)
+
+        self.assertIsInstance(out, DAGCircuit)","qr[0], qr[13]","*(qr[0], qr[13])","iterable_zj[0], iterable_zj[13]","*(qr[0], qr[13])",*qr[:26:13],0,,
+ImageAI,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ImageAI/imageai/Detection/Custom/generator.py,https://github.com/OlafenwaMoses/ImageAI/tree/master/imageai/Detection/Custom/generator.py,BatchGenerator,__init__$9,"def __init__(self, 
+        instances, 
+        anchors,   
+        labels,        
+        downsample=32, # ratio between network input's size and network output's size, 32 for YOLOv3
+        max_box_per_image=30,
+        batch_size=1,
+        min_net_size=320,
+        max_net_size=608,    
+        shuffle=True, 
+        jitter=True, 
+        norm=None
+    ):
+        self.instances          = instances
+        self.batch_size         = batch_size
+        self.labels             = labels
+        self.downsample         = downsample
+        self.max_box_per_image  = max_box_per_image
+        self.min_net_size       = (min_net_size//self.downsample)*self.downsample
+        self.max_net_size       = (max_net_size//self.downsample)*self.downsample
+        self.shuffle            = shuffle
+        self.jitter             = jitter
+        self.norm               = norm
+        self.anchors            = [BoundBox(0, 0, anchors[2*i], anchors[2*i+1]) for i in range(len(anchors)//2)]
+        self.net_h              = 416  
+        self.net_w              = 416
+
+        if shuffle: np.random.shuffle(self.instances)","anchors[2 * i], anchors[2 * i + 1]",*anchors[::2],"iterable_zj[2 * i], iterable_zj[2 * i + 1]",*anchors[::2],*anchors[2 * i:2 * i + 2],0,,
+pyglet,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/pyglet/tools/wraptypes/cparser.py,https://github.com/pyglet/pyglet/tree/master/tools/wraptypes/cparser.py,,p_shift_expression$521,"def p_shift_expression(p):
+    '''shift_expression : additive_expression
+                        | shift_expression LEFT_OP additive_expression
+                        | shift_expression RIGHT_OP additive_expression
+    '''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = BinaryExpressionNode({
+            '<<': operator.lshift,
+            '>>': operator.rshift}[p[2]], p[2], p[1], p[3])","p[2], p[1], p[3]",*p[1:4][::-1],"iterable_zj[2], iterable_zj[1], iterable_zj[3]",*p[1:4][::-1],Cannot refactor,2,0,it actually cannot refactor
+DSB2017,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/DSB2017/training/classifier/net_detector_3.py,https://github.com/lfz/DSB2017/tree/master/training/classifier/net_detector_3.py,Net,forward$103,"def forward(self, x, coord):
+        #x = (x-128.)/128.
+        out = self.preBlock(x)#16
+        out_pool,indices0 = self.maxpool1(out)
+        out1 = self.forw1(out_pool)#32
+        out1_pool,indices1 = self.maxpool2(out1)
+        out2 = self.forw2(out1_pool)#64
+        #out2 = self.drop(out2)
+        out2_pool,indices2 = self.maxpool3(out2)
+        out3 = self.forw3(out2_pool)#96
+        out3_pool,indices3 = self.maxpool4(out3)
+        out4 = self.forw4(out3_pool)#96
+        #out4 = self.drop(out4)
+        
+        rev3 = self.path1(out4)
+        comb3 = self.back3(torch.cat((rev3, out3), 1))#96+96
+        #comb3 = self.drop(comb3)
+        rev2 = self.path2(comb3)
+        
+        feat = self.back2(torch.cat((rev2, out2,coord), 1))#64+64
+        comb2 = self.drop(feat)
+        out = self.output(comb2)
+        size = out.size()
+        out = out.view(out.size(0), out.size(1), -1)
+        #out = out.transpose(1, 4).transpose(1, 2).transpose(2, 3).contiguous()
+        out = out.transpose(1, 2).contiguous().view(size[0], size[2], size[3], size[4], len(config['anchors']), 5)
+        #out = out.view(-1, 5)
+        return feat,out","size[0], size[2], size[3], size[4]",*size[::2],"iterable_zj[0], iterable_zj[2], iterable_zj[3], iterable_zj[4]",*size[::2],Cannot refactor,2,0,it actually cannot refactor
+CLUEPretrainedModels,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/CLUEPretrainedModels/baselines/models_pytorch/classifier_pytorch/transformers/modeling_xlnet.py,https://github.com/CLUEbenchmark/CLUEPretrainedModels/tree/master/baselines/models_pytorch/classifier_pytorch/transformers/modeling_xlnet.py,XLNetRelativeAttention,rel_shift$230,"def rel_shift(x, klen=-1):
+        """"""perform relative shift to form the relative attention score.""""""
+        x_size = x.shape
+
+        x = x.reshape(x_size[1], x_size[0], x_size[2], x_size[3])
+        x = x[1:, ...]
+        x = x.reshape(x_size[0], x_size[1] - 1, x_size[2], x_size[3])
+        # x = x[:, 0:klen, :, :]
+        x = torch.index_select(x, 1, torch.arange(klen, device=x.device, dtype=torch.long))
+
+        return x","x_size[0], x_size[2], x_size[3]",*x_size[::2],"iterable_zj[0], iterable_zj[2], iterable_zj[3]",*x_size[::2],Cannot refactor,2,0,it actually cannot refactor
+gnss-ins-sim,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/gnss-ins-sim/gnss_ins_sim/attitude/attitude.py,https://github.com/Aceinna/gnss-ins-sim/tree/master/gnss_ins_sim/attitude/attitude.py,,dcm2euler$496,"def dcm2euler(dcm, rot_seq='zyx'):
+    """"""
+    Convert direction cosine matrix to Euler angles.
+    The Euler angles rotate the frame n to the frame b according to specified
+    rotation sequency. The DCM is a 3x3 coordinate transformation matrix from n
+    to b. That is v_b  = DCM * v_n. '_b' or '_n' mean the vector 'v' is expressed
+    in the frame b or n.
+    Args:
+        dcm: 3x3 coordinate transformation matrix from n to b
+        rot_seq: rotation sequence corresponding to the angles.
+    Returns:
+        angles: 3x1 Euler angles, rad.
+    """"""
+    if rot_seq == 'zyx':
+        #     [          cy*cz,          cy*sz,            -sy]
+        #     [ sy*sx*cz-sz*cx, sy*sx*sz+cz*cx,          cy*sx]
+        #     [ sy*cx*cz+sz*sx, sy*cx*sz-cz*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[0][1], dcm[0][0], -dcm[0][2],
+                                      dcm[1][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zyz':
+        #     [  cz2*cy*cz-sz2*sz,  cz2*cy*sz+sz2*cz,           -cz2*sy]
+        #     [ -sz2*cy*cz-cz2*sz, -sz2*cy*sz+cz2*cz,            sz2*sy]
+        #     [             sy*cz,             sy*sz,                cy]
+        [r1, r2, r3] = two_axis_rot(dcm[2][1], dcm[2][0], dcm[2][2],
+                                    dcm[1][2], -dcm[0][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxy':
+        #     [ cy*cz-sy*sx*sz, cy*sz+sy*sx*cz,         -sy*cx]
+        #     [         -sz*cx,          cz*cx,             sx]
+        #     [ sy*cz+cy*sx*sz, sy*sz-cy*sx*cz,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[1][0], dcm[1][1], dcm[1][2],
+                                      -dcm[0][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxz':
+        #     [  cz2*cz-sz2*cx*sz,  cz2*sz+sz2*cx*cz,            sz2*sx]
+        #     [ -sz2*cz-cz2*cx*sz, -sz2*sz+cz2*cx*cz,            cz2*sx]
+        #     [             sz*sx,            -cz*sx,                cx]
+        [r1, r2, r3] = two_axis_rot(dcm[2][0], -dcm[2][1], dcm[2][2],
+                                    dcm[0][2], dcm[1][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxz':
+        #     [  cy*cz+sy*sx*sz,           sz*cx, -sy*cz+cy*sx*sz]
+        #     [ -cy*sz+sy*sx*cz,           cz*cx,  sy*sz+cy*sx*cz]
+        #     [           sy*cx,             -sx,           cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[2][0], dcm[2][2], -dcm[2][1],
+                                      dcm[0][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxy':
+        #     [  cy2*cy-sy2*cx*sy,            sy2*sx, -cy2*sy-sy2*cx*cy]
+        #     [             sy*sx,                cx,             cy*sx]
+        #     [  sy2*cy+cy2*cx*sy,           -cy2*sx, -sy2*sy+cy2*cx*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][0], dcm[1][2], dcm[1][1],
+                                    dcm[0][1], -dcm[2][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzx':
+        #     [           cy*cz,              sz,          -sy*cz]
+        #     [ -sz*cx*cy+sy*sx,           cz*cx,  sy*cx*sz+cy*sx]
+        #     [  cy*sx*sz+sy*cx,          -cz*sx, -sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[0][2], dcm[0][0], dcm[0][1],
+                                      -dcm[2][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzy':
+        #     [  cy2*cz*cy-sy2*sy,            cy2*sz, -cy2*cz*sy-sy2*cy]
+        #     [            -cy*sz,                cz,             sy*sz]
+        #     [  sy2*cz*cy+cy2*sy,            sy2*sz, -sy2*cz*sy+cy2*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][2], -dcm[1][0], dcm[1][1],
+                                    dcm[2][1], dcm[0][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyz':
+        #     [          cy*cz, sz*cx+sy*sx*cz, sz*sx-sy*cx*cz]
+        #     [         -cy*sz, cz*cx-sy*sx*sz, cz*sx+sy*cx*sz]
+        #     [             sy,         -cy*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[2][1], dcm[2][2], dcm[2][0],
+                                      -dcm[1][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyx':
+        #     [                cy,             sy*sx,            -sy*cx]
+        #     [            sx2*sy,  cx2*cx-sx2*cy*sx,  cx2*sx+sx2*cy*cx]
+        #     [            cx2*sy, -sx2*cx-cx2*cy*sx, -sx2*sx+cx2*cy*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][1], -dcm[0][2], dcm[0][0],
+                                    dcm[1][0], dcm[2][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzy':
+        #     [          cy*cz, sz*cx*cy+sy*sx, cy*sx*sz-sy*cx]
+        #     [            -sz,          cz*cx,          cz*sx]
+        #     [          sy*cz, sy*cx*sz-cy*sx, sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[1][2], dcm[1][1], -dcm[1][0],
+                                      dcm[2][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzx':
+        #     [                cz,             sz*cx,             sz*sx]
+        #     [           -cx2*sz,  cx2*cz*cx-sx2*sx,  cx2*cz*sx+sx2*cx]
+        #     [            sx2*sz, -sx2*cz*cx-cx2*sx, -sx2*cz*sx+cx2*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][2], dcm[0][1], dcm[0][0],
+                                    dcm[2][0], -dcm[1][0])
+        return np.array([r1, r2, r3])
+    else:
+        return False","dcm[2][1], dcm[2][0], dcm[2][2]",*dcm[2][1::-1] + dcm[2][2:],"iterable_zj[1], iterable_zj[0], iterable_zj[2]",*(dcm[2][1::-1] + dcm[2][2:]),Cannot refactor,2,0,it actually cannot refactor
+gnss-ins-sim,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/gnss-ins-sim/gnss_ins_sim/attitude/attitude.py,https://github.com/Aceinna/gnss-ins-sim/tree/master/gnss_ins_sim/attitude/attitude.py,,dcm2euler$496,"def dcm2euler(dcm, rot_seq='zyx'):
+    """"""
+    Convert direction cosine matrix to Euler angles.
+    The Euler angles rotate the frame n to the frame b according to specified
+    rotation sequency. The DCM is a 3x3 coordinate transformation matrix from n
+    to b. That is v_b  = DCM * v_n. '_b' or '_n' mean the vector 'v' is expressed
+    in the frame b or n.
+    Args:
+        dcm: 3x3 coordinate transformation matrix from n to b
+        rot_seq: rotation sequence corresponding to the angles.
+    Returns:
+        angles: 3x1 Euler angles, rad.
+    """"""
+    if rot_seq == 'zyx':
+        #     [          cy*cz,          cy*sz,            -sy]
+        #     [ sy*sx*cz-sz*cx, sy*sx*sz+cz*cx,          cy*sx]
+        #     [ sy*cx*cz+sz*sx, sy*cx*sz-cz*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[0][1], dcm[0][0], -dcm[0][2],
+                                      dcm[1][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zyz':
+        #     [  cz2*cy*cz-sz2*sz,  cz2*cy*sz+sz2*cz,           -cz2*sy]
+        #     [ -sz2*cy*cz-cz2*sz, -sz2*cy*sz+cz2*cz,            sz2*sy]
+        #     [             sy*cz,             sy*sz,                cy]
+        [r1, r2, r3] = two_axis_rot(dcm[2][1], dcm[2][0], dcm[2][2],
+                                    dcm[1][2], -dcm[0][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxy':
+        #     [ cy*cz-sy*sx*sz, cy*sz+sy*sx*cz,         -sy*cx]
+        #     [         -sz*cx,          cz*cx,             sx]
+        #     [ sy*cz+cy*sx*sz, sy*sz-cy*sx*cz,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[1][0], dcm[1][1], dcm[1][2],
+                                      -dcm[0][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxz':
+        #     [  cz2*cz-sz2*cx*sz,  cz2*sz+sz2*cx*cz,            sz2*sx]
+        #     [ -sz2*cz-cz2*cx*sz, -sz2*sz+cz2*cx*cz,            cz2*sx]
+        #     [             sz*sx,            -cz*sx,                cx]
+        [r1, r2, r3] = two_axis_rot(dcm[2][0], -dcm[2][1], dcm[2][2],
+                                    dcm[0][2], dcm[1][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxz':
+        #     [  cy*cz+sy*sx*sz,           sz*cx, -sy*cz+cy*sx*sz]
+        #     [ -cy*sz+sy*sx*cz,           cz*cx,  sy*sz+cy*sx*cz]
+        #     [           sy*cx,             -sx,           cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[2][0], dcm[2][2], -dcm[2][1],
+                                      dcm[0][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxy':
+        #     [  cy2*cy-sy2*cx*sy,            sy2*sx, -cy2*sy-sy2*cx*cy]
+        #     [             sy*sx,                cx,             cy*sx]
+        #     [  sy2*cy+cy2*cx*sy,           -cy2*sx, -sy2*sy+cy2*cx*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][0], dcm[1][2], dcm[1][1],
+                                    dcm[0][1], -dcm[2][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzx':
+        #     [           cy*cz,              sz,          -sy*cz]
+        #     [ -sz*cx*cy+sy*sx,           cz*cx,  sy*cx*sz+cy*sx]
+        #     [  cy*sx*sz+sy*cx,          -cz*sx, -sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[0][2], dcm[0][0], dcm[0][1],
+                                      -dcm[2][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzy':
+        #     [  cy2*cz*cy-sy2*sy,            cy2*sz, -cy2*cz*sy-sy2*cy]
+        #     [            -cy*sz,                cz,             sy*sz]
+        #     [  sy2*cz*cy+cy2*sy,            sy2*sz, -sy2*cz*sy+cy2*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][2], -dcm[1][0], dcm[1][1],
+                                    dcm[2][1], dcm[0][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyz':
+        #     [          cy*cz, sz*cx+sy*sx*cz, sz*sx-sy*cx*cz]
+        #     [         -cy*sz, cz*cx-sy*sx*sz, cz*sx+sy*cx*sz]
+        #     [             sy,         -cy*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[2][1], dcm[2][2], dcm[2][0],
+                                      -dcm[1][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyx':
+        #     [                cy,             sy*sx,            -sy*cx]
+        #     [            sx2*sy,  cx2*cx-sx2*cy*sx,  cx2*sx+sx2*cy*cx]
+        #     [            cx2*sy, -sx2*cx-cx2*cy*sx, -sx2*sx+cx2*cy*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][1], -dcm[0][2], dcm[0][0],
+                                    dcm[1][0], dcm[2][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzy':
+        #     [          cy*cz, sz*cx*cy+sy*sx, cy*sx*sz-sy*cx]
+        #     [            -sz,          cz*cx,          cz*sx]
+        #     [          sy*cz, sy*cx*sz-cy*sx, sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[1][2], dcm[1][1], -dcm[1][0],
+                                      dcm[2][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzx':
+        #     [                cz,             sz*cx,             sz*sx]
+        #     [           -cx2*sz,  cx2*cz*cx-sx2*sx,  cx2*cz*sx+sx2*cx]
+        #     [            sx2*sz, -sx2*cz*cx-cx2*sx, -sx2*cz*sx+cx2*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][2], dcm[0][1], dcm[0][0],
+                                    dcm[2][0], -dcm[1][0])
+        return np.array([r1, r2, r3])
+    else:
+        return False","dcm[0][2], dcm[0][1], dcm[0][0]",*dcm[0][0:3][::-1],"iterable_zj[2], iterable_zj[1], iterable_zj[0]",*dcm[0][0:3][::-1],Cannot refactor,2,0,it actually cannot refactor
+dragonfly,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dragonfly/dragonfly/nn/unittest_nn_gp.py,https://github.com/dragonfly/dragonfly/tree/master/dragonfly/nn/unittest_nn_gp.py,,fit_nngp_with_dataset$97,"def fit_nngp_with_dataset(dataset, kernel_type, dist_type):
+  """""" Fits an NNGP to this dataset. """"""
+  options = load_options(nn_gp.nn_gp_args, '')
+  options.kernel_type = kernel_type
+  options.dist_type = dist_type
+  gp_fitter = nn_gp.NNGPFitter(dataset[0], dataset[1], dataset[-1],
+                               options=options, reporter=None)
+  fitted_result = gp_fitter.fit_gp()
+  fitted_gp = fitted_result[1]
+  return fitted_gp","dataset[1], dataset[-1]",*dataset[1::len(dataset) - 1],"iterable_zj[1], iterable_zj[-1]",*dataset[1::len(dataset)-1],Cannot refactor,2,0,it actually cannot refactor
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[1], timestamps[3], timestamps[6]",*timestamps[1:7:2],"iterable_zj[1], iterable_zj[3], iterable_zj[6]",*timestamps[1:7:2],Cannot refactor,2,0,it actually cannot refactor
+ThinkMatch,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ThinkMatch/models/NGM/model_v2.py,https://github.com/Thinklab-SJTU/ThinkMatch/tree/master/models/NGM/model_v2.py,Net,forward$68,"def forward(
+        self,
+        data_dict,
+    ):
+        images = data_dict['images']
+        points = data_dict['Ps']
+        n_points = data_dict['ns']
+        graphs = data_dict['pyg_graphs']
+        batch_size = data_dict['batch_size']
+        num_graphs = len(images)
+
+        global_list = []
+        orig_graph_list = []
+        for image, p, n_p, graph in zip(images, points, n_points, graphs):
+            # extract feature
+            nodes = self.node_layers(image)
+            edges = self.edge_layers(nodes)
+
+            global_list.append(self.final_layers(edges).reshape((nodes.shape[0], -1)))
+            nodes = normalize_over_channels(nodes)
+            edges = normalize_over_channels(edges)
+
+            # arrange features
+            U = concat_features(feature_align(nodes, p, n_p, self.rescale), n_p)
+            F = concat_features(feature_align(edges, p, n_p, self.rescale), n_p)
+            node_features = torch.cat((U, F), dim=1)
+            graph.x = node_features
+
+            graph = self.message_pass_node_features(graph)
+            orig_graph = self.build_edge_features_from_node_features(graph)
+            orig_graph_list.append(orig_graph)
+
+        global_weights_list = [
+            torch.cat([global_src, global_tgt], axis=-1) for global_src, global_tgt in lexico_iter(global_list)
+        ]
+
+        global_weights_list = [normalize_over_channels(g) for g in global_weights_list]
+
+        unary_affs_list = [
+            self.vertex_affinity([item.x for item in g_1], [item.x for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [
+            self.edge_affinity([item.edge_attr for item in g_1], [item.edge_attr for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [[0.5 * x for x in quadratic_affs] for quadratic_affs in quadratic_affs_list]
+
+        s_list, mgm_s_list, x_list, mgm_x_list, indices = [], [], [], [], []
+
+        for unary_affs, quadratic_affs, (idx1, idx2) in zip(unary_affs_list, quadratic_affs_list, lexico_iter(range(num_graphs))):
+            kro_G, kro_H = data_dict['KGHs'] if num_graphs == 2 else data_dict['KGHs']['{},{}'.format(idx1, idx2)]
+            Kp = torch.stack(pad_tensor(unary_affs), dim=0)
+            Ke = torch.stack(pad_tensor(quadratic_affs), dim=0)
+            K = construct_aff_mat(Ke, Kp, kro_G, kro_H)
+            if num_graphs == 2: data_dict['aff_mat'] = K
+
+            if cfg.NGM.FIRST_ORDER:
+                emb = Kp.transpose(1, 2).contiguous().view(Kp.shape[0], -1, 1)
+            else:
+                emb = torch.ones(K.shape[0], K.shape[1], 1, device=K.device)
+
+            if cfg.NGM.POSITIVE_EDGES:
+                A = (K > 0).to(K.dtype)
+            else:
+                A = (K != 0).to(K.dtype)
+
+            emb_K = K.unsqueeze(-1)
+
+            # NGM qap solver
+            for i in range(self.gnn_layer):
+                gnn_layer = getattr(self, 'gnn_layer_{}'.format(i))
+                emb_K, emb = gnn_layer(A, emb_K, emb, n_points[idx1], n_points[idx2])
+
+            v = self.classifier(emb)
+            s = v.view(v.shape[0], points[idx2].shape[1], -1).transpose(1, 2)
+
+            ss = self.sinkhorn(s, n_points[idx1], n_points[idx2], dummy_row=True)
+            x = hungarian(ss, n_points[idx1], n_points[idx2])
+            s_list.append(ss)
+            x_list.append(x)
+            indices.append((idx1, idx2))
+
+        if num_graphs > 2:
+            joint_indices = torch.cat((torch.cumsum(torch.stack([torch.max(np) for np in n_points]), dim=0), torch.zeros((1,), dtype=torch.long, device=K.device)))
+            joint_S = torch.zeros(batch_size, torch.max(joint_indices), torch.max(joint_indices), device=K.device)
+            for idx in range(num_graphs):
+                for b in range(batch_size):
+                    start = joint_indices[idx-1]
+                    joint_S[b, start:start+n_points[idx][b], start:start+n_points[idx][b]] += torch.eye(n_points[idx][b], device=K.device)
+
+            for (idx1, idx2), s in zip(indices, s_list):
+                if idx1 > idx2:
+                    joint_S[:, joint_indices[idx2-1]:joint_indices[idx2], joint_indices[idx1-1]:joint_indices[idx1]] += s.transpose(1, 2)
+                else:
+                    joint_S[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]] += s
+
+            matching_s = []
+            for b in range(batch_size):
+                e, v = torch.symeig(joint_S[b], eigenvectors=True)
+                diff = e[-self.univ_size:-1] - e[-self.univ_size+1:]
+                if self.training and torch.min(torch.abs(diff)) <= 1e-4:
+                    matching_s.append(joint_S[b])
+                else:
+                    matching_s.append(num_graphs * torch.mm(v[:, -self.univ_size:], v[:, -self.univ_size:].transpose(0, 1)))
+
+            matching_s = torch.stack(matching_s, dim=0)
+
+            for idx1, idx2 in indices:
+                s = matching_s[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]]
+                s = self.sinkhorn_mgm(torch.log(torch.relu(s)), n_points[idx1], n_points[idx2]) # only perform row/col norm, do not perform exp
+                x = hungarian(s, n_points[idx1], n_points[idx2])
+
+                mgm_s_list.append(s)
+                mgm_x_list.append(x)
+
+        if cfg.PROBLEM.TYPE == '2GM':
+            data_dict.update({
+                'ds_mat': s_list[0],
+                'perm_mat': x_list[0]
+            })
+        elif cfg.PROBLEM.TYPE == 'MGM':
+            data_dict.update({
+                'ds_mat_list': mgm_s_list,
+                'perm_mat_list': mgm_x_list,
+                'graph_indices': indices,
+            })
+
+        return data_dict","n_points[idx1], n_points[idx2]",*n_points[idx1:idx2 + 1],"iterable_zj[idx1], iterable_zj[idx2]",*n_points[idx1:idx2+1],Cannot refactor,2,0,it actually cannot refactor
+ThinkMatch,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ThinkMatch/models/NGM/model_v2.py,https://github.com/Thinklab-SJTU/ThinkMatch/tree/master/models/NGM/model_v2.py,Net,forward$68,"def forward(
+        self,
+        data_dict,
+    ):
+        images = data_dict['images']
+        points = data_dict['Ps']
+        n_points = data_dict['ns']
+        graphs = data_dict['pyg_graphs']
+        batch_size = data_dict['batch_size']
+        num_graphs = len(images)
+
+        global_list = []
+        orig_graph_list = []
+        for image, p, n_p, graph in zip(images, points, n_points, graphs):
+            # extract feature
+            nodes = self.node_layers(image)
+            edges = self.edge_layers(nodes)
+
+            global_list.append(self.final_layers(edges).reshape((nodes.shape[0], -1)))
+            nodes = normalize_over_channels(nodes)
+            edges = normalize_over_channels(edges)
+
+            # arrange features
+            U = concat_features(feature_align(nodes, p, n_p, self.rescale), n_p)
+            F = concat_features(feature_align(edges, p, n_p, self.rescale), n_p)
+            node_features = torch.cat((U, F), dim=1)
+            graph.x = node_features
+
+            graph = self.message_pass_node_features(graph)
+            orig_graph = self.build_edge_features_from_node_features(graph)
+            orig_graph_list.append(orig_graph)
+
+        global_weights_list = [
+            torch.cat([global_src, global_tgt], axis=-1) for global_src, global_tgt in lexico_iter(global_list)
+        ]
+
+        global_weights_list = [normalize_over_channels(g) for g in global_weights_list]
+
+        unary_affs_list = [
+            self.vertex_affinity([item.x for item in g_1], [item.x for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [
+            self.edge_affinity([item.edge_attr for item in g_1], [item.edge_attr for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [[0.5 * x for x in quadratic_affs] for quadratic_affs in quadratic_affs_list]
+
+        s_list, mgm_s_list, x_list, mgm_x_list, indices = [], [], [], [], []
+
+        for unary_affs, quadratic_affs, (idx1, idx2) in zip(unary_affs_list, quadratic_affs_list, lexico_iter(range(num_graphs))):
+            kro_G, kro_H = data_dict['KGHs'] if num_graphs == 2 else data_dict['KGHs']['{},{}'.format(idx1, idx2)]
+            Kp = torch.stack(pad_tensor(unary_affs), dim=0)
+            Ke = torch.stack(pad_tensor(quadratic_affs), dim=0)
+            K = construct_aff_mat(Ke, Kp, kro_G, kro_H)
+            if num_graphs == 2: data_dict['aff_mat'] = K
+
+            if cfg.NGM.FIRST_ORDER:
+                emb = Kp.transpose(1, 2).contiguous().view(Kp.shape[0], -1, 1)
+            else:
+                emb = torch.ones(K.shape[0], K.shape[1], 1, device=K.device)
+
+            if cfg.NGM.POSITIVE_EDGES:
+                A = (K > 0).to(K.dtype)
+            else:
+                A = (K != 0).to(K.dtype)
+
+            emb_K = K.unsqueeze(-1)
+
+            # NGM qap solver
+            for i in range(self.gnn_layer):
+                gnn_layer = getattr(self, 'gnn_layer_{}'.format(i))
+                emb_K, emb = gnn_layer(A, emb_K, emb, n_points[idx1], n_points[idx2])
+
+            v = self.classifier(emb)
+            s = v.view(v.shape[0], points[idx2].shape[1], -1).transpose(1, 2)
+
+            ss = self.sinkhorn(s, n_points[idx1], n_points[idx2], dummy_row=True)
+            x = hungarian(ss, n_points[idx1], n_points[idx2])
+            s_list.append(ss)
+            x_list.append(x)
+            indices.append((idx1, idx2))
+
+        if num_graphs > 2:
+            joint_indices = torch.cat((torch.cumsum(torch.stack([torch.max(np) for np in n_points]), dim=0), torch.zeros((1,), dtype=torch.long, device=K.device)))
+            joint_S = torch.zeros(batch_size, torch.max(joint_indices), torch.max(joint_indices), device=K.device)
+            for idx in range(num_graphs):
+                for b in range(batch_size):
+                    start = joint_indices[idx-1]
+                    joint_S[b, start:start+n_points[idx][b], start:start+n_points[idx][b]] += torch.eye(n_points[idx][b], device=K.device)
+
+            for (idx1, idx2), s in zip(indices, s_list):
+                if idx1 > idx2:
+                    joint_S[:, joint_indices[idx2-1]:joint_indices[idx2], joint_indices[idx1-1]:joint_indices[idx1]] += s.transpose(1, 2)
+                else:
+                    joint_S[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]] += s
+
+            matching_s = []
+            for b in range(batch_size):
+                e, v = torch.symeig(joint_S[b], eigenvectors=True)
+                diff = e[-self.univ_size:-1] - e[-self.univ_size+1:]
+                if self.training and torch.min(torch.abs(diff)) <= 1e-4:
+                    matching_s.append(joint_S[b])
+                else:
+                    matching_s.append(num_graphs * torch.mm(v[:, -self.univ_size:], v[:, -self.univ_size:].transpose(0, 1)))
+
+            matching_s = torch.stack(matching_s, dim=0)
+
+            for idx1, idx2 in indices:
+                s = matching_s[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]]
+                s = self.sinkhorn_mgm(torch.log(torch.relu(s)), n_points[idx1], n_points[idx2]) # only perform row/col norm, do not perform exp
+                x = hungarian(s, n_points[idx1], n_points[idx2])
+
+                mgm_s_list.append(s)
+                mgm_x_list.append(x)
+
+        if cfg.PROBLEM.TYPE == '2GM':
+            data_dict.update({
+                'ds_mat': s_list[0],
+                'perm_mat': x_list[0]
+            })
+        elif cfg.PROBLEM.TYPE == 'MGM':
+            data_dict.update({
+                'ds_mat_list': mgm_s_list,
+                'perm_mat_list': mgm_x_list,
+                'graph_indices': indices,
+            })
+
+        return data_dict","n_points[idx1], n_points[idx2]",*n_points[idx1:idx2 + 1],"iterable_zj[idx1], iterable_zj[idx2]",*n_points[idx1:idx2+1],Cannot refactor,2,0,it actually cannot refactor
+ThinkMatch,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ThinkMatch/models/NGM/model_v2.py,https://github.com/Thinklab-SJTU/ThinkMatch/tree/master/models/NGM/model_v2.py,Net,forward$68,"def forward(
+        self,
+        data_dict,
+    ):
+        images = data_dict['images']
+        points = data_dict['Ps']
+        n_points = data_dict['ns']
+        graphs = data_dict['pyg_graphs']
+        batch_size = data_dict['batch_size']
+        num_graphs = len(images)
+
+        global_list = []
+        orig_graph_list = []
+        for image, p, n_p, graph in zip(images, points, n_points, graphs):
+            # extract feature
+            nodes = self.node_layers(image)
+            edges = self.edge_layers(nodes)
+
+            global_list.append(self.final_layers(edges).reshape((nodes.shape[0], -1)))
+            nodes = normalize_over_channels(nodes)
+            edges = normalize_over_channels(edges)
+
+            # arrange features
+            U = concat_features(feature_align(nodes, p, n_p, self.rescale), n_p)
+            F = concat_features(feature_align(edges, p, n_p, self.rescale), n_p)
+            node_features = torch.cat((U, F), dim=1)
+            graph.x = node_features
+
+            graph = self.message_pass_node_features(graph)
+            orig_graph = self.build_edge_features_from_node_features(graph)
+            orig_graph_list.append(orig_graph)
+
+        global_weights_list = [
+            torch.cat([global_src, global_tgt], axis=-1) for global_src, global_tgt in lexico_iter(global_list)
+        ]
+
+        global_weights_list = [normalize_over_channels(g) for g in global_weights_list]
+
+        unary_affs_list = [
+            self.vertex_affinity([item.x for item in g_1], [item.x for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [
+            self.edge_affinity([item.edge_attr for item in g_1], [item.edge_attr for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [[0.5 * x for x in quadratic_affs] for quadratic_affs in quadratic_affs_list]
+
+        s_list, mgm_s_list, x_list, mgm_x_list, indices = [], [], [], [], []
+
+        for unary_affs, quadratic_affs, (idx1, idx2) in zip(unary_affs_list, quadratic_affs_list, lexico_iter(range(num_graphs))):
+            kro_G, kro_H = data_dict['KGHs'] if num_graphs == 2 else data_dict['KGHs']['{},{}'.format(idx1, idx2)]
+            Kp = torch.stack(pad_tensor(unary_affs), dim=0)
+            Ke = torch.stack(pad_tensor(quadratic_affs), dim=0)
+            K = construct_aff_mat(Ke, Kp, kro_G, kro_H)
+            if num_graphs == 2: data_dict['aff_mat'] = K
+
+            if cfg.NGM.FIRST_ORDER:
+                emb = Kp.transpose(1, 2).contiguous().view(Kp.shape[0], -1, 1)
+            else:
+                emb = torch.ones(K.shape[0], K.shape[1], 1, device=K.device)
+
+            if cfg.NGM.POSITIVE_EDGES:
+                A = (K > 0).to(K.dtype)
+            else:
+                A = (K != 0).to(K.dtype)
+
+            emb_K = K.unsqueeze(-1)
+
+            # NGM qap solver
+            for i in range(self.gnn_layer):
+                gnn_layer = getattr(self, 'gnn_layer_{}'.format(i))
+                emb_K, emb = gnn_layer(A, emb_K, emb, n_points[idx1], n_points[idx2])
+
+            v = self.classifier(emb)
+            s = v.view(v.shape[0], points[idx2].shape[1], -1).transpose(1, 2)
+
+            ss = self.sinkhorn(s, n_points[idx1], n_points[idx2], dummy_row=True)
+            x = hungarian(ss, n_points[idx1], n_points[idx2])
+            s_list.append(ss)
+            x_list.append(x)
+            indices.append((idx1, idx2))
+
+        if num_graphs > 2:
+            joint_indices = torch.cat((torch.cumsum(torch.stack([torch.max(np) for np in n_points]), dim=0), torch.zeros((1,), dtype=torch.long, device=K.device)))
+            joint_S = torch.zeros(batch_size, torch.max(joint_indices), torch.max(joint_indices), device=K.device)
+            for idx in range(num_graphs):
+                for b in range(batch_size):
+                    start = joint_indices[idx-1]
+                    joint_S[b, start:start+n_points[idx][b], start:start+n_points[idx][b]] += torch.eye(n_points[idx][b], device=K.device)
+
+            for (idx1, idx2), s in zip(indices, s_list):
+                if idx1 > idx2:
+                    joint_S[:, joint_indices[idx2-1]:joint_indices[idx2], joint_indices[idx1-1]:joint_indices[idx1]] += s.transpose(1, 2)
+                else:
+                    joint_S[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]] += s
+
+            matching_s = []
+            for b in range(batch_size):
+                e, v = torch.symeig(joint_S[b], eigenvectors=True)
+                diff = e[-self.univ_size:-1] - e[-self.univ_size+1:]
+                if self.training and torch.min(torch.abs(diff)) <= 1e-4:
+                    matching_s.append(joint_S[b])
+                else:
+                    matching_s.append(num_graphs * torch.mm(v[:, -self.univ_size:], v[:, -self.univ_size:].transpose(0, 1)))
+
+            matching_s = torch.stack(matching_s, dim=0)
+
+            for idx1, idx2 in indices:
+                s = matching_s[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]]
+                s = self.sinkhorn_mgm(torch.log(torch.relu(s)), n_points[idx1], n_points[idx2]) # only perform row/col norm, do not perform exp
+                x = hungarian(s, n_points[idx1], n_points[idx2])
+
+                mgm_s_list.append(s)
+                mgm_x_list.append(x)
+
+        if cfg.PROBLEM.TYPE == '2GM':
+            data_dict.update({
+                'ds_mat': s_list[0],
+                'perm_mat': x_list[0]
+            })
+        elif cfg.PROBLEM.TYPE == 'MGM':
+            data_dict.update({
+                'ds_mat_list': mgm_s_list,
+                'perm_mat_list': mgm_x_list,
+                'graph_indices': indices,
+            })
+
+        return data_dict","n_points[idx1], n_points[idx2]",*n_points[idx1:idx2 + 1],"iterable_zj[idx1], iterable_zj[idx2]",*n_points[idx1:idx2+1],Cannot refactor,2,0,it actually cannot refactor
+ThinkMatch,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ThinkMatch/models/NGM/model_v2.py,https://github.com/Thinklab-SJTU/ThinkMatch/tree/master/models/NGM/model_v2.py,Net,forward$68,"def forward(
+        self,
+        data_dict,
+    ):
+        images = data_dict['images']
+        points = data_dict['Ps']
+        n_points = data_dict['ns']
+        graphs = data_dict['pyg_graphs']
+        batch_size = data_dict['batch_size']
+        num_graphs = len(images)
+
+        global_list = []
+        orig_graph_list = []
+        for image, p, n_p, graph in zip(images, points, n_points, graphs):
+            # extract feature
+            nodes = self.node_layers(image)
+            edges = self.edge_layers(nodes)
+
+            global_list.append(self.final_layers(edges).reshape((nodes.shape[0], -1)))
+            nodes = normalize_over_channels(nodes)
+            edges = normalize_over_channels(edges)
+
+            # arrange features
+            U = concat_features(feature_align(nodes, p, n_p, self.rescale), n_p)
+            F = concat_features(feature_align(edges, p, n_p, self.rescale), n_p)
+            node_features = torch.cat((U, F), dim=1)
+            graph.x = node_features
+
+            graph = self.message_pass_node_features(graph)
+            orig_graph = self.build_edge_features_from_node_features(graph)
+            orig_graph_list.append(orig_graph)
+
+        global_weights_list = [
+            torch.cat([global_src, global_tgt], axis=-1) for global_src, global_tgt in lexico_iter(global_list)
+        ]
+
+        global_weights_list = [normalize_over_channels(g) for g in global_weights_list]
+
+        unary_affs_list = [
+            self.vertex_affinity([item.x for item in g_1], [item.x for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [
+            self.edge_affinity([item.edge_attr for item in g_1], [item.edge_attr for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [[0.5 * x for x in quadratic_affs] for quadratic_affs in quadratic_affs_list]
+
+        s_list, mgm_s_list, x_list, mgm_x_list, indices = [], [], [], [], []
+
+        for unary_affs, quadratic_affs, (idx1, idx2) in zip(unary_affs_list, quadratic_affs_list, lexico_iter(range(num_graphs))):
+            kro_G, kro_H = data_dict['KGHs'] if num_graphs == 2 else data_dict['KGHs']['{},{}'.format(idx1, idx2)]
+            Kp = torch.stack(pad_tensor(unary_affs), dim=0)
+            Ke = torch.stack(pad_tensor(quadratic_affs), dim=0)
+            K = construct_aff_mat(Ke, Kp, kro_G, kro_H)
+            if num_graphs == 2: data_dict['aff_mat'] = K
+
+            if cfg.NGM.FIRST_ORDER:
+                emb = Kp.transpose(1, 2).contiguous().view(Kp.shape[0], -1, 1)
+            else:
+                emb = torch.ones(K.shape[0], K.shape[1], 1, device=K.device)
+
+            if cfg.NGM.POSITIVE_EDGES:
+                A = (K > 0).to(K.dtype)
+            else:
+                A = (K != 0).to(K.dtype)
+
+            emb_K = K.unsqueeze(-1)
+
+            # NGM qap solver
+            for i in range(self.gnn_layer):
+                gnn_layer = getattr(self, 'gnn_layer_{}'.format(i))
+                emb_K, emb = gnn_layer(A, emb_K, emb, n_points[idx1], n_points[idx2])
+
+            v = self.classifier(emb)
+            s = v.view(v.shape[0], points[idx2].shape[1], -1).transpose(1, 2)
+
+            ss = self.sinkhorn(s, n_points[idx1], n_points[idx2], dummy_row=True)
+            x = hungarian(ss, n_points[idx1], n_points[idx2])
+            s_list.append(ss)
+            x_list.append(x)
+            indices.append((idx1, idx2))
+
+        if num_graphs > 2:
+            joint_indices = torch.cat((torch.cumsum(torch.stack([torch.max(np) for np in n_points]), dim=0), torch.zeros((1,), dtype=torch.long, device=K.device)))
+            joint_S = torch.zeros(batch_size, torch.max(joint_indices), torch.max(joint_indices), device=K.device)
+            for idx in range(num_graphs):
+                for b in range(batch_size):
+                    start = joint_indices[idx-1]
+                    joint_S[b, start:start+n_points[idx][b], start:start+n_points[idx][b]] += torch.eye(n_points[idx][b], device=K.device)
+
+            for (idx1, idx2), s in zip(indices, s_list):
+                if idx1 > idx2:
+                    joint_S[:, joint_indices[idx2-1]:joint_indices[idx2], joint_indices[idx1-1]:joint_indices[idx1]] += s.transpose(1, 2)
+                else:
+                    joint_S[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]] += s
+
+            matching_s = []
+            for b in range(batch_size):
+                e, v = torch.symeig(joint_S[b], eigenvectors=True)
+                diff = e[-self.univ_size:-1] - e[-self.univ_size+1:]
+                if self.training and torch.min(torch.abs(diff)) <= 1e-4:
+                    matching_s.append(joint_S[b])
+                else:
+                    matching_s.append(num_graphs * torch.mm(v[:, -self.univ_size:], v[:, -self.univ_size:].transpose(0, 1)))
+
+            matching_s = torch.stack(matching_s, dim=0)
+
+            for idx1, idx2 in indices:
+                s = matching_s[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]]
+                s = self.sinkhorn_mgm(torch.log(torch.relu(s)), n_points[idx1], n_points[idx2]) # only perform row/col norm, do not perform exp
+                x = hungarian(s, n_points[idx1], n_points[idx2])
+
+                mgm_s_list.append(s)
+                mgm_x_list.append(x)
+
+        if cfg.PROBLEM.TYPE == '2GM':
+            data_dict.update({
+                'ds_mat': s_list[0],
+                'perm_mat': x_list[0]
+            })
+        elif cfg.PROBLEM.TYPE == 'MGM':
+            data_dict.update({
+                'ds_mat_list': mgm_s_list,
+                'perm_mat_list': mgm_x_list,
+                'graph_indices': indices,
+            })
+
+        return data_dict","n_points[idx1], n_points[idx2]",*n_points[idx1:idx2 + 1],"iterable_zj[idx1], iterable_zj[idx2]",*n_points[idx1:idx2+1],Cannot refactor,2,0,it actually cannot refactor
+ThinkMatch,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ThinkMatch/models/NGM/model_v2.py,https://github.com/Thinklab-SJTU/ThinkMatch/tree/master/models/NGM/model_v2.py,Net,forward$68,"def forward(
+        self,
+        data_dict,
+    ):
+        images = data_dict['images']
+        points = data_dict['Ps']
+        n_points = data_dict['ns']
+        graphs = data_dict['pyg_graphs']
+        batch_size = data_dict['batch_size']
+        num_graphs = len(images)
+
+        global_list = []
+        orig_graph_list = []
+        for image, p, n_p, graph in zip(images, points, n_points, graphs):
+            # extract feature
+            nodes = self.node_layers(image)
+            edges = self.edge_layers(nodes)
+
+            global_list.append(self.final_layers(edges).reshape((nodes.shape[0], -1)))
+            nodes = normalize_over_channels(nodes)
+            edges = normalize_over_channels(edges)
+
+            # arrange features
+            U = concat_features(feature_align(nodes, p, n_p, self.rescale), n_p)
+            F = concat_features(feature_align(edges, p, n_p, self.rescale), n_p)
+            node_features = torch.cat((U, F), dim=1)
+            graph.x = node_features
+
+            graph = self.message_pass_node_features(graph)
+            orig_graph = self.build_edge_features_from_node_features(graph)
+            orig_graph_list.append(orig_graph)
+
+        global_weights_list = [
+            torch.cat([global_src, global_tgt], axis=-1) for global_src, global_tgt in lexico_iter(global_list)
+        ]
+
+        global_weights_list = [normalize_over_channels(g) for g in global_weights_list]
+
+        unary_affs_list = [
+            self.vertex_affinity([item.x for item in g_1], [item.x for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [
+            self.edge_affinity([item.edge_attr for item in g_1], [item.edge_attr for item in g_2], global_weights)
+            for (g_1, g_2), global_weights in zip(lexico_iter(orig_graph_list), global_weights_list)
+        ]
+
+        quadratic_affs_list = [[0.5 * x for x in quadratic_affs] for quadratic_affs in quadratic_affs_list]
+
+        s_list, mgm_s_list, x_list, mgm_x_list, indices = [], [], [], [], []
+
+        for unary_affs, quadratic_affs, (idx1, idx2) in zip(unary_affs_list, quadratic_affs_list, lexico_iter(range(num_graphs))):
+            kro_G, kro_H = data_dict['KGHs'] if num_graphs == 2 else data_dict['KGHs']['{},{}'.format(idx1, idx2)]
+            Kp = torch.stack(pad_tensor(unary_affs), dim=0)
+            Ke = torch.stack(pad_tensor(quadratic_affs), dim=0)
+            K = construct_aff_mat(Ke, Kp, kro_G, kro_H)
+            if num_graphs == 2: data_dict['aff_mat'] = K
+
+            if cfg.NGM.FIRST_ORDER:
+                emb = Kp.transpose(1, 2).contiguous().view(Kp.shape[0], -1, 1)
+            else:
+                emb = torch.ones(K.shape[0], K.shape[1], 1, device=K.device)
+
+            if cfg.NGM.POSITIVE_EDGES:
+                A = (K > 0).to(K.dtype)
+            else:
+                A = (K != 0).to(K.dtype)
+
+            emb_K = K.unsqueeze(-1)
+
+            # NGM qap solver
+            for i in range(self.gnn_layer):
+                gnn_layer = getattr(self, 'gnn_layer_{}'.format(i))
+                emb_K, emb = gnn_layer(A, emb_K, emb, n_points[idx1], n_points[idx2])
+
+            v = self.classifier(emb)
+            s = v.view(v.shape[0], points[idx2].shape[1], -1).transpose(1, 2)
+
+            ss = self.sinkhorn(s, n_points[idx1], n_points[idx2], dummy_row=True)
+            x = hungarian(ss, n_points[idx1], n_points[idx2])
+            s_list.append(ss)
+            x_list.append(x)
+            indices.append((idx1, idx2))
+
+        if num_graphs > 2:
+            joint_indices = torch.cat((torch.cumsum(torch.stack([torch.max(np) for np in n_points]), dim=0), torch.zeros((1,), dtype=torch.long, device=K.device)))
+            joint_S = torch.zeros(batch_size, torch.max(joint_indices), torch.max(joint_indices), device=K.device)
+            for idx in range(num_graphs):
+                for b in range(batch_size):
+                    start = joint_indices[idx-1]
+                    joint_S[b, start:start+n_points[idx][b], start:start+n_points[idx][b]] += torch.eye(n_points[idx][b], device=K.device)
+
+            for (idx1, idx2), s in zip(indices, s_list):
+                if idx1 > idx2:
+                    joint_S[:, joint_indices[idx2-1]:joint_indices[idx2], joint_indices[idx1-1]:joint_indices[idx1]] += s.transpose(1, 2)
+                else:
+                    joint_S[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]] += s
+
+            matching_s = []
+            for b in range(batch_size):
+                e, v = torch.symeig(joint_S[b], eigenvectors=True)
+                diff = e[-self.univ_size:-1] - e[-self.univ_size+1:]
+                if self.training and torch.min(torch.abs(diff)) <= 1e-4:
+                    matching_s.append(joint_S[b])
+                else:
+                    matching_s.append(num_graphs * torch.mm(v[:, -self.univ_size:], v[:, -self.univ_size:].transpose(0, 1)))
+
+            matching_s = torch.stack(matching_s, dim=0)
+
+            for idx1, idx2 in indices:
+                s = matching_s[:, joint_indices[idx1-1]:joint_indices[idx1], joint_indices[idx2-1]:joint_indices[idx2]]
+                s = self.sinkhorn_mgm(torch.log(torch.relu(s)), n_points[idx1], n_points[idx2]) # only perform row/col norm, do not perform exp
+                x = hungarian(s, n_points[idx1], n_points[idx2])
+
+                mgm_s_list.append(s)
+                mgm_x_list.append(x)
+
+        if cfg.PROBLEM.TYPE == '2GM':
+            data_dict.update({
+                'ds_mat': s_list[0],
+                'perm_mat': x_list[0]
+            })
+        elif cfg.PROBLEM.TYPE == 'MGM':
+            data_dict.update({
+                'ds_mat_list': mgm_s_list,
+                'perm_mat_list': mgm_x_list,
+                'graph_indices': indices,
+            })
+
+        return data_dict","n_points[idx1], n_points[idx2]",*n_points[idx1:idx2 + 1],"iterable_zj[idx1], iterable_zj[idx2]",*n_points[idx1:idx2+1],Cannot refactor,2,0,it actually cannot refactor
+feincms,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/feincms/feincms/templatetags/fragment_tags.py,https://github.com/feincms/feincms/tree/master/feincms/templatetags/fragment_tags.py,,get_fragment$79,"def get_fragment(parser, token):
+    """"""
+    Fetches the content of a fragment.
+
+    Either::
+
+        {% get_fragment request ""title"" %}
+
+    or::
+
+        {% get_fragment request ""title"" as title %}
+    """"""
+
+    fragments = token.contents.split()
+
+    if len(fragments) == 3:
+        return GetFragmentNode(fragments[1], fragments[2])
+    elif len(fragments) == 5 and fragments[3] == ""as"":
+        return GetFragmentNode(fragments[1], fragments[2], fragments[4])
+    raise template.TemplateSyntaxError(
+        ""Invalid syntax for get_fragment: %s"" % token.contents
+    )","fragments[1], fragments[2], fragments[4]",*fragments[1:5:2],"iterable_zj[1], iterable_zj[2], iterable_zj[4]",*fragments[1:5:2],Cannot refactor,2,0,it actually cannot refactor
+new_find,,,,,,,,,,,,,
+dask,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dask/dask/array/tests/test_slicing.py,https://github.com/dask/dask/tree/master/dask/array/tests/test_slicing.py,,test_slicing_consistent_names$559,"def test_slicing_consistent_names():
+    x = np.arange(100).reshape((10, 10))
+    a = da.from_array(x, chunks=(5, 5))
+    assert same_keys(a[0], a[0])
+    assert same_keys(a[:, [1, 2, 3]], a[:, [1, 2, 3]])
+    assert same_keys(a[:, 5:2:-1], a[:, 5:2:-1])
+    assert same_keys(a[0, ...], a[0, ...])
+    assert same_keys(a[...], a[...])
+    assert same_keys(a[[1, 3, 5]], a[[1, 3, 5]])
+    assert same_keys(a[-11:11], a[:])
+    assert same_keys(a[-11:-9], a[:1])
+    assert same_keys(a[-1], a[9])
+    assert same_keys(a[0::-1], a[0:-11:-1])","a[-11:11], a[:]","*(a[-11:11], a[:])","iterable_zj[-11:11], iterable_zj[:]","*(a[-11:11], a[:])",Cannot refactor,2,1,
+dask,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/dask/dask/array/tests/test_slicing.py,https://github.com/dask/dask/tree/master/dask/array/tests/test_slicing.py,,test_slicing_consistent_names$559,"def test_slicing_consistent_names():
+    x = np.arange(100).reshape((10, 10))
+    a = da.from_array(x, chunks=(5, 5))
+    assert same_keys(a[0], a[0])
+    assert same_keys(a[:, [1, 2, 3]], a[:, [1, 2, 3]])
+    assert same_keys(a[:, 5:2:-1], a[:, 5:2:-1])
+    assert same_keys(a[0, ...], a[0, ...])
+    assert same_keys(a[...], a[...])
+    assert same_keys(a[[1, 3, 5]], a[[1, 3, 5]])
+    assert same_keys(a[-11:11], a[:])
+    assert same_keys(a[-11:-9], a[:1])
+    assert same_keys(a[-1], a[9])
+    assert same_keys(a[0::-1], a[0:-11:-1])","a[-11:-9], a[:1]",*a[-11:-9] + a[:1],"iterable_zj[-11:-9], iterable_zj[:1]",*(a[-11:-9] + a[:1]),Cannot refactor,2,1,
+gaphor,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/gaphor/gaphor/diagram/presentation.py,https://github.com/gaphor/gaphor/tree/master/gaphor/diagram/presentation.py,LinePresentation,draw$253,"def draw(self, context):
+        def draw_line_end(end_handle, second_handle, draw):
+            pos, p1 = end_handle.pos, second_handle.pos
+            angle = atan2(p1.y - pos.y, p1.x - pos.x)
+            cr.save()
+            try:
+                cr.translate(*pos)
+                cr.rotate(angle)
+                draw(context)
+            finally:
+                cr.restore()
+
+        style = merge_styles(context.style, self.style)
+        context = replace(context, style=style)
+
+        self.update_shape_bounds(context)
+        cr = context.cairo
+
+        handles = self._handles
+        draw_line_end(handles[0], handles[1], self.draw_head)
+
+        for h in self._handles[1:-1]:
+            cr.line_to(*h.pos)
+
+        draw_line_end(handles[-1], handles[-2], self.draw_tail)
+
+        stroke(context)
+
+        for shape, rect in (
+            (self.shape_head, self._shape_head_rect),
+            (self.shape_middle, self._shape_middle_rect),
+            (self.shape_tail, self._shape_tail_rect),
+        ):
+            if shape:
+                shape.draw(context, rect)","handles[-2], handles[-1]",*handles[-2:],"iterable_zj[-2], iterable_zj[-1]",*handles[-2:],Cannot refactor,2,1,
+PaddleDetection,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/PaddleDetection/ppdet/slim/distill.py,https://github.com/PaddlePaddle/PaddleDetection/tree/master/ppdet/slim/distill.py,DistillYOLOv3Loss,forward$93,"def forward(self, teacher_model, student_model):
+        teacher_distill_pairs = teacher_model.yolo_head.loss.distill_pairs
+        student_distill_pairs = student_model.yolo_head.loss.distill_pairs
+        distill_reg_loss, distill_cls_loss, distill_obj_loss = [], [], []
+        for s_pair, t_pair in zip(student_distill_pairs, teacher_distill_pairs):
+            distill_reg_loss.append(
+                self.obj_weighted_reg(s_pair[0], s_pair[1], s_pair[2], s_pair[
+                    3], t_pair[0], t_pair[1], t_pair[2], t_pair[3], t_pair[4]))
+            distill_cls_loss.append(
+                self.obj_weighted_cls(s_pair[5], t_pair[5], t_pair[4]))
+            distill_obj_loss.append(self.obj_loss(s_pair[4], t_pair[4]))
+        distill_reg_loss = paddle.add_n(distill_reg_loss)
+        distill_cls_loss = paddle.add_n(distill_cls_loss)
+        distill_obj_loss = paddle.add_n(distill_obj_loss)
+        loss = (distill_reg_loss + distill_cls_loss + distill_obj_loss
+                ) * self.weight
+        return loss","t_pair[5], t_pair[4]",*t_pair[5:3:-1],"iterable_zj[5], iterable_zj[4]",*t_pair[5:3:-1],Cannot refactor,2,1,
+SSL4MIS,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/SSL4MIS/code/networks/attention_unet.py,https://github.com/HiLab-git/SSL4MIS/tree/master/code/networks/attention_unet.py,Attention_UNet,__init__$11,"def __init__(self, feature_scale=4, n_classes=21, is_deconv=True, in_channels=3,
+                 nonlocal_mode='concatenation', attention_dsample=(2,2,2), is_batchnorm=True):
+        super(Attention_UNet, self).__init__()
+        self.is_deconv = is_deconv
+        self.in_channels = in_channels
+        self.is_batchnorm = is_batchnorm
+        self.feature_scale = feature_scale
+
+        filters = [64, 128, 256, 512, 1024]
+        filters = [int(x / self.feature_scale) for x in filters]
+
+        # downsampling
+        self.conv1 = UnetConv3(self.in_channels, filters[0], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool1 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv2 = UnetConv3(filters[0], filters[1], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool2 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv3 = UnetConv3(filters[1], filters[2], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool3 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv4 = UnetConv3(filters[2], filters[3], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool4 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.center = UnetConv3(filters[3], filters[4], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.gating = UnetGridGatingSignal3(filters[4], filters[4], kernel_size=(1, 1, 1), is_batchnorm=self.is_batchnorm)
+
+        # attention blocks
+        self.attentionblock2 = MultiAttentionBlock(in_size=filters[1], gate_size=filters[2], inter_size=filters[1],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+        self.attentionblock3 = MultiAttentionBlock(in_size=filters[2], gate_size=filters[3], inter_size=filters[2],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+        self.attentionblock4 = MultiAttentionBlock(in_size=filters[3], gate_size=filters[4], inter_size=filters[3],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+
+        # upsampling
+        self.up_concat4 = UnetUp3_CT(filters[4], filters[3], is_batchnorm)
+        self.up_concat3 = UnetUp3_CT(filters[3], filters[2], is_batchnorm)
+        self.up_concat2 = UnetUp3_CT(filters[2], filters[1], is_batchnorm)
+        self.up_concat1 = UnetUp3_CT(filters[1], filters[0], is_batchnorm)
+
+        # deep supervision
+        self.dsv4 = UnetDsv3(in_size=filters[3], out_size=n_classes, scale_factor=8)
+        self.dsv3 = UnetDsv3(in_size=filters[2], out_size=n_classes, scale_factor=4)
+        self.dsv2 = UnetDsv3(in_size=filters[1], out_size=n_classes, scale_factor=2)
+        self.dsv1 = nn.Conv3d(in_channels=filters[0], out_channels=n_classes, kernel_size=1)
+
+        # final conv (without any concat)
+        self.final = nn.Conv3d(n_classes*4, n_classes, 1)
+
+        # initialise weights
+        for m in self.modules():
+            if isinstance(m, nn.Conv3d):
+                init_weights(m, init_type='kaiming')
+            elif isinstance(m, nn.BatchNorm3d):
+                init_weights(m, init_type='kaiming')","filters[4], filters[3]",*filters[4:2:-1],"iterable_zj[4], iterable_zj[3]",*filters[4:2:-1],Cannot refactor,2,1,
+SSL4MIS,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/SSL4MIS/code/networks/attention_unet.py,https://github.com/HiLab-git/SSL4MIS/tree/master/code/networks/attention_unet.py,Attention_UNet,__init__$11,"def __init__(self, feature_scale=4, n_classes=21, is_deconv=True, in_channels=3,
+                 nonlocal_mode='concatenation', attention_dsample=(2,2,2), is_batchnorm=True):
+        super(Attention_UNet, self).__init__()
+        self.is_deconv = is_deconv
+        self.in_channels = in_channels
+        self.is_batchnorm = is_batchnorm
+        self.feature_scale = feature_scale
+
+        filters = [64, 128, 256, 512, 1024]
+        filters = [int(x / self.feature_scale) for x in filters]
+
+        # downsampling
+        self.conv1 = UnetConv3(self.in_channels, filters[0], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool1 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv2 = UnetConv3(filters[0], filters[1], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool2 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv3 = UnetConv3(filters[1], filters[2], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool3 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv4 = UnetConv3(filters[2], filters[3], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool4 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.center = UnetConv3(filters[3], filters[4], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.gating = UnetGridGatingSignal3(filters[4], filters[4], kernel_size=(1, 1, 1), is_batchnorm=self.is_batchnorm)
+
+        # attention blocks
+        self.attentionblock2 = MultiAttentionBlock(in_size=filters[1], gate_size=filters[2], inter_size=filters[1],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+        self.attentionblock3 = MultiAttentionBlock(in_size=filters[2], gate_size=filters[3], inter_size=filters[2],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+        self.attentionblock4 = MultiAttentionBlock(in_size=filters[3], gate_size=filters[4], inter_size=filters[3],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+
+        # upsampling
+        self.up_concat4 = UnetUp3_CT(filters[4], filters[3], is_batchnorm)
+        self.up_concat3 = UnetUp3_CT(filters[3], filters[2], is_batchnorm)
+        self.up_concat2 = UnetUp3_CT(filters[2], filters[1], is_batchnorm)
+        self.up_concat1 = UnetUp3_CT(filters[1], filters[0], is_batchnorm)
+
+        # deep supervision
+        self.dsv4 = UnetDsv3(in_size=filters[3], out_size=n_classes, scale_factor=8)
+        self.dsv3 = UnetDsv3(in_size=filters[2], out_size=n_classes, scale_factor=4)
+        self.dsv2 = UnetDsv3(in_size=filters[1], out_size=n_classes, scale_factor=2)
+        self.dsv1 = nn.Conv3d(in_channels=filters[0], out_channels=n_classes, kernel_size=1)
+
+        # final conv (without any concat)
+        self.final = nn.Conv3d(n_classes*4, n_classes, 1)
+
+        # initialise weights
+        for m in self.modules():
+            if isinstance(m, nn.Conv3d):
+                init_weights(m, init_type='kaiming')
+            elif isinstance(m, nn.BatchNorm3d):
+                init_weights(m, init_type='kaiming')","filters[3], filters[2]",*filters[3:1:-1],"iterable_zj[3], iterable_zj[2]",*filters[3:1:-1],Cannot refactor,2,1,
+SSL4MIS,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/SSL4MIS/code/networks/attention_unet.py,https://github.com/HiLab-git/SSL4MIS/tree/master/code/networks/attention_unet.py,Attention_UNet,__init__$11,"def __init__(self, feature_scale=4, n_classes=21, is_deconv=True, in_channels=3,
+                 nonlocal_mode='concatenation', attention_dsample=(2,2,2), is_batchnorm=True):
+        super(Attention_UNet, self).__init__()
+        self.is_deconv = is_deconv
+        self.in_channels = in_channels
+        self.is_batchnorm = is_batchnorm
+        self.feature_scale = feature_scale
+
+        filters = [64, 128, 256, 512, 1024]
+        filters = [int(x / self.feature_scale) for x in filters]
+
+        # downsampling
+        self.conv1 = UnetConv3(self.in_channels, filters[0], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool1 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv2 = UnetConv3(filters[0], filters[1], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool2 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv3 = UnetConv3(filters[1], filters[2], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool3 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.conv4 = UnetConv3(filters[2], filters[3], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.maxpool4 = nn.MaxPool3d(kernel_size=(2, 2, 2))
+
+        self.center = UnetConv3(filters[3], filters[4], self.is_batchnorm, kernel_size=(3,3,3), padding_size=(1,1,1))
+        self.gating = UnetGridGatingSignal3(filters[4], filters[4], kernel_size=(1, 1, 1), is_batchnorm=self.is_batchnorm)
+
+        # attention blocks
+        self.attentionblock2 = MultiAttentionBlock(in_size=filters[1], gate_size=filters[2], inter_size=filters[1],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+        self.attentionblock3 = MultiAttentionBlock(in_size=filters[2], gate_size=filters[3], inter_size=filters[2],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+        self.attentionblock4 = MultiAttentionBlock(in_size=filters[3], gate_size=filters[4], inter_size=filters[3],
+                                                   nonlocal_mode=nonlocal_mode, sub_sample_factor= attention_dsample)
+
+        # upsampling
+        self.up_concat4 = UnetUp3_CT(filters[4], filters[3], is_batchnorm)
+        self.up_concat3 = UnetUp3_CT(filters[3], filters[2], is_batchnorm)
+        self.up_concat2 = UnetUp3_CT(filters[2], filters[1], is_batchnorm)
+        self.up_concat1 = UnetUp3_CT(filters[1], filters[0], is_batchnorm)
+
+        # deep supervision
+        self.dsv4 = UnetDsv3(in_size=filters[3], out_size=n_classes, scale_factor=8)
+        self.dsv3 = UnetDsv3(in_size=filters[2], out_size=n_classes, scale_factor=4)
+        self.dsv2 = UnetDsv3(in_size=filters[1], out_size=n_classes, scale_factor=2)
+        self.dsv1 = nn.Conv3d(in_channels=filters[0], out_channels=n_classes, kernel_size=1)
+
+        # final conv (without any concat)
+        self.final = nn.Conv3d(n_classes*4, n_classes, 1)
+
+        # initialise weights
+        for m in self.modules():
+            if isinstance(m, nn.Conv3d):
+                init_weights(m, init_type='kaiming')
+            elif isinstance(m, nn.BatchNorm3d):
+                init_weights(m, init_type='kaiming')","filters[2], filters[1]",*filters[2:0:-1],"iterable_zj[2], iterable_zj[1]",*filters[2:0:-1],Cannot refactor,2,1,
+transformers,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/transformers/tests/test_tokenization_common.py,https://github.com/huggingface/transformers/tree/master/tests/test_tokenization_common.py,TokenizerTesterMixin,test_add_tokens_tokenizer$822,"def test_add_tokens_tokenizer(self):
+        tokenizers = self.get_tokenizers(do_lower_case=False)
+        for tokenizer in tokenizers:
+            with self.subTest(f""{tokenizer.__class__.__name__}""):
+                vocab_size = tokenizer.vocab_size
+                all_size = len(tokenizer)
+
+                self.assertNotEqual(vocab_size, 0)
+
+                # We usually have added tokens from the start in tests because our vocab fixtures are
+                # smaller than the original vocabs - let's not assert this
+                # self.assertEqual(vocab_size, all_size)
+
+                new_toks = [""aaaaa bbbbbb"", ""cccccccccdddddddd""]
+                added_toks = tokenizer.add_tokens(new_toks)
+                vocab_size_2 = tokenizer.vocab_size
+                all_size_2 = len(tokenizer)
+
+                self.assertNotEqual(vocab_size_2, 0)
+                self.assertEqual(vocab_size, vocab_size_2)
+                self.assertEqual(added_toks, len(new_toks))
+                self.assertEqual(all_size_2, all_size + len(new_toks))
+
+                tokens = tokenizer.encode(""aaaaa bbbbbb low cccccccccdddddddd l"", add_special_tokens=False)
+
+                self.assertGreaterEqual(len(tokens), 4)
+                self.assertGreater(tokens[0], tokenizer.vocab_size - 1)
+                self.assertGreater(tokens[-2], tokenizer.vocab_size - 1)
+
+                new_toks_2 = {""eos_token"": "">>>>|||<||<<|<<"", ""pad_token"": ""<<<<<|||>|>>>>|>""}
+                added_toks_2 = tokenizer.add_special_tokens(new_toks_2)
+                vocab_size_3 = tokenizer.vocab_size
+                all_size_3 = len(tokenizer)
+
+                self.assertNotEqual(vocab_size_3, 0)
+                self.assertEqual(vocab_size, vocab_size_3)
+                self.assertEqual(added_toks_2, len(new_toks_2))
+                self.assertEqual(all_size_3, all_size_2 + len(new_toks_2))
+
+                tokens = tokenizer.encode(
+                    "">>>>|||<||<<|<< aaaaabbbbbb low cccccccccdddddddd <<<<<|||>|>>>>|> l"", add_special_tokens=False
+                )
+
+                self.assertGreaterEqual(len(tokens), 6)
+                self.assertGreater(tokens[0], tokenizer.vocab_size - 1)
+                self.assertGreater(tokens[0], tokens[1])
+                self.assertGreater(tokens[-2], tokenizer.vocab_size - 1)
+                self.assertGreater(tokens[-2], tokens[-3])
+                self.assertEqual(tokens[0], tokenizer.eos_token_id)
+                self.assertEqual(tokens[-2], tokenizer.pad_token_id)","tokens[-3], tokens[-2]",*tokens[-3:-1],"iterable_zj[-3], iterable_zj[-2]",*tokens[-3:-1],Cannot refactor,2,1,
+gnss-ins-sim,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/gnss-ins-sim/gnss_ins_sim/attitude/attitude.py,https://github.com/Aceinna/gnss-ins-sim/tree/master/gnss_ins_sim/attitude/attitude.py,,dcm2euler$496,"def dcm2euler(dcm, rot_seq='zyx'):
+    """"""
+    Convert direction cosine matrix to Euler angles.
+    The Euler angles rotate the frame n to the frame b according to specified
+    rotation sequency. The DCM is a 3x3 coordinate transformation matrix from n
+    to b. That is v_b  = DCM * v_n. '_b' or '_n' mean the vector 'v' is expressed
+    in the frame b or n.
+    Args:
+        dcm: 3x3 coordinate transformation matrix from n to b
+        rot_seq: rotation sequence corresponding to the angles.
+    Returns:
+        angles: 3x1 Euler angles, rad.
+    """"""
+    if rot_seq == 'zyx':
+        #     [          cy*cz,          cy*sz,            -sy]
+        #     [ sy*sx*cz-sz*cx, sy*sx*sz+cz*cx,          cy*sx]
+        #     [ sy*cx*cz+sz*sx, sy*cx*sz-cz*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[0][1], dcm[0][0], -dcm[0][2],
+                                      dcm[1][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zyz':
+        #     [  cz2*cy*cz-sz2*sz,  cz2*cy*sz+sz2*cz,           -cz2*sy]
+        #     [ -sz2*cy*cz-cz2*sz, -sz2*cy*sz+cz2*cz,            sz2*sy]
+        #     [             sy*cz,             sy*sz,                cy]
+        [r1, r2, r3] = two_axis_rot(dcm[2][1], dcm[2][0], dcm[2][2],
+                                    dcm[1][2], -dcm[0][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxy':
+        #     [ cy*cz-sy*sx*sz, cy*sz+sy*sx*cz,         -sy*cx]
+        #     [         -sz*cx,          cz*cx,             sx]
+        #     [ sy*cz+cy*sx*sz, sy*sz-cy*sx*cz,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[1][0], dcm[1][1], dcm[1][2],
+                                      -dcm[0][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxz':
+        #     [  cz2*cz-sz2*cx*sz,  cz2*sz+sz2*cx*cz,            sz2*sx]
+        #     [ -sz2*cz-cz2*cx*sz, -sz2*sz+cz2*cx*cz,            cz2*sx]
+        #     [             sz*sx,            -cz*sx,                cx]
+        [r1, r2, r3] = two_axis_rot(dcm[2][0], -dcm[2][1], dcm[2][2],
+                                    dcm[0][2], dcm[1][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxz':
+        #     [  cy*cz+sy*sx*sz,           sz*cx, -sy*cz+cy*sx*sz]
+        #     [ -cy*sz+sy*sx*cz,           cz*cx,  sy*sz+cy*sx*cz]
+        #     [           sy*cx,             -sx,           cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[2][0], dcm[2][2], -dcm[2][1],
+                                      dcm[0][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxy':
+        #     [  cy2*cy-sy2*cx*sy,            sy2*sx, -cy2*sy-sy2*cx*cy]
+        #     [             sy*sx,                cx,             cy*sx]
+        #     [  sy2*cy+cy2*cx*sy,           -cy2*sx, -sy2*sy+cy2*cx*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][0], dcm[1][2], dcm[1][1],
+                                    dcm[0][1], -dcm[2][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzx':
+        #     [           cy*cz,              sz,          -sy*cz]
+        #     [ -sz*cx*cy+sy*sx,           cz*cx,  sy*cx*sz+cy*sx]
+        #     [  cy*sx*sz+sy*cx,          -cz*sx, -sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[0][2], dcm[0][0], dcm[0][1],
+                                      -dcm[2][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzy':
+        #     [  cy2*cz*cy-sy2*sy,            cy2*sz, -cy2*cz*sy-sy2*cy]
+        #     [            -cy*sz,                cz,             sy*sz]
+        #     [  sy2*cz*cy+cy2*sy,            sy2*sz, -sy2*cz*sy+cy2*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][2], -dcm[1][0], dcm[1][1],
+                                    dcm[2][1], dcm[0][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyz':
+        #     [          cy*cz, sz*cx+sy*sx*cz, sz*sx-sy*cx*cz]
+        #     [         -cy*sz, cz*cx-sy*sx*sz, cz*sx+sy*cx*sz]
+        #     [             sy,         -cy*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[2][1], dcm[2][2], dcm[2][0],
+                                      -dcm[1][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyx':
+        #     [                cy,             sy*sx,            -sy*cx]
+        #     [            sx2*sy,  cx2*cx-sx2*cy*sx,  cx2*sx+sx2*cy*cx]
+        #     [            cx2*sy, -sx2*cx-cx2*cy*sx, -sx2*sx+cx2*cy*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][1], -dcm[0][2], dcm[0][0],
+                                    dcm[1][0], dcm[2][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzy':
+        #     [          cy*cz, sz*cx*cy+sy*sx, cy*sx*sz-sy*cx]
+        #     [            -sz,          cz*cx,          cz*sx]
+        #     [          sy*cz, sy*cx*sz-cy*sx, sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[1][2], dcm[1][1], -dcm[1][0],
+                                      dcm[2][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzx':
+        #     [                cz,             sz*cx,             sz*sx]
+        #     [           -cx2*sz,  cx2*cz*cx-sx2*sx,  cx2*cz*sx+sx2*cx]
+        #     [            sx2*sz, -sx2*cz*cx-cx2*sx, -sx2*cz*sx+cx2*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][2], dcm[0][1], dcm[0][0],
+                                    dcm[2][0], -dcm[1][0])
+        return np.array([r1, r2, r3])
+    else:
+        return False","dcm[1][2], dcm[1][1]",*dcm[1][2:0:-1],"iterable_zj[2], iterable_zj[1]",*dcm[1][2:0:-1],Cannot refactor,2,1,
+gnss-ins-sim,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/gnss-ins-sim/gnss_ins_sim/attitude/attitude.py,https://github.com/Aceinna/gnss-ins-sim/tree/master/gnss_ins_sim/attitude/attitude.py,,dcm2euler$496,"def dcm2euler(dcm, rot_seq='zyx'):
+    """"""
+    Convert direction cosine matrix to Euler angles.
+    The Euler angles rotate the frame n to the frame b according to specified
+    rotation sequency. The DCM is a 3x3 coordinate transformation matrix from n
+    to b. That is v_b  = DCM * v_n. '_b' or '_n' mean the vector 'v' is expressed
+    in the frame b or n.
+    Args:
+        dcm: 3x3 coordinate transformation matrix from n to b
+        rot_seq: rotation sequence corresponding to the angles.
+    Returns:
+        angles: 3x1 Euler angles, rad.
+    """"""
+    if rot_seq == 'zyx':
+        #     [          cy*cz,          cy*sz,            -sy]
+        #     [ sy*sx*cz-sz*cx, sy*sx*sz+cz*cx,          cy*sx]
+        #     [ sy*cx*cz+sz*sx, sy*cx*sz-cz*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[0][1], dcm[0][0], -dcm[0][2],
+                                      dcm[1][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zyz':
+        #     [  cz2*cy*cz-sz2*sz,  cz2*cy*sz+sz2*cz,           -cz2*sy]
+        #     [ -sz2*cy*cz-cz2*sz, -sz2*cy*sz+cz2*cz,            sz2*sy]
+        #     [             sy*cz,             sy*sz,                cy]
+        [r1, r2, r3] = two_axis_rot(dcm[2][1], dcm[2][0], dcm[2][2],
+                                    dcm[1][2], -dcm[0][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxy':
+        #     [ cy*cz-sy*sx*sz, cy*sz+sy*sx*cz,         -sy*cx]
+        #     [         -sz*cx,          cz*cx,             sx]
+        #     [ sy*cz+cy*sx*sz, sy*sz-cy*sx*cz,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[1][0], dcm[1][1], dcm[1][2],
+                                      -dcm[0][2], dcm[2][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'zxz':
+        #     [  cz2*cz-sz2*cx*sz,  cz2*sz+sz2*cx*cz,            sz2*sx]
+        #     [ -sz2*cz-cz2*cx*sz, -sz2*sz+cz2*cx*cz,            cz2*sx]
+        #     [             sz*sx,            -cz*sx,                cx]
+        [r1, r2, r3] = two_axis_rot(dcm[2][0], -dcm[2][1], dcm[2][2],
+                                    dcm[0][2], dcm[1][2])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxz':
+        #     [  cy*cz+sy*sx*sz,           sz*cx, -sy*cz+cy*sx*sz]
+        #     [ -cy*sz+sy*sx*cz,           cz*cx,  sy*sz+cy*sx*cz]
+        #     [           sy*cx,             -sx,           cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[2][0], dcm[2][2], -dcm[2][1],
+                                      dcm[0][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yxy':
+        #     [  cy2*cy-sy2*cx*sy,            sy2*sx, -cy2*sy-sy2*cx*cy]
+        #     [             sy*sx,                cx,             cy*sx]
+        #     [  sy2*cy+cy2*cx*sy,           -cy2*sx, -sy2*sy+cy2*cx*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][0], dcm[1][2], dcm[1][1],
+                                    dcm[0][1], -dcm[2][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzx':
+        #     [           cy*cz,              sz,          -sy*cz]
+        #     [ -sz*cx*cy+sy*sx,           cz*cx,  sy*cx*sz+cy*sx]
+        #     [  cy*sx*sz+sy*cx,          -cz*sx, -sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[0][2], dcm[0][0], dcm[0][1],
+                                      -dcm[2][1], dcm[1][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'yzy':
+        #     [  cy2*cz*cy-sy2*sy,            cy2*sz, -cy2*cz*sy-sy2*cy]
+        #     [            -cy*sz,                cz,             sy*sz]
+        #     [  sy2*cz*cy+cy2*sy,            sy2*sz, -sy2*cz*sy+cy2*cy]
+        [r1, r2, r3] = two_axis_rot(dcm[1][2], -dcm[1][0], dcm[1][1],
+                                    dcm[2][1], dcm[0][1])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyz':
+        #     [          cy*cz, sz*cx+sy*sx*cz, sz*sx-sy*cx*cz]
+        #     [         -cy*sz, cz*cx-sy*sx*sz, cz*sx+sy*cx*sz]
+        #     [             sy,         -cy*sx,          cy*cx]
+        [r1, r2, r3] = three_axis_rot(-dcm[2][1], dcm[2][2], dcm[2][0],
+                                      -dcm[1][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xyx':
+        #     [                cy,             sy*sx,            -sy*cx]
+        #     [            sx2*sy,  cx2*cx-sx2*cy*sx,  cx2*sx+sx2*cy*cx]
+        #     [            cx2*sy, -sx2*cx-cx2*cy*sx, -sx2*sx+cx2*cy*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][1], -dcm[0][2], dcm[0][0],
+                                    dcm[1][0], dcm[2][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzy':
+        #     [          cy*cz, sz*cx*cy+sy*sx, cy*sx*sz-sy*cx]
+        #     [            -sz,          cz*cx,          cz*sx]
+        #     [          sy*cz, sy*cx*sz-cy*sx, sy*sx*sz+cy*cx]
+        [r1, r2, r3] = three_axis_rot(dcm[1][2], dcm[1][1], -dcm[1][0],
+                                      dcm[2][0], dcm[0][0])
+        return np.array([r1, r2, r3])
+    elif rot_seq == 'xzx':
+        #     [                cz,             sz*cx,             sz*sx]
+        #     [           -cx2*sz,  cx2*cz*cx-sx2*sx,  cx2*cz*sx+sx2*cx]
+        #     [            sx2*sz, -sx2*cz*cx-cx2*sx, -sx2*cz*sx+cx2*cx]
+        [r1, r2, r3] = two_axis_rot(dcm[0][2], dcm[0][1], dcm[0][0],
+                                    dcm[2][0], -dcm[1][0])
+        return np.array([r1, r2, r3])
+    else:
+        return False","dcm[1][2], dcm[1][1]",*dcm[1][2:0:-1],"iterable_zj[2], iterable_zj[1]",*dcm[1][2:0:-1],Cannot refactor,2,1,
+qiskit-terra,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/qiskit-terra/test/python/dagcircuit/test_dagdependency.py,https://github.com/Qiskit/qiskit-terra/tree/master/test/python/dagcircuit/test_dagdependency.py,TestDagProperties,setUp$280,"def setUp(self):
+        #       閳瑰备鏀㈤埞閳归埞                閳瑰备鏀㈤埞閳归埞
+        # q0_0: 閳 H 閳规壕鏀㈤埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳 X 閳规壕鏀㈤埞閳归埞閳归埞閳归埞閳归埞
+        #       閳规柡鏀㈤埞閳归埞                閳规柡鏀㈤埞閳归埞     閳瑰备鏀㈤埞閳归埞
+        # q0_1: 閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞灏栨敘閳归埞閳归埞閳归埞閳 H 閳
+        #                 閳瑰备鏀㈤埞閳归埞        閳  閳瑰备鏀㈤埞閳归埞鎰ㄦ晜閳归埞閳归埞
+        # q0_2: 閳归埞閳荤姭鏀㈤埞閳归埞閳归埞閳归埞 H 閳规壕鏀㈤埞閳归埞閳归埞閳归埞閳瑰皷鏀㈤埞閳 T 閳规壕鏀㈤埞閳荤姭鏀㈤埞
+        #       閳瑰备鏀㈤埞绮规敘閳规劏鏀查埞閳归埞閳归埞绮规敘閳归埞閳圭补鏀㈤埞閳归埞閳归埞  閳  閳规柡鏀㈤埞閳归埞
+        # q0_3: 閳 X 閳规壕鏁 U(0,0.1,0.2) 閳规壕鏀㈤埞閳瑰皷鏀㈤埞閳归埞閳归埞閳归埞閳归埞閳归埞
+        #       閳规柡鏀㈤埞閳归埞妯锋晜閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳  閳
+        # q1_0: 閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埢鐘鏀㈤埞閳归埞閳归埞閳归埞閳归埞閳归埞
+        #                              閳
+        # q1_1: 閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埞閳归埢鐘鏀㈤埞閳归埞閳归埞閳归埞閳归埞閳归埞
+        super().setUp()
+        qr1 = QuantumRegister(4)
+        qr2 = QuantumRegister(2)
+        circ = QuantumCircuit(qr1, qr2)
+        circ.h(qr1[0])
+        circ.cx(qr1[2], qr1[3])
+        circ.h(qr1[2])
+        circ.t(qr1[2])
+        circ.ch(qr1[2], qr1[1])
+        circ.u(0.0, 0.1, 0.2, qr1[3])
+        circ.ccx(qr2[0], qr2[1], qr1[0])
+
+        self.dag = circuit_to_dagdependency(circ)","qr1[2], qr1[1]",*qr1[2:0:-1],"iterable_zj[2], iterable_zj[1]",*qr1[2:0:-1],Cannot refactor,2,1,
+qiskit-terra,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/qiskit-terra/test/python/transpiler/test_lookahead_swap.py,https://github.com/Qiskit/qiskit-terra/tree/master/test/python/transpiler/test_lookahead_swap.py,TestLookaheadSwap,test_lookahead_swap_hang_in_min_case$225,"def test_lookahead_swap_hang_in_min_case(self):
+        """"""Verify LookaheadSwap does not stall in minimal case.""""""
+        # ref: https://github.com/Qiskit/qiskit-terra/issues/2171
+
+        qr = QuantumRegister(14, ""q"")
+        qc = QuantumCircuit(qr)
+        qc.cx(qr[0], qr[13])
+        qc.cx(qr[1], qr[13])
+        qc.cx(qr[1], qr[0])
+        qc.cx(qr[13], qr[1])
+        dag = circuit_to_dag(qc)
+
+        cmap = CouplingMap(FakeMelbourne().configuration().coupling_map)
+
+        out = LookaheadSwap(cmap, search_depth=4, search_width=4).run(dag)
+
+        self.assertIsInstance(out, DAGCircuit)","qr[13], qr[1]",*qr[13:0:-12],"iterable_zj[13], iterable_zj[1]",*qr[13:0:-12],Cannot refactor,2,1,
+qiskit-terra,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/qiskit-terra/test/python/transpiler/test_apply_layout.py,https://github.com/Qiskit/qiskit-terra/tree/master/test/python/transpiler/test_apply_layout.py,TestApplyLayout,test_circuit_with_swap_gate$74,"def test_circuit_with_swap_gate(self):
+        """"""Test if a virtual circuit with one swap gate is transformed into
+        a circuit with physical qubits.
+
+        [Circuit with virtual qubits]
+          v0:--X---.---M(v0->c0)
+               |   |
+          v1:--X---|---M(v1->c1)
+                   |
+          v2:-----(+)--M(v2->c2)
+
+         Initial layout: {v[0]: 2, v[1]: 1, v[2]: 0}
+
+        [Circuit with physical qubits]
+          q2:--X---.---M(q2->c0)
+               |   |
+          q1:--X---|---M(q1->c1)
+                   |
+          q0:-----(+)--M(q0->c2)
+        """"""
+        v = QuantumRegister(3, ""v"")
+        cr = ClassicalRegister(3, ""c"")
+        circuit = QuantumCircuit(v, cr)
+        circuit.swap(v[0], v[1])
+        circuit.cx(v[0], v[2])
+        circuit.measure(v[0], cr[0])
+        circuit.measure(v[1], cr[1])
+        circuit.measure(v[2], cr[2])
+
+        q = QuantumRegister(3, ""q"")
+        expected = QuantumCircuit(q, cr)
+        expected.swap(q[2], q[1])
+        expected.cx(q[2], q[0])
+        expected.measure(q[2], cr[0])
+        expected.measure(q[1], cr[1])
+        expected.measure(q[0], cr[2])
+
+        dag = circuit_to_dag(circuit)
+        pass_ = ApplyLayout()
+        pass_.property_set[""layout""] = Layout({v[0]: 2, v[1]: 1, v[2]: 0})
+        after = pass_.run(dag)
+
+        self.assertEqual(circuit_to_dag(expected), after)","q[2], q[1]",*q[2:0:-1],"iterable_zj[2], iterable_zj[1]",*q[2:0:-1],Cannot refactor,2,1,
+tvm,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/tvm/tests/python/relay/test_op_level5.py,https://github.com/apache/tvm/tree/master/tests/python/relay/test_op_level5.py,,test_multibox_transform_loc$628,"def test_multibox_transform_loc(executor_kind):
+    def test_default_value():
+        num_anchors = 3
+        num_classes = 3
+
+        np_cls_prob = np.array([[[0.2, 0.5, 0.3], [0.25, 0.3, 0.45], [0.7, 0.1, 0.2]]]).astype(
+            ""float32""
+        )
+        np_loc_preds = np.array(
+            [[0.1, -0.2, 0.3, 0.2, 0.2, 0.4, 0.5, -0.3, 0.7, -0.2, -0.4, -0.8]]
+        ).astype(""float32"")
+        np_anchors = np.array(
+            [[[-0.1, -0.1, 0.1, 0.1], [-0.2, -0.2, 0.2, 0.2], [1.2, 1.2, 1.5, 1.5]]]
+        ).astype(""float32"")
+
+        expected_np_out = np.array(
+            [
+                [
+                    [1, 0.69999999, 0, 0, 0.10818365, 0.10008108],
+                    [0, 0.44999999, 1, 1, 1, 1],
+                    [0, 0.30000001, 0, 0, 0.22903419, 0.20435292],
+                ]
+            ]
+        )
+
+        cls_prob = relay.var(
+            ""cls_prob"", relay.ty.TensorType((1, num_anchors, num_classes), ""float32"")
+        )
+        loc_pred = relay.var(""loc_pred"", relay.ty.TensorType((1, num_anchors * 4), ""float32""))
+        anchors = relay.var(""anchors"", relay.ty.TensorType((1, num_anchors, 4), ""float32""))
+
+        mtl = relay.vision.multibox_transform_loc(
+            cls_prob=cls_prob, loc_pred=loc_pred, anchor=anchors
+        )
+        ret = run_infer_type(mtl.astuple())
+        ref_type = relay.ty.TupleType(
+            tvm.runtime.convert(
+                [
+                    relay.ty.TensorType((1, num_anchors, 6), ""float32""),
+                    relay.ty.TensorType((1,), ""int""),
+                ]
+            )
+        )
+
+        assert ret.checked_type == ref_type
+
+        nms = relay.vision.non_max_suppression(mtl[0], mtl[1], mtl[0], return_indices=False)
+        func = relay.Function([cls_prob, loc_pred, anchors], nms)
+        func = run_infer_type(func)
+        for target, dev in tvm.testing.enabled_targets():
+            op_res = relay.create_executor(executor_kind, device=dev, target=target).evaluate(func)(
+                np_cls_prob, np_loc_preds, np_anchors
+            )
+            tvm.testing.assert_allclose(op_res.numpy(), expected_np_out, rtol=1e-5)
+
+    def test_threshold():
+        num_anchors = 5
+        num_classes = 5
+        n = te.size_var(""n"")
+        cls_prob = relay.var(
+            ""cls_prob"", relay.ty.TensorType((n, num_anchors, num_classes), ""float32"")
+        )
+        loc_pred = relay.var(""loc_pred"", relay.ty.TensorType((n, num_anchors * 4), ""float32""))
+        anchors = relay.var(""anchors"", relay.ty.TensorType((1, num_anchors, 4), ""float32""))
+        threshold = 0.02
+        variances = (0.2, 0.2, 0.3, 0.3)
+
+        ret = relay.vision.multibox_transform_loc(
+            cls_prob=cls_prob,
+            loc_pred=loc_pred,
+            anchor=anchors,
+            threshold=threshold,
+            variances=variances,
+        )
+        ret = run_infer_type(ret.astuple())
+        ref_type = relay.ty.TupleType(
+            tvm.runtime.convert(
+                [
+                    relay.ty.TensorType((n, num_anchors, 6), ""float32""),
+                    relay.ty.TensorType((n,), ""int""),
+                ]
+            )
+        )
+        assert ret.checked_type == ref_type
+
+    test_default_value()
+    test_threshold()","mtl[1], mtl[0]",*mtl[0:2][::-1],"iterable_zj[1], iterable_zj[0]",*mtl[0:2][::-1],Cannot refactor,2,1,
+opytimizer,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/opytimizer/tests/opytimizer/optimizers/swarm/test_kh.py,https://github.com/gugarosa/opytimizer/tree/master/tests/opytimizer/optimizers/swarm/test_kh.py,,test_kh_best_beta$289,"def test_kh_best_beta():
+    search_space = search.SearchSpace(n_agents=5, n_variables=2,
+                                      lower_bound=[0, 0], upper_bound=[10, 10])
+
+    new_kh = kh.KH()
+    new_kh.compile(search_space)
+
+    beta = new_kh._best_beta(
+        search_space.agents[0], search_space.agents[-1], search_space.agents[0])
+
+    assert beta.shape == (2, 1)","search_space.agents[0], search_space.agents[-1], search_space.agents[0]",*search_space.agents[:1] + search_space.agents[-1:] + search_space.agents[:1],"iterable_zj[0], iterable_zj[-1], iterable_zj[0]",*(search_space.agents[:1] + search_space.agents[-1:] + search_space.agents[:1]),Cannot refactor,2,1,
+mmdetection3d,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mmdetection3d/mmdet3d/datasets/kitti_mono_dataset.py,https://github.com/open-mmlab/mmdetection3d/tree/master/mmdet3d/datasets/kitti_mono_dataset.py,KittiMonoDataset,bbox2result_kitti$271,"def bbox2result_kitti(self,
+                          net_outputs,
+                          class_names,
+                          pklfile_prefix=None,
+                          submission_prefix=None):
+        """"""Convert 3D detection results to kitti format for evaluation and test
+        submission.
+
+        Args:
+            net_outputs (list[np.ndarray]): List of array storing the
+                inferenced bounding boxes and scores.
+            class_names (list[String]): A list of class names.
+            pklfile_prefix (str): The prefix of pkl file.
+            submission_prefix (str): The prefix of submission file.
+
+        Returns:
+            list[dict]: A list of dictionaries with the kitti format.
+        """"""
+        assert len(net_outputs) == len(self.anno_infos)
+        if submission_prefix is not None:
+            mmcv.mkdir_or_exist(submission_prefix)
+
+        det_annos = []
+        print('\nConverting prediction to KITTI format')
+        for idx, pred_dicts in enumerate(
+                mmcv.track_iter_progress(net_outputs)):
+            annos = []
+            info = self.anno_infos[idx]
+            sample_idx = info['image']['image_idx']
+            image_shape = info['image']['image_shape'][:2]
+
+            box_dict = self.convert_valid_bboxes(pred_dicts, info)
+            anno = {
+                'name': [],
+                'truncated': [],
+                'occluded': [],
+                'alpha': [],
+                'bbox': [],
+                'dimensions': [],
+                'location': [],
+                'rotation_y': [],
+                'score': []
+            }
+            if len(box_dict['bbox']) > 0:
+                box_2d_preds = box_dict['bbox']
+                box_preds = box_dict['box3d_camera']
+                scores = box_dict['scores']
+                box_preds_lidar = box_dict['box3d_lidar']
+                label_preds = box_dict['label_preds']
+
+                for box, box_lidar, bbox, score, label in zip(
+                        box_preds, box_preds_lidar, box_2d_preds, scores,
+                        label_preds):
+                    bbox[2:] = np.minimum(bbox[2:], image_shape[::-1])
+                    bbox[:2] = np.maximum(bbox[:2], [0, 0])
+                    anno['name'].append(class_names[int(label)])
+                    anno['truncated'].append(0.0)
+                    anno['occluded'].append(0)
+                    anno['alpha'].append(-np.arctan2(box[0], box[2]) + box[6])
+                    anno['bbox'].append(bbox)
+                    anno['dimensions'].append(box[3:6])
+                    anno['location'].append(box[:3])
+                    anno['rotation_y'].append(box[6])
+                    anno['score'].append(score)
+
+                anno = {k: np.stack(v) for k, v in anno.items()}
+                annos.append(anno)
+
+            else:
+                anno = {
+                    'name': np.array([]),
+                    'truncated': np.array([]),
+                    'occluded': np.array([]),
+                    'alpha': np.array([]),
+                    'bbox': np.zeros([0, 4]),
+                    'dimensions': np.zeros([0, 3]),
+                    'location': np.zeros([0, 3]),
+                    'rotation_y': np.array([]),
+                    'score': np.array([]),
+                }
+                annos.append(anno)
+
+            if submission_prefix is not None:
+                curr_file = f'{submission_prefix}/{sample_idx:06d}.txt'
+                with open(curr_file, 'w') as f:
+                    bbox = anno['bbox']
+                    loc = anno['location']
+                    dims = anno['dimensions']  # lhw -> hwl
+
+                    for idx in range(len(bbox)):
+                        print(
+                            '{} -1 -1 {:.4f} {:.4f} {:.4f} {:.4f} '
+                            '{:.4f} {:.4f} {:.4f} '
+                            '{:.4f} {:.4f} {:.4f} {:.4f} {:.4f} {:.4f}'.format(
+                                anno['name'][idx], anno['alpha'][idx],
+                                bbox[idx][0], bbox[idx][1], bbox[idx][2],
+                                bbox[idx][3], dims[idx][1], dims[idx][2],
+                                dims[idx][0], loc[idx][0], loc[idx][1],
+                                loc[idx][2], anno['rotation_y'][idx],
+                                anno['score'][idx]),
+                            file=f)
+
+            annos[-1]['sample_idx'] = np.array(
+                [sample_idx] * len(annos[-1]['score']), dtype=np.int64)
+
+            det_annos += annos
+
+        if pklfile_prefix is not None:
+            if not pklfile_prefix.endswith(('.pkl', '.pickle')):
+                out = f'{pklfile_prefix}.pkl'
+            mmcv.dump(det_annos, out)
+            print('Result is saved to %s' % out)
+
+        return det_annos","dims[idx][2], dims[idx][0]",*dims[idx][2::-2],"iterable_zj[2], iterable_zj[0]",*dims[idx][2::-2],Cannot refactor,2,1,
+videos,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/videos/_2016/wcat.py,https://github.com/3b1b/videos/tree/master/_2016/wcat.py,DefineOrderedPair,construct$890,"def construct(self):
+        title = TexText(""Ordered pairs"")
+        title.to_edge(UP)
+        subtitle = Tex(
+            ""("", ""a"", "","", ""b"", "")"", 
+            ""\\ne"", 
+            ""("", ""b"", "","", ""a"", "")""
+        )
+        labels_start = VGroup(subtitle[1], subtitle[3])
+        labels_end = VGroup(subtitle[9], subtitle[7])
+        subtitle.next_to(title, DOWN)
+        colors = GREEN, RED
+        for char, color in zip(""ab"", colors):
+            subtitle.set_color_by_tex(char, color)
+        self.loop.next_to(subtitle, DOWN)
+        self.add(title, subtitle)
+
+        self.add_dots_at_alphas(0.5, 0.6)
+        dots = self.dots
+        for dot, color, char in zip(dots, colors, ""ab""):
+            dot.set_color(color)
+            label = Tex(char)
+            label.set_color(color)
+            label.next_to(dot, RIGHT, buff = SMALL_BUFF)
+            dot.label = label
+        self.dots[1].label.shift(0.3*UP)
+        first = TexText(""First"")
+        first.next_to(self.dots[0], UP+2*LEFT, LARGE_BUFF)
+        arrow = Arrow(first.get_bottom(), self.dots[0], color = GREEN)
+
+        self.wait()
+        self.play(*[
+            Transform(label.copy(), dot.label)
+            for label, dot in zip(labels_start, dots)
+        ])
+        self.remove(*self.get_mobjects_from_last_animation())
+        self.add(*[d.label for d in dots])
+        self.wait()
+        self.play(
+            Write(first),
+            ShowCreation(arrow)
+        )
+        self.wait()","subtitle[9], subtitle[7]",*subtitle[9:6:-2],"iterable_zj[9], iterable_zj[7]",*subtitle[9:6:-2],Cannot refactor,2,1,
+anycost-gan,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/anycost-gan/cuda_op/op_native.py,https://github.com/mit-han-lab/anycost-gan/tree/master/cuda_op/op_native.py,,upfirdn2d$29,"def upfirdn2d(input, kernel, up=1, down=1, pad=(0, 0)):
+    out = upfirdn2d_native(input, kernel, up, up, down, down, pad[0], pad[1], pad[0], pad[1])
+    return out","pad[1], pad[0]",*pad[0:2][::-1],"iterable_zj[1], iterable_zj[0]",*pad[0:2][::-1],Cannot refactor,2,1,
+anycost-gan,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/anycost-gan/cuda_op/op_native.py,https://github.com/mit-han-lab/anycost-gan/tree/master/cuda_op/op_native.py,,upfirdn2d$29,"def upfirdn2d(input, kernel, up=1, down=1, pad=(0, 0)):
+    out = upfirdn2d_native(input, kernel, up, up, down, down, pad[0], pad[1], pad[0], pad[1])
+    return out","pad[0], pad[1], pad[0], pad[1]",*pad[:2] + pad[:2],"iterable_zj[0], iterable_zj[1], iterable_zj[0], iterable_zj[1]",*(pad[:2] + pad[:2]),Cannot refactor,2,1,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[2], timestamps[3], timestamps[5]",*timestamps[2:4] + timestamps[5:6],"iterable_zj[2], iterable_zj[3], iterable_zj[5]",*(timestamps[2:4] + timestamps[5:6]),Cannot refactor,2,1,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[2], timestamps[3], timestamps[6]",*timestamps[2:4] + timestamps[6:7],"iterable_zj[2], iterable_zj[3], iterable_zj[6]",*(timestamps[2:4] + timestamps[6:7]),Cannot refactor,2,1,
+TensorNetwork,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/TensorNetwork/tensornetwork/tests/tensornetwork_symmetric_test.py,https://github.com/google/TensorNetwork/tree/master/tensornetwork/tests/tensornetwork_symmetric_test.py,,test_flatten_trace_consistent_tensor$272,"def test_flatten_trace_consistent_tensor(dtype, num_charges):
+  a_val = get_random_symmetric((5, 5, 5, 5, 5),
+                               [False, False, True, True, True],
+                               num_charges,
+                               dtype=dtype)
+  a = tn.Node(a_val, backend='symmetric')
+  e1 = tn.connect(a[0], a[4])
+  e2 = tn.connect(a[3], a[2])
+  tn.flatten_edges([e2, e1])
+  tn.check_correct({a})
+  # Check expected values.
+  a_final = np.reshape(
+      np.transpose(a_val.todense(), (1, 2, 0, 3, 4)), (5, 25, 25))
+  np.testing.assert_allclose(a.tensor.todense(), a_final)","a[3], a[2]",*a[3:1:-1],"iterable_zj[3], iterable_zj[2]",*a[3:1:-1],Cannot refactor,2,1,
+no_find,,,,,,,,,,,,,
+xonsh,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/xonsh/xonsh/parsers/base.py,https://github.com/xonsh/xonsh/tree/master/xonsh/parsers/base.py,BaseParser,p_typedargslist_t11$923,"def p_typedargslist_t11(self, p):
+        """"""typedargslist : tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt TIMES tfpdef_opt comma_tfpdef_list COMMA POW tfpdef""""""
+        # x, *args, **kwargs
+        p0 = ast.arguments(
+            args=[],
+            vararg=None,
+            kwonlyargs=[],
+            kw_defaults=[],
+            kwarg=p[10],
+            defaults=[],
+        )
+        self._set_regular_args(p0, p[1], p[2], p[3], p[4])
+        self._set_var_args(p0, p[6], p[7])
+        p[0] = p0","p[6], p[7]",*p[6:8],0,,,,,
+DSB2017,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/DSB2017/training/classifier/net_detector_3.py,https://github.com/lfz/DSB2017/tree/master/training/classifier/net_detector_3.py,Net,forward$103,"def forward(self, x, coord):
+        #x = (x-128.)/128.
+        out = self.preBlock(x)#16
+        out_pool,indices0 = self.maxpool1(out)
+        out1 = self.forw1(out_pool)#32
+        out1_pool,indices1 = self.maxpool2(out1)
+        out2 = self.forw2(out1_pool)#64
+        #out2 = self.drop(out2)
+        out2_pool,indices2 = self.maxpool3(out2)
+        out3 = self.forw3(out2_pool)#96
+        out3_pool,indices3 = self.maxpool4(out3)
+        out4 = self.forw4(out3_pool)#96
+        #out4 = self.drop(out4)
+        
+        rev3 = self.path1(out4)
+        comb3 = self.back3(torch.cat((rev3, out3), 1))#96+96
+        #comb3 = self.drop(comb3)
+        rev2 = self.path2(comb3)
+        
+        feat = self.back2(torch.cat((rev2, out2,coord), 1))#64+64
+        comb2 = self.drop(feat)
+        out = self.output(comb2)
+        size = out.size()
+        out = out.view(out.size(0), out.size(1), -1)
+        #out = out.transpose(1, 4).transpose(1, 2).transpose(2, 3).contiguous()
+        out = out.transpose(1, 2).contiguous().view(size[0], size[2], size[3], size[4], len(config['anchors']), 5)
+        #out = out.view(-1, 5)
+        return feat,out","size[0], size[2]",*size[:4:2],0,,,,,
+DSB2017,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/DSB2017/training/classifier/net_detector_3.py,https://github.com/lfz/DSB2017/tree/master/training/classifier/net_detector_3.py,Net,forward$103,"def forward(self, x, coord):
+        #x = (x-128.)/128.
+        out = self.preBlock(x)#16
+        out_pool,indices0 = self.maxpool1(out)
+        out1 = self.forw1(out_pool)#32
+        out1_pool,indices1 = self.maxpool2(out1)
+        out2 = self.forw2(out1_pool)#64
+        #out2 = self.drop(out2)
+        out2_pool,indices2 = self.maxpool3(out2)
+        out3 = self.forw3(out2_pool)#96
+        out3_pool,indices3 = self.maxpool4(out3)
+        out4 = self.forw4(out3_pool)#96
+        #out4 = self.drop(out4)
+        
+        rev3 = self.path1(out4)
+        comb3 = self.back3(torch.cat((rev3, out3), 1))#96+96
+        #comb3 = self.drop(comb3)
+        rev2 = self.path2(comb3)
+        
+        feat = self.back2(torch.cat((rev2, out2,coord), 1))#64+64
+        comb2 = self.drop(feat)
+        out = self.output(comb2)
+        size = out.size()
+        out = out.view(out.size(0), out.size(1), -1)
+        #out = out.transpose(1, 4).transpose(1, 2).transpose(2, 3).contiguous()
+        out = out.transpose(1, 2).contiguous().view(size[0], size[2], size[3], size[4], len(config['anchors']), 5)
+        #out = out.view(-1, 5)
+        return feat,out","size[3], size[4]",*size[3:5],0,,,,,
+CLUEPretrainedModels,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/CLUEPretrainedModels/baselines/models_pytorch/classifier_pytorch/transformers/modeling_xlnet.py,https://github.com/CLUEbenchmark/CLUEPretrainedModels/tree/master/baselines/models_pytorch/classifier_pytorch/transformers/modeling_xlnet.py,XLNetRelativeAttention,rel_shift$230,"def rel_shift(x, klen=-1):
+        """"""perform relative shift to form the relative attention score.""""""
+        x_size = x.shape
+
+        x = x.reshape(x_size[1], x_size[0], x_size[2], x_size[3])
+        x = x[1:, ...]
+        x = x.reshape(x_size[0], x_size[1] - 1, x_size[2], x_size[3])
+        # x = x[:, 0:klen, :, :]
+        x = torch.index_select(x, 1, torch.arange(klen, device=x.device, dtype=torch.long))
+
+        return x","x_size[0], x_size[2]",*x_size[:4:2],0,,,,,
+anycost-gan,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/anycost-gan/cuda_op/op_native.py,https://github.com/mit-han-lab/anycost-gan/tree/master/cuda_op/op_native.py,,upfirdn2d$29,"def upfirdn2d(input, kernel, up=1, down=1, pad=(0, 0)):
+    out = upfirdn2d_native(input, kernel, up, up, down, down, pad[0], pad[1], pad[0], pad[1])
+    return out","pad[0], pad[1]",*pad[:2],0,,,,,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[2], timestamps[3]",*timestamps[2:4],0,,,,,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[1], timestamps[3]",*timestamps[1:5:2],0,,,,,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[2], timestamps[3]",*timestamps[2:4],0,,,,,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[2], timestamps[6]",*timestamps[2:10:4],0,,,,,
+swift,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/swift/test/unit/container/test_sharder.py,https://github.com/openstack/swift/tree/master/test/unit/container/test_sharder.py,TestSharder,test_misplaced_objects_deleted_and_updated$4320,"def test_misplaced_objects_deleted_and_updated(self):
+        # setup
+        broker = self._make_broker()
+        broker.enable_sharding(next(self.ts_iter))
+
+        shard_bounds = (('', 'here'), ('here', ''))
+        root_shard_ranges = self._make_shard_ranges(
+            shard_bounds, state=ShardRange.ACTIVE)
+        expected_shard_dbs = []
+        for sr in root_shard_ranges:
+            db_hash = hash_path(sr.account, sr.container)
+            expected_shard_dbs.append(
+                os.path.join(self.tempdir, 'sda', 'containers', '0',
+                             db_hash[-3:], db_hash, db_hash + '.db'))
+        broker.merge_shard_ranges(root_shard_ranges)
+        self.assertTrue(broker.set_sharding_state())
+
+        ts_older_internal = self.ts_encoded()  # used later
+        # put deleted objects into source
+        objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(objects, broker.db_file)  # sanity check
+        # pretend we cleaved all ranges - sharded state
+        self.assertTrue(broker.set_sharded_state())
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        expected_stats = {'attempted': 1, 'success': 1, 'failure': 0,
+                          'found': 1, 'placed': 2, 'unplaced': 0}
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check new misplaced objects were moved
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source db with older undeleted versions of same objects
+        old_objects = [
+            ['b', ts_older_internal, 2, 'text/plain', 'etag_b', 0, 0],
+            ['x', ts_older_internal, 4, 'text/plain', 'etag_x', 0, 0]
+        ]
+        for obj in old_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(old_objects, broker.db_file)  # sanity check
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check older misplaced objects were not merged to shard brokers
+        self._check_objects(objects[:1], expected_shard_dbs[0])
+        self._check_objects(objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # the destination shard dbs for misplaced objects may already exist so
+        # check they are updated correctly when overwriting objects
+        # update source db with newer deleted versions of same objects
+        new_objects = [
+            ['b', self.ts_encoded(), 0, '', '', 1, 0],
+            ['x', self.ts_encoded(), 0, '', '', 1, 0]
+        ]
+        for obj in new_objects:
+            broker.put_object(*obj)
+        broker.get_info()
+        self._check_objects(new_objects, broker.db_file)  # sanity check
+        shard_broker = ContainerBroker(
+            expected_shard_dbs[0], account=root_shard_ranges[0].account,
+            container=root_shard_ranges[0].container)
+        # update one shard container with even newer version of object
+        timestamps = [next(self.ts_iter) for i in range(7)]
+        ts_newer = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[5])
+        newer_object = ('b', ts_newer, 10, 'text/plain', 'etag_b', 0, 0)
+        shard_broker.put_object(*newer_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        sharder._replicate_object.assert_has_calls(
+            [mock.call(0, db, 0) for db in (expected_shard_dbs[0],
+                                            expected_shard_dbs[1])],
+            any_order=True
+        )
+        self._assert_stats(expected_stats, sharder, 'misplaced')
+        self.assertEqual(
+            1, sharder.logger.get_stats_counts()['misplaced_found'])
+
+        # check only the newer misplaced object was moved
+        self._check_objects([newer_object], expected_shard_dbs[0])
+        self._check_objects(new_objects[1:], expected_shard_dbs[1])
+        # ... and removed from the source db
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has newer data
+        # but older content-type and metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[4])
+        update_object = ('b', ts_update, 20, 'text/ignored', 'etag_newer', 0,
+                         0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[5])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # and content-type but newer metadata relative to shard object
+        ts_update = encode_timestamps(
+            timestamps[1], timestamps[3], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/ignored', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[3], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/plain', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)
+
+        # update source with a version of 'b' that has older data
+        # but newer content-type and metadata
+        ts_update = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        update_object = ('b', ts_update, 999, 'text/newer', 'etag_b', 0, 0)
+        broker.put_object(*update_object)
+
+        with self._mock_sharder() as sharder:
+            sharder._move_misplaced_objects(broker)
+
+        ts_expected = encode_timestamps(
+            timestamps[2], timestamps[6], timestamps[6])
+        expected = ('b', ts_expected, 20, 'text/newer', 'etag_newer', 0, 0)
+        self._check_objects([expected], expected_shard_dbs[0])
+        self._check_objects([], broker.db_file)","timestamps[2], timestamps[6]",*timestamps[2:10:4],0,,,,,
+feincms,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/feincms/feincms/templatetags/fragment_tags.py,https://github.com/feincms/feincms/tree/master/feincms/templatetags/fragment_tags.py,,get_fragment$79,"def get_fragment(parser, token):
+    """"""
+    Fetches the content of a fragment.
+
+    Either::
+
+        {% get_fragment request ""title"" %}
+
+    or::
+
+        {% get_fragment request ""title"" as title %}
+    """"""
+
+    fragments = token.contents.split()
+
+    if len(fragments) == 3:
+        return GetFragmentNode(fragments[1], fragments[2])
+    elif len(fragments) == 5 and fragments[3] == ""as"":
+        return GetFragmentNode(fragments[1], fragments[2], fragments[4])
+    raise template.TemplateSyntaxError(
+        ""Invalid syntax for get_fragment: %s"" % token.contents
+    )","fragments[1], fragments[2]",*fragments[1:3],0,,,,,

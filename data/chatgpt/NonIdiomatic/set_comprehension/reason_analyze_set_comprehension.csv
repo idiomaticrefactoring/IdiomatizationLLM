@@ -1,0 +1,1503 @@
+repo_name,file_path,file_html,class_name,me_name,me_code,old_code,chatGPT_code,element_str,slice_str,,,,truth_code,,
+find_or_refactor_wrong,,,,,,,,,,,,,,,
+watchdog,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/watchdog/src/watchdog/utils/dirsnapshot.py,https://github.com/gorakhargosh/watchdog/tree/master/src/watchdog/utils/dirsnapshot.py,DirectorySnapshotDiff,__init__$82,"def __init__(self, ref, snapshot, ignore_device=False):
+    created = snapshot.paths - ref.paths
+    deleted = ref.paths - snapshot.paths
+    if ignore_device:
+
+        def get_inode(directory, full_path):
+            return directory.inode(full_path)[0]
+    else:
+
+        def get_inode(directory, full_path):
+            return directory.inode(full_path)
+    for path in ref.paths & snapshot.paths:
+        if get_inode(ref, path) != get_inode(snapshot, path):
+            created.add(path)
+            deleted.add(path)
+    moved = set()
+    for path in set(deleted):
+        inode = ref.inode(path)
+        new_path = snapshot.path(inode)
+        if new_path:
+            deleted.remove(path)
+            moved.add((path, new_path))
+    for path in set(created):
+        inode = snapshot.inode(path)
+        old_path = ref.path(inode)
+        if old_path:
+            created.remove(path)
+            moved.add((old_path, path))
+    modified = set()
+    for path in ref.paths & snapshot.paths:
+        if get_inode(ref, path) == get_inode(snapshot, path):
+            if ref.mtime(path) != snapshot.mtime(path) or ref.size(path) != snapshot.size(path):
+                modified.add(path)
+    for (old_path, new_path) in moved:
+        if ref.mtime(old_path) != snapshot.mtime(new_path) or ref.size(old_path) != snapshot.size(new_path):
+            modified.add(old_path)
+    self._dirs_created = [path for path in created if snapshot.isdir(path)]
+    self._dirs_deleted = [path for path in deleted if ref.isdir(path)]
+    self._dirs_modified = [path for path in modified if ref.isdir(path)]
+    self._dirs_moved = [(frm, to) for (frm, to) in moved if ref.isdir(frm)]
+    self._files_created = list(created - set(self._dirs_created))
+    self._files_deleted = list(deleted - set(self._dirs_deleted))
+    self._files_modified = list(modified - set(self._dirs_modified))
+    self._files_moved = list(moved - set(self._dirs_moved))","for path in set(deleted):
+    inode = ref.inode(path)
+    new_path = snapshot.path(inode)
+    if new_path:
+        deleted.remove(path)
+        moved.add((path, new_path))","moved = {(path, snapshot.path(ref.inode(path))) for path in set(deleted) if snapshot.path(ref.inode(path))}",Cannot refactor,-1,0,,0,moved = set(),"Answer: Yes
+Information:
+zejun = {(path, snapshot.path(ref.inode(path))) for path in set(deleted) if snapshot.path(ref.inode(path))}",it actually cannot refactor
+watchdog,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/watchdog/src/watchdog/utils/dirsnapshot.py,https://github.com/gorakhargosh/watchdog/tree/master/src/watchdog/utils/dirsnapshot.py,DirectorySnapshotDiff,__init__$82,"def __init__(self, ref, snapshot, ignore_device=False):
+    created = snapshot.paths - ref.paths
+    deleted = ref.paths - snapshot.paths
+    if ignore_device:
+
+        def get_inode(directory, full_path):
+            return directory.inode(full_path)[0]
+    else:
+
+        def get_inode(directory, full_path):
+            return directory.inode(full_path)
+    for path in ref.paths & snapshot.paths:
+        if get_inode(ref, path) != get_inode(snapshot, path):
+            created.add(path)
+            deleted.add(path)
+    moved = set()
+    for path in set(deleted):
+        inode = ref.inode(path)
+        new_path = snapshot.path(inode)
+        if new_path:
+            deleted.remove(path)
+            moved.add((path, new_path))
+    for path in set(created):
+        inode = snapshot.inode(path)
+        old_path = ref.path(inode)
+        if old_path:
+            created.remove(path)
+            moved.add((old_path, path))
+    modified = set()
+    for path in ref.paths & snapshot.paths:
+        if get_inode(ref, path) == get_inode(snapshot, path):
+            if ref.mtime(path) != snapshot.mtime(path) or ref.size(path) != snapshot.size(path):
+                modified.add(path)
+    for (old_path, new_path) in moved:
+        if ref.mtime(old_path) != snapshot.mtime(new_path) or ref.size(old_path) != snapshot.size(new_path):
+            modified.add(old_path)
+    self._dirs_created = [path for path in created if snapshot.isdir(path)]
+    self._dirs_deleted = [path for path in deleted if ref.isdir(path)]
+    self._dirs_modified = [path for path in modified if ref.isdir(path)]
+    self._dirs_moved = [(frm, to) for (frm, to) in moved if ref.isdir(frm)]
+    self._files_created = list(created - set(self._dirs_created))
+    self._files_deleted = list(deleted - set(self._dirs_deleted))
+    self._files_modified = list(modified - set(self._dirs_modified))
+    self._files_moved = list(moved - set(self._dirs_moved))","for path in set(created):
+    inode = snapshot.inode(path)
+    old_path = ref.path(inode)
+    if old_path:
+        created.remove(path)
+        moved.add((old_path, path))","moved |= {(ref.path(snapshot.inode(path)), path) for path in set(created) if ref.path(snapshot.inode(path))}",Cannot refactor,-1,0,,0,moved = set(),"Answer: Yes
+Information:
+zejun = {(ref.path(snapshot.inode(path)), path) for path in set(created) if ref.path(snapshot.inode(path))}",it actually cannot refactor
+sympy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/sympy/sympy/solvers/polysys.py,https://github.com/sympy/sympy/tree/master/sympy/solvers/polysys.py,,solve_triangulated$302,"def solve_triangulated(polys, *gens, **args):
+    """"""
+    Solve a polynomial system using Gianni-Kalkbrenner algorithm.
+
+    The algorithm proceeds by computing one Groebner basis in the ground
+    domain and then by iteratively computing polynomial factorizations in
+    appropriately constructed algebraic extensions of the ground domain.
+
+    Parameters
+    ==========
+
+    polys: a list/tuple/set
+        Listing all the equations that are needed to be solved
+    gens: generators
+        generators of the equations in polys for which we want the
+        solutions
+    args: Keyword arguments
+        Special options for solving the equations
+
+    Returns
+    =======
+
+    List[Tuple]
+        A List of tuples. Solutions for symbols that satisfy the
+        equations listed in polys
+
+    Examples
+    ========
+
+    >>> from sympy import solve_triangulated
+    >>> from sympy.abc import x, y, z
+
+    >>> F = [x**2 + y + z - 1, x + y**2 + z - 1, x + y + z**2 - 1]
+
+    >>> solve_triangulated(F, x, y, z)
+    [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
+
+    References
+    ==========
+
+    1. Patrizia Gianni, Teo Mora, Algebraic Solution of System of
+    Polynomial Equations using Groebner Bases, AAECC-5 on Applied Algebra,
+    Algebraic Algorithms and Error-Correcting Codes, LNCS 356 247--257, 1989
+
+    """"""
+    G = groebner(polys, gens, polys=True)
+    G = list(reversed(G))
+    domain = args.get('domain')
+    if domain is not None:
+        for (i, g) in enumerate(G):
+            G[i] = g.set_domain(domain)
+    (f, G) = (G[0].ltrim(-1), G[1:])
+    dom = f.get_domain()
+    zeros = f.ground_roots()
+    solutions = set()
+    for zero in zeros:
+        solutions.add(((zero,), dom))
+    var_seq = reversed(gens[:-1])
+    vars_seq = postfixes(gens[1:])
+    for (var, vars) in zip(var_seq, vars_seq):
+        _solutions = set()
+        for (values, dom) in solutions:
+            (H, mapping) = ([], list(zip(vars, values)))
+            for g in G:
+                _vars = (var,) + vars
+                if g.has_only_gens(*_vars) and g.degree(var) != 0:
+                    h = g.ltrim(var).eval(dict(mapping))
+                    if g.degree(var) == h.degree():
+                        H.append(h)
+            p = min(H, key=lambda h: h.degree())
+            zeros = p.ground_roots()
+            for zero in zeros:
+                if not zero.is_Rational:
+                    dom_zero = dom.algebraic_field(zero)
+                else:
+                    dom_zero = dom
+                _solutions.add(((zero,) + values, dom_zero))
+        solutions = _solutions
+    solutions = list(solutions)
+    for (i, (solution, _)) in enumerate(solutions):
+        solutions[i] = solution
+    return sorted(solutions, key=default_sort_key)","for (values, dom) in solutions:
+    (H, mapping) = ([], list(zip(vars, values)))
+    for g in G:
+        _vars = (var,) + vars
+        if g.has_only_gens(*_vars) and g.degree(var) != 0:
+            h = g.ltrim(var).eval(dict(mapping))
+            if g.degree(var) == h.degree():
+                H.append(h)
+    p = min(H, key=lambda h: h.degree())
+    zeros = p.ground_roots()
+    for zero in zeros:
+        if not zero.is_Rational:
+            dom_zero = dom.algebraic_field(zero)
+        else:
+            dom_zero = dom
+        _solutions.add(((zero,) + values, dom_zero))","_solutions = {((zero,) + values, dom.algebraic_field(zero)) if not zero.is_Rational else ((zero,) + values, dom) for (values, dom) in solutions for (H, mapping) in [([], list(zip(vars, values))) for g in G for var in vars if g.has_only_gens((var,) + vars) and g.degree(var) != 0 if (h := g.ltrim(var).eval(dict(mapping))) and g.degree(var) == h.degree() for p in [min(H, key=lambda h: h.degree())] for zero in p.ground_roots()]}",Cannot refactor,-1,0,0,1,_solutions = set(),"Answer: Yes
+Information:
+zejun = {((zero,) + values, dom.algebraic_field(zero)) if not zero.is_Rational else ((zero,) + values, dom) for (values, dom) in solutions for (H, mapping) in [([], list(zip(vars, values))) for g in G for var in vars if g.has_only_gens((var,) + vars) and g.degree(var) != 0 if (h := g.ltrim(var).eval(dict(mapping))) and g.degree(var) == h.degree() for p in [min(H, key=lambda h: h.degree())] for zero in p.ground_roots()]}",it actually cannot refactor
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/sysmod.py,https://github.com/saltstack/salt/tree/master/salt/modules/sysmod.py,,list_runners$620,"def list_runners(*args):
+    """"""
+    List the runners loaded on the minion
+
+    .. versionadded:: 2014.7.0
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' sys.list_runners
+
+    Runner names can be specified as globs.
+
+    .. versionadded:: 2015.5.0
+
+    .. code-block:: bash
+
+        salt '*' sys.list_runners 'm*'
+
+    """"""
+    run_ = salt.runner.Runner(__opts__)
+    runners = set()
+    if not args:
+        for func in run_.functions:
+            runners.add(func.split('.')[0])
+        return sorted(runners)
+    for module in args:
+        if '*' in module:
+            for func in fnmatch.filter(run_.functions, module):
+                runners.add(func.split('.')[0])
+        else:
+            for func in run_.functions:
+                mod_test = func.split('.')[0]
+                if mod_test == module:
+                    runners.add(mod_test)
+    return sorted(runners)","for module in args:
+    if '*' in module:
+        for func in fnmatch.filter(run_.functions, module):
+            runners.add(func.split('.')[0])
+    else:
+        for func in run_.functions:
+            mod_test = func.split('.')[0]
+            if mod_test == module:
+                runners.add(mod_test)","runners |= {func.split('.')[0] for module in args for func in fnmatch.filter(run_.functions, module)} | {func.split('.')[0] for module in args for func in run_.functions if func.split('.')[0] == module and '*' not in module}",Cannot refactor,-1,0,0,1,runners = set(),"Answer: Yes
+Information:
+zejun = {func.split('.')[0] for module in args for func in fnmatch.filter(run_.functions, module)} | {func.split('.')[0] for module in args for func in run_.functions if func.split('.')[0] == module and '*' not in module}",it actually cannot refactor
+tahoe-lafs,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/tahoe-lafs/src/allmydata/immutable/happiness_upload.py,https://github.com/tahoe-lafs/tahoe-lafs/tree/master/src/allmydata/immutable/happiness_upload.py,,share_placement$332,"def share_placement(peers, readonly_peers, shares, peers_to_shares):
+    """"""
+    Generates the allocations the upload should based on the given
+    information. We construct a dictionary of 'share_num' ->
+    'server_id' and return it to the caller. Existing allocations
+    appear as placements because attempting to place an existing
+    allocation will renew the share.
+
+    For more information on the algorithm this class implements, refer to
+    docs/specifications/servers-of-happiness.rst
+    """"""
+    if not peers:
+        return dict()
+    readonly_shares = set()
+    readonly_map = {}
+    for peer in sorted(peers_to_shares.keys()):
+        if peer in readonly_peers:
+            readonly_map.setdefault(peer, peers_to_shares[peer])
+            for share in peers_to_shares[peer]:
+                readonly_shares.add(share)
+    readonly_mappings = _calculate_mappings(readonly_peers, readonly_shares, readonly_map)
+    (used_peers, used_shares) = _extract_ids(readonly_mappings)
+    new_peers = set(peers) - used_peers
+    new_shares = shares - used_shares
+    servermap = peers_to_shares.copy()
+    for peer in sorted(peers_to_shares.keys()):
+        if peer in used_peers:
+            servermap.pop(peer, None)
+        else:
+            servermap[peer] = set(servermap[peer]) - used_shares
+            if servermap[peer] == set():
+                servermap.pop(peer, None)
+                try:
+                    new_peers.remove(peer)
+                except KeyError:
+                    pass
+    existing_mappings = _calculate_mappings(new_peers, new_shares, servermap)
+    (existing_peers, existing_shares) = _extract_ids(existing_mappings)
+    new_peers = new_peers - existing_peers - used_peers
+    new_shares = new_shares - existing_shares - used_shares
+    new_mappings = _calculate_mappings(new_peers, new_shares)
+    mappings = dict(list(readonly_mappings.items()) + list(existing_mappings.items()) + list(new_mappings.items()))
+    homeless_shares = set()
+    for share in mappings:
+        if mappings[share] is None:
+            homeless_shares.add(share)
+    if len(homeless_shares) != 0:
+        _distribute_homeless_shares(mappings, homeless_shares, {k: v for (k, v) in list(peers_to_shares.items()) if k not in readonly_peers})
+
+    def round_robin(peers):
+        while True:
+            for peer in peers:
+                yield peer
+    peer_iter = round_robin(peers - readonly_peers)
+    return {k: v.pop() if v else next(peer_iter) for (k, v) in list(mappings.items())}","for peer in sorted(peers_to_shares.keys()):
+    if peer in readonly_peers:
+        readonly_map.setdefault(peer, peers_to_shares[peer])
+        for share in peers_to_shares[peer]:
+            readonly_shares.add(share)",readonly_map = {peer: peers_to_shares[peer] for peer in sorted(peers_to_shares.keys()) if peer in readonly_peers},Cannot refactor,-1,0,,0,readonly_shares = set(),"Answer: Yes
+Information:
+zejun = {share for peer in sorted(peers_to_shares.keys()) if peer in readonly_peers for share in peers_to_shares[peer]}
+readonly_map = {peer: peers_to_shares[peer] for peer in sorted(peers_to_shares.keys()) if peer in readonly_peers}",it actually cannot refactor
+cloudtracker,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/cloudtracker/cloudtracker/datasources/athena.py,https://github.com/duo-labs/cloudtracker/tree/master/cloudtracker/datasources/athena.py,Athena,__init__$164,"def __init__(self, config, account, start, end, args):
+    logging.getLogger('botocore').setLevel(logging.WARN)
+    logging.info('Source of CloudTrail logs: s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    if (datetime.datetime.now() - datetime.datetime.strptime(start, '%Y-%m-%d')).days > 365:
+        raise Exception('Start date is over a year old. CloudTracker does not create or use partitions over a year old.')
+    month_restrictions = set()
+    start = start.split('-')
+    end = end.split('-')
+    if start[0] == end[0]:
+        for month in range(int(start[1]), int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+    else:
+        for month in range(int(start[1]), 12 + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+        for year in range(int(start[0]), int(end[0])):
+            for month in (1, 12 + 1):
+                month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month))
+        for month in range(1, int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month))
+    self.search_filter = '((' + ' or '.join(month_restrictions) + ') and errorcode IS NULL)'
+    self.table_name = 'cloudtrail_logs_{}'.format(account['id'])
+    sts = boto3.client('sts')
+    identity = sts.get_caller_identity()
+    logging.info('Using AWS identity: {}'.format(identity['Arn']))
+    current_account_id = identity['Account']
+    region = boto3.session.Session().region_name
+    if 'output_s3_bucket' in config:
+        self.output_bucket = config['output_s3_bucket']
+    else:
+        self.output_bucket = 's3://aws-athena-query-results-{}-{}'.format(current_account_id, region)
+    logging.info('Using output bucket: {}'.format(self.output_bucket))
+    if 'workgroup' in config:
+        self.workgroup = config['workgroup']
+    logging.info('Using workgroup: {}'.format(self.workgroup))
+    if not config.get('org_id'):
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], account_id=account['id'])
+    else:
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{org_id}/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], org_id=config['org_id'], account_id=account['id'])
+    logging.info('Account cloudtrail log path: {}'.format(cloudtrail_log_path))
+    self.athena = boto3.client('athena')
+    self.s3 = boto3.client('s3')
+    if args.skip_setup:
+        logging.info('Skipping initial table creation')
+        return
+    resp = self.s3.list_objects_v2(Bucket=config['s3_bucket'], Prefix=config['path'], MaxKeys=1)
+    if 'Contents' not in resp or len(resp['Contents']) == 0:
+        exit('ERROR: S3 bucket has no contents.  Ensure you have logs at s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    self.query_athena('CREATE DATABASE IF NOT EXISTS {db} {comment}'.format(db=self.database, comment=""COMMENT 'Created by CloudTracker'""), context=None)
+    query = ""CREATE EXTERNAL TABLE IF NOT EXISTS `{table_name}` (\n            `eventversion` string COMMENT 'from deserializer', \n            `useridentity` struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>>> COMMENT 'from deserializer', \n            `eventtime` string COMMENT 'from deserializer', \n            `eventsource` string COMMENT 'from deserializer', \n            `eventname` string COMMENT 'from deserializer', \n            `awsregion` string COMMENT 'from deserializer', \n            `sourceipaddress` string COMMENT 'from deserializer', \n            `useragent` string COMMENT 'from deserializer', \n            `errorcode` string COMMENT 'from deserializer', \n            `errormessage` string COMMENT 'from deserializer', \n            `requestparameters` string COMMENT 'from deserializer', \n            `responseelements` string COMMENT 'from deserializer', \n            `additionaleventdata` string COMMENT 'from deserializer', \n            `requestid` string COMMENT 'from deserializer', \n            `eventid` string COMMENT 'from deserializer', \n            `resources` array<struct<arn:string,accountid:string,type:string>> COMMENT 'from deserializer', \n            `eventtype` string COMMENT 'from deserializer', \n            `apiversion` string COMMENT 'from deserializer', \n            `readonly` string COMMENT 'from deserializer', \n            `recipientaccountid` string COMMENT 'from deserializer', \n            `serviceeventdetails` string COMMENT 'from deserializer', \n            `sharedeventid` string COMMENT 'from deserializer', \n            `vpcendpointid` string COMMENT 'from deserializer')\n            PARTITIONED BY (region string, year string, month string)\n            ROW FORMAT SERDE \n            'com.amazon.emr.hive.serde.CloudTrailSerde' \n            STORED AS INPUTFORMAT \n            'com.amazon.emr.cloudtrail.CloudTrailInputFormat' \n            OUTPUTFORMAT \n            'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'\n            LOCATION '{cloudtrail_log_path}'"".format(table_name=self.table_name, cloudtrail_log_path=cloudtrail_log_path)
+    self.query_athena(query)
+    logging.info('Checking if all partitions for the past {} months exist'.format(NUM_MONTHS_FOR_PARTITIONS))
+    query = 'SHOW PARTITIONS {table_name}'.format(table_name=self.table_name)
+    partition_list = self.query_athena(query, skip_header=False)
+    partition_set = set()
+    for partition in partition_list:
+        partition_set.add(partition[0])
+    regions = boto3.session.Session().get_available_regions('ec2')
+    queries_to_make = set()
+    for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS):
+        date_of_interest = datetime.datetime.now() - relativedelta(months=num_months_ago)
+        year = date_of_interest.year
+        month = '{:0>2}'.format(date_of_interest.month)
+        query = ''
+        for region in regions:
+            if 'region={region}/year={year}/month={month}'.format(region=region, year=year, month=month) in partition_set:
+                continue
+            query += ""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=year, month=month, cloudtrail_log_path=cloudtrail_log_path)
+        if query != '':
+            queries_to_make.add('ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + query)
+    query_count = len(queries_to_make)
+    for query in queries_to_make:
+        logging.info('Partition groups remaining to create: {}'.format(query_count))
+        self.query_athena(query)
+        query_count -= 1","for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS):
+    date_of_interest = datetime.datetime.now() - relativedelta(months=num_months_ago)
+    year = date_of_interest.year
+    month = '{:0>2}'.format(date_of_interest.month)
+    query = ''
+    for region in regions:
+        if 'region={region}/year={year}/month={month}'.format(region=region, year=year, month=month) in partition_set:
+            continue
+        query += ""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=year, month=month, cloudtrail_log_path=cloudtrail_log_path)
+    if query != '':
+        queries_to_make.add('ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + query)","queries_to_make = {'ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + ''.join([""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=date_of_interest.year, month='{0:0>2}'.format(date_of_interest.month), cloudtrail_log_path=cloudtrail_log_path) for region in regions if 'region={region}/year={year}/month={month}'.format(region=region, year=date_of_interest.year, month='{0:0>2}'.format(date_of_interest.month)) not in partition_set]) for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS) for partition_set in [set(self.get_partitions())] for date_of_interest in [datetime.datetime.now() - relativedelta(months=num_months_ago)]}",Cannot refactor,-1,0,,0,queries_to_make = set(),"Answer: Yes
+Information:
+zejun = {'ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + ''.join([""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=date_of_interest.year, month='{0:0>2}'.format(date_of_interest.month), cloudtrail_log_path=cloudtrail_log_path) for region in regions if 'region={region}/year={year}/month={month}'.format(region=region, year=date_of_interest.year, month='{0:0>2}'.format(date_of_interest.month)) not in partition_set]) for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS) for partition_set in [set(self.get_partitions())] for date_of_interest in [datetime.datetime.now() - relativedelta(months=num_months_ago)]}",it actually cannot refactor
+salt,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/salt/salt/modules/sysmod.py,https://github.com/saltstack/salt/tree/master/salt/modules/sysmod.py,,list_modules$369,"def list_modules(*args):
+    """"""
+    List the modules loaded on the minion
+
+    .. versionadded:: 2015.5.0
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt '*' sys.list_modules
+
+    Module names can be specified as globs.
+
+    .. code-block:: bash
+
+        salt '*' sys.list_modules 's*'
+
+    """"""
+    modules = set()
+    if not args:
+        for func in __salt__:
+            modules.add(func.split('.')[0])
+        return sorted(modules)
+    for module in args:
+        if '*' in module:
+            for func in fnmatch.filter(__salt__, module):
+                modules.add(func.split('.')[0])
+        else:
+            for func in __salt__:
+                mod_test = func.split('.')[0]
+                if mod_test == module:
+                    modules.add(mod_test)
+    return sorted(modules)","for module in args:
+    if '*' in module:
+        for func in fnmatch.filter(__salt__, module):
+            modules.add(func.split('.')[0])
+    else:
+        for func in __salt__:
+            mod_test = func.split('.')[0]
+            if mod_test == module:
+                modules.add(mod_test)","modules |= {func.split('.')[0] for module in args for func in fnmatch.filter(__salt__, module) if '*' in module} | {func.split('.')[0] for module in args for func in __salt__ if func.split('.')[0] == module and '*' not in module}",Cannot refactor,-1,0,0,1,modules = set(),"Answer: Yes
+Information:
+zejun = {func.split('.')[0] for module in args for func in fnmatch.filter(__salt__, module) if '*' in module} | {func.split('.')[0] for module in args for func in __salt__ if func.split('.')[0] == module and '*' not in module}",it actually cannot refactor
+UNITER,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/UNITER/train_vcr.py,https://github.com/ChenRocks/UNITER/tree/master//train_vcr.py,,main$116,"def main(opts):
+    hvd.init()
+    n_gpu = hvd.size()
+    device = torch.device('cuda', hvd.local_rank())
+    torch.cuda.set_device(hvd.local_rank())
+    rank = hvd.rank()
+    opts.rank = rank
+    LOGGER.info('device: {} n_gpu: {}, rank: {}, 16-bits training: {}'.format(device, n_gpu, hvd.rank(), opts.fp16))
+    if opts.gradient_accumulation_steps < 1:
+        raise ValueError('Invalid gradient_accumulation_steps parameter: {}, should be >= 1'.format(opts.gradient_accumulation_steps))
+    set_random_seed(opts.seed)
+    all_img_dbs = ImageLmdbGroup(opts.conf_th, opts.max_bb, opts.min_bb, opts.num_bb, opts.compressed_db)
+    LOGGER.info(f'Loading Train Dataset {opts.train_txt_dbs}, {opts.train_img_dbs}')
+    train_datasets = []
+    for (txt_path, img_path) in zip(opts.train_txt_dbs, opts.train_img_dbs):
+        (img_db, img_db_gt) = load_img_feat(img_path, all_img_dbs, opts)
+        qa_txt_db = VcrTxtTokLmdb(txt_path, opts.max_txt_len, task='qa')
+        qar_txt_db = VcrTxtTokLmdb(txt_path, opts.max_txt_len, task='qar')
+        train_datasets.append(VcrDataset(qa_txt_db, img_db_gt=img_db_gt, img_db=img_db))
+        train_datasets.append(VcrDataset(qar_txt_db, img_db_gt=img_db_gt, img_db=img_db))
+    train_dataset = ConcatDatasetWithLens(train_datasets)
+    train_dataloader = build_dataloader(train_dataset, vcr_collate, True, opts)
+    LOGGER.info(f'Loading Val Dataset {opts.val_txt_db}, {opts.val_img_db}')
+    (val_img_db, val_img_db_gt) = load_img_feat(opts.val_img_db, all_img_dbs, opts)
+    val_txt_db = VcrTxtTokLmdb(opts.val_txt_db, -1)
+    val_dataset = VcrEvalDataset('val', val_txt_db, img_db=val_img_db, img_db_gt=val_img_db_gt)
+    val_final_dataset = VcrEvalDataset('test', val_txt_db, img_db=val_img_db, img_db_gt=val_img_db_gt)
+    val_dataloader = build_dataloader(val_dataset, vcr_eval_collate, False, opts)
+    val_final_dataloader = build_dataloader(val_final_dataset, vcr_eval_collate, False, opts)
+    if opts.checkpoint and opts.checkpoint_from == 'pretrain':
+        checkpoint = torch.load(opts.checkpoint)
+    else:
+        checkpoint = {}
+    all_dbs = opts.train_txt_dbs + [opts.val_txt_db]
+    toker = json.load(open(f'{all_dbs[0]}/meta.json'))['bert']
+    assert all((toker == json.load(open(f'{db}/meta.json'))['bert'] for db in all_dbs))
+    model = UniterForVisualCommonsenseReasoning.from_pretrained(opts.model_config, checkpoint, img_dim=IMG_DIM)
+    model.init_type_embedding()
+    model.init_word_embedding(NUM_SPECIAL_TOKENS)
+    if opts.checkpoint_from == 'vcr_pretrain':
+        checkpoint = torch.load(opts.checkpoint)
+        state_dict = checkpoint.get('model_state', checkpoint)
+        matched_state_dict = {}
+        unexpected_keys = set()
+        missing_keys = set()
+        for (name, param) in model.named_parameters():
+            missing_keys.add(name)
+        for (key, data) in state_dict.items():
+            if key in missing_keys:
+                matched_state_dict[key] = data
+                missing_keys.remove(key)
+            else:
+                unexpected_keys.add(key)
+        print('Unexpected_keys:', list(unexpected_keys))
+        print('Missing_keys:', list(missing_keys))
+        model.load_state_dict(matched_state_dict, strict=False)
+    del checkpoint
+    model.to(device)
+    broadcast_tensors([p.data for p in model.parameters()], 0)
+    set_dropout(model, opts.dropout)
+    optimizer = build_optimizer(model, opts)
+    (model, optimizer) = amp.initialize(model, optimizer, enabled=opts.fp16, opt_level='O2')
+    global_step = 0
+    if rank == 0:
+        save_training_meta(opts)
+        TB_LOGGER.create(join(opts.output_dir, 'log'))
+        pbar = tqdm(total=opts.num_train_steps)
+        model_saver = ModelSaver(join(opts.output_dir, 'ckpt'))
+        os.makedirs(join(opts.output_dir, 'results'))
+        add_log_to_file(join(opts.output_dir, 'log', 'log.txt'))
+    else:
+        LOGGER.disabled = True
+        pbar = NoOp()
+        model_saver = NoOp()
+    LOGGER.info(f'***** Running training with {n_gpu} GPUs *****')
+    LOGGER.info('  Num examples = %d', len(train_dataset) * hvd.size())
+    LOGGER.info('  Batch size = %d', opts.train_batch_size)
+    LOGGER.info('  Accumulate steps = %d', opts.gradient_accumulation_steps)
+    LOGGER.info('  Num steps = %d', opts.num_train_steps)
+    running_loss = RunningMeter('loss')
+    model.train()
+    n_examples = 0
+    n_epoch = 0
+    start = time()
+    optimizer.zero_grad()
+    optimizer.step()
+    while True:
+        for (step, batch) in enumerate(train_dataloader):
+            n_examples += batch['input_ids'].size(0)
+            loss = model(batch, compute_loss=True)
+            loss = loss.mean()
+            delay_unscale = (step + 1) % opts.gradient_accumulation_steps != 0
+            with amp.scale_loss(loss, optimizer, delay_unscale=delay_unscale) as scaled_loss:
+                scaled_loss.backward()
+                if not delay_unscale:
+                    grads = [p.grad.data for p in model.parameters() if p.requires_grad and p.grad is not None]
+                    all_reduce_and_rescale_tensors(grads, float(1))
+            running_loss(loss.item())
+            if (step + 1) % opts.gradient_accumulation_steps == 0:
+                global_step += 1
+                lr_this_step = get_lr_sched(global_step, opts)
+                for (i, param_group) in enumerate(optimizer.param_groups):
+                    if i == 0 or i == 1:
+                        param_group['lr'] = lr_this_step * opts.lr_mul
+                    elif i == 2 or i == 3:
+                        param_group['lr'] = lr_this_step
+                    else:
+                        raise ValueError()
+                TB_LOGGER.add_scalar('lr', lr_this_step, global_step)
+                TB_LOGGER.add_scalar('loss', running_loss.val, global_step)
+                TB_LOGGER.step()
+                if opts.grad_norm != -1:
+                    grad_norm = clip_grad_norm_(amp.master_params(optimizer), opts.grad_norm)
+                    TB_LOGGER.add_scalar('grad_norm', grad_norm, global_step)
+                optimizer.step()
+                optimizer.zero_grad()
+                pbar.update(1)
+                if global_step % 100 == 0:
+                    LOGGER.info(f'============Step {global_step}=============')
+                    tot_ex = sum(all_gather_list(n_examples))
+                    ex_per_sec = int(tot_ex / (time() - start))
+                    LOGGER.info(f'{tot_ex} examples trained at {ex_per_sec} ex/s')
+                    TB_LOGGER.add_scalar('perf/ex_per_s', ex_per_sec, global_step)
+                    LOGGER.info('===========================================')
+                if global_step % opts.valid_steps == 0:
+                    (val_log, results) = validate(model, val_dataloader)
+                    TB_LOGGER.log_scaler_dict(val_log)
+                    model_saver.save(model, global_step)
+            if global_step >= opts.num_train_steps:
+                break
+        if global_step >= opts.num_train_steps:
+            break
+        n_epoch += 1
+        LOGGER.info(f'finished {n_epoch} epochs')
+    if global_step % opts.valid_steps != 0:
+        (val_log, results) = validate(model, val_dataloader)
+        TB_LOGGER.log_scaler_dict(val_log)
+    (val_log, results) = validate(model, val_final_dataloader)
+    with open(f'{opts.output_dir}/results/results_{global_step}_final_qa_qar_rank{rank}.json', 'w') as f:
+        json.dump(results, f)
+    TB_LOGGER.log_scaler_dict(val_log)
+    model_saver.save(model, global_step)","for (key, data) in state_dict.items():
+    if key in missing_keys:
+        matched_state_dict[key] = data
+        missing_keys.remove(key)
+    else:
+        unexpected_keys.add(key)",unexpected_keys = {key for key in state_dict.keys() if key not in missing_keys},Cannot refactor,-1,0,,0,unexpected_keys = set(),"Answer: Yes
+Information:
+matched_state_dict = {key: data for (key, data) in state_dict.items() if key in missing_keys}
+zejun = {key for key in state_dict.keys() if key not in missing_keys}",it actually cannot refactor
+prjxray,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/prjxray/fuzzers/060-bram-cascades/top.py,https://github.com/SymbiFlow/prjxray/tree/master/fuzzers/060-bram-cascades/top.py,,random_sdp_bram$120,"def random_sdp_bram(luts, name, modules, lines):
+    sdp_choices = set()
+    for width in (1, 2, 4, 8, 16, 18, 32, 36):
+        sdp_choices.add((width, (1, max_address_bits(width))))
+    for nbram in range(2, MAX_BRAM + 1):
+        sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+        sdp_choices.add((nbram * 36, (1, max_address_bits(nbram * 36))))
+        sdp_choices.add((nbram * 16, (1, max_address_bits(nbram * 16))))
+        sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+        for address_bits in range(1, 4):
+            sdp_choices.add((nbram * 16, (address_bits, address_bits)))
+    sdp_choices = sorted(sdp_choices)
+    (width, address_bits_range) = random.choice(sdp_choices)
+    address_bits = random.randint(*address_bits_range)
+    return emit_sdp_bram(luts, name, modules, lines, width, address_bits)","for nbram in range(2, MAX_BRAM + 1):
+    sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+    sdp_choices.add((nbram * 36, (1, max_address_bits(nbram * 36))))
+    sdp_choices.add((nbram * 16, (1, max_address_bits(nbram * 16))))
+    sdp_choices.add((nbram * 32, (1, max_address_bits(nbram * 32))))
+    for address_bits in range(1, 4):
+        sdp_choices.add((nbram * 16, (address_bits, address_bits)))","sdp_choices.update({(nbram * 16, (address_bits, address_bits)) for nbram in range(2, MAX_BRAM + 1) for address_bits in range(1, 4)})",Cannot refactor,-1,0,,0,sdp_choices = set(),"Answer: Yes
+Information:
+zejun = {(nbram * size, (1, max_address_bits(nbram * size))) for nbram in range(2, MAX_BRAM + 1) for size in [32, 36, 16]}
+zejun.update({(nbram * 16, (address_bits, address_bits)) for nbram in range(2, MAX_BRAM + 1) for address_bits in range(1, 4)})",it actually cannot refactor
+unknown-horizons,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/unknown-horizons/horizons/ai/aiplayer/building/farm.py,https://github.com/unknown-horizons/unknown-horizons/tree/master/horizons/ai/aiplayer/building/farm.py,FarmOptionCache,_get_raw_options$44,"def _get_raw_options(self, farm_spots_set, field_spots_set, road_spots_set):
+    field_row3 = {}
+    field_col3 = {}
+    for coords in farm_spots_set:
+        (x, y) = coords
+        row_score = 1
+        if (x - 3, y) in field_spots_set:
+            row_score += 1
+        if (x + 3, y) in field_spots_set:
+            row_score += 1
+        field_row3[coords] = row_score
+        col_score = 1
+        if (x, y - 3) in field_spots_set:
+            col_score += 1
+        if (x, y + 3) in field_spots_set:
+            col_score += 1
+        field_col3[coords] = col_score
+    road_row3 = set()
+    road_col3 = set()
+    for (x, y) in road_spots_set:
+        if (x + 2, y) in road_spots_set and (x + 1, y) in road_spots_set:
+            road_row3.add((x, y))
+        if (x, y + 2) in road_spots_set and (x, y + 1) in road_spots_set:
+            road_col3.add((x, y))
+    road_row9 = set()
+    for (x, y) in road_row3:
+        if (x - 3, y) in road_row3 and (x + 3, y) in road_row3:
+            road_row9.add((x, y))
+    road_col9 = set()
+    for (x, y) in road_col3:
+        if (x, y - 3) in road_col3 and (x, y + 3) in road_col3:
+            road_col9.add((x, y))
+    raw_options = []
+    for coords in sorted(farm_spots_set):
+        (x, y) = coords
+        row_score = field_row3[coords] - 1
+        if (x, y - 1) in road_row9:
+            score = row_score
+            if (x, y - 4) in field_row3:
+                score += field_row3[x, y - 4]
+            if (x, y + 3) in field_row3:
+                score += field_row3[x, y + 3]
+            if score > 0:
+                raw_options.append((score, coords, 0))
+        if (x, y + 3) in road_row9:
+            score = row_score
+            if (x, y - 3) in field_row3:
+                score += field_row3[x, y - 3]
+            if (x, y + 4) in field_row3:
+                score += field_row3[x, y + 4]
+            if score > 0:
+                raw_options.append((score, coords, 1))
+        col_score = field_col3[coords] - 1
+        if (x - 1, y) in road_col9:
+            score = col_score
+            if (x - 4, y) in field_col3:
+                score += field_col3[x - 4, y]
+            if (x + 3, y) in field_col3:
+                score += field_col3[x + 3, y]
+            if score > 0:
+                raw_options.append((score, coords, 2))
+        if (x + 3, y) in road_col9:
+            score = col_score
+            if (x - 3, y) in field_col3:
+                score += field_col3[x - 3, y]
+            if (x + 4, y) in field_col3:
+                score += field_col3[x + 4, y]
+            if score > 0:
+                raw_options.append((score, coords, 3))
+    return raw_options","for (x, y) in road_spots_set:
+    if (x + 2, y) in road_spots_set and (x + 1, y) in road_spots_set:
+        road_row3.add((x, y))
+    if (x, y + 2) in road_spots_set and (x, y + 1) in road_spots_set:
+        road_col3.add((x, y))","road_col3 = {(x, y) for (x, y) in road_spots_set if (x, y + 2) in road_spots_set and (x, y + 1) in road_spots_set}",Cannot refactor,-1,0,0,1,road_col3 = set(),"Answer: Yes
+Information:
+road_row3 = {(x, y) for (x, y) in road_spots_set if (x + 2, y) in road_spots_set and (x + 1, y) in road_spots_set}
+zejun = {(x, y) for (x, y) in road_spots_set if (x, y + 2) in road_spots_set and (x, y + 1) in road_spots_set}",it actually cannot refactor
+new_find,,,,,,,,,,,,,,,
+prjxray,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/prjxray/utils/create_timing_worksheet_db.py,https://github.com/SymbiFlow/prjxray/tree/master/utils/create_timing_worksheet_db.py,,build_wire_filter$482,"def build_wire_filter(wire_filter):
+    wires_to_include = set()
+    with OpenSafeFile(wire_filter) as f:
+        for l in f:
+            wire = l.strip()
+            if not wire:
+                continue
+            wires_to_include.add(wire)
+
+    def filter_net(net):
+        wires_in_net = set()
+        for node in net['nodes']:
+            for wire in node['wires']:
+                wires_in_net.add(wire['name'])
+        return len(wires_in_net & wires_to_include) > 0
+    return filter_net","for l in f:
+    wire = l.strip()
+    if not wire:
+        continue
+    wires_to_include.add(wire)",wires_to_include = {wire.strip() for wire in f if wire.strip()},Cannot refactor,-1,1,,,wires_to_include = set(),"Answer: Yes
+Information:
+zejun = {wire.strip() for wire in f if wire.strip()}",
+moto,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/moto/tests/test_ec2/test_regions.py,https://github.com/spulec/moto/tree/master/tests/test_ec2/test_regions.py,,test_use_boto_regions$19,"def test_use_boto_regions():
+    boto_regions = set()
+    for region in Session().get_available_regions('ec2'):
+        boto_regions.add(region)
+    for region in Session().get_available_regions('ec2', partition_name='aws-us-gov'):
+        boto_regions.add(region)
+    for region in Session().get_available_regions('ec2', partition_name='aws-cn'):
+        boto_regions.add(region)
+    moto_regions = set(ec2_backends)
+    moto_regions.should.equal(boto_regions)","for region in Session().get_available_regions('ec2', partition_name='aws-us-gov'):
+    boto_regions.add(region)","boto_regions |= {region for region in Session().get_available_regions('ec2', partition_name='aws-us-gov')}",Cannot refactor,-1,1,,,boto_regions = set(),"Answer: Yes
+Information:
+zejun = {region for region in Session().get_available_regions('ec2', partition_name='aws-us-gov')}",
+moto,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/moto/tests/test_ec2/test_regions.py,https://github.com/spulec/moto/tree/master/tests/test_ec2/test_regions.py,,test_use_boto_regions$19,"def test_use_boto_regions():
+    boto_regions = set()
+    for region in Session().get_available_regions('ec2'):
+        boto_regions.add(region)
+    for region in Session().get_available_regions('ec2', partition_name='aws-us-gov'):
+        boto_regions.add(region)
+    for region in Session().get_available_regions('ec2', partition_name='aws-cn'):
+        boto_regions.add(region)
+    moto_regions = set(ec2_backends)
+    moto_regions.should.equal(boto_regions)","for region in Session().get_available_regions('ec2', partition_name='aws-cn'):
+    boto_regions.add(region)","boto_regions |= {region for region in Session().get_available_regions('ec2', partition_name='aws-cn')}",Cannot refactor,-1,1,,,boto_regions = set(),"Answer: Yes
+Information:
+zejun = {region for region in Session().get_available_regions('ec2', partition_name='aws-cn')}",
+cloud-custodian,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/cloud-custodian/c7n/policy.py,https://github.com/cloud-custodian/cloud-custodian/tree/master/c7n/policy.py,ConfigPollRuleMode,run$784,"def run(self, event, lambda_context):
+    cfg_event = json.loads(event['invokingEvent'])
+    resource_type = self.policy.resource_manager.resource_type.cfn_type
+    resource_id = self.policy.resource_manager.resource_type.id
+    client = self._get_client()
+    token = event.get('resultToken')
+    matched_resources = set()
+    for r in PullMode.run(self):
+        matched_resources.add(r[resource_id])
+    unmatched_resources = set()
+    for r in self.policy.resource_manager.get_resource_manager(self.policy.resource_type).resources():
+        if r[resource_id] not in matched_resources:
+            unmatched_resources.add(r[resource_id])
+    evaluations = [dict(ComplianceResourceType=resource_type, ComplianceResourceId=r, ComplianceType='NON_COMPLIANT', OrderingTimestamp=cfg_event['notificationCreationTime'], Annotation='The resource is not compliant with policy:%s.' % self.policy.name) for r in matched_resources]
+    if evaluations and token:
+        self.put_evaluations(client, token, evaluations)
+    evaluations = [dict(ComplianceResourceType=resource_type, ComplianceResourceId=r, ComplianceType='COMPLIANT', OrderingTimestamp=cfg_event['notificationCreationTime'], Annotation='The resource is compliant with policy:%s.' % self.policy.name) for r in unmatched_resources]
+    if evaluations and token:
+        self.put_evaluations(client, token, evaluations)
+    return list(matched_resources)","for r in PullMode.run(self):
+    matched_resources.add(r[resource_id])",matched_resources = {r[resource_id] for r in PullMode.run(self)},Cannot refactor,-1,1,,,matched_resources = set(),"Answer: Yes
+Information:
+zejun = {r[resource_id] for r in PullMode.run(self)}",
+watchdog,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/watchdog/src/watchdog/utils/dirsnapshot.py,https://github.com/gorakhargosh/watchdog/tree/master/src/watchdog/utils/dirsnapshot.py,DirectorySnapshotDiff,__init__$82,"def __init__(self, ref, snapshot, ignore_device=False):
+    created = snapshot.paths - ref.paths
+    deleted = ref.paths - snapshot.paths
+    if ignore_device:
+
+        def get_inode(directory, full_path):
+            return directory.inode(full_path)[0]
+    else:
+
+        def get_inode(directory, full_path):
+            return directory.inode(full_path)
+    for path in ref.paths & snapshot.paths:
+        if get_inode(ref, path) != get_inode(snapshot, path):
+            created.add(path)
+            deleted.add(path)
+    moved = set()
+    for path in set(deleted):
+        inode = ref.inode(path)
+        new_path = snapshot.path(inode)
+        if new_path:
+            deleted.remove(path)
+            moved.add((path, new_path))
+    for path in set(created):
+        inode = snapshot.inode(path)
+        old_path = ref.path(inode)
+        if old_path:
+            created.remove(path)
+            moved.add((old_path, path))
+    modified = set()
+    for path in ref.paths & snapshot.paths:
+        if get_inode(ref, path) == get_inode(snapshot, path):
+            if ref.mtime(path) != snapshot.mtime(path) or ref.size(path) != snapshot.size(path):
+                modified.add(path)
+    for (old_path, new_path) in moved:
+        if ref.mtime(old_path) != snapshot.mtime(new_path) or ref.size(old_path) != snapshot.size(new_path):
+            modified.add(old_path)
+    self._dirs_created = [path for path in created if snapshot.isdir(path)]
+    self._dirs_deleted = [path for path in deleted if ref.isdir(path)]
+    self._dirs_modified = [path for path in modified if ref.isdir(path)]
+    self._dirs_moved = [(frm, to) for (frm, to) in moved if ref.isdir(frm)]
+    self._files_created = list(created - set(self._dirs_created))
+    self._files_deleted = list(deleted - set(self._dirs_deleted))
+    self._files_modified = list(modified - set(self._dirs_modified))
+    self._files_moved = list(moved - set(self._dirs_moved))","for (old_path, new_path) in moved:
+    if ref.mtime(old_path) != snapshot.mtime(new_path) or ref.size(old_path) != snapshot.size(new_path):
+        modified.add(old_path)","modified |= {old_path for (old_path, new_path) in moved if ref.mtime(old_path) != snapshot.mtime(new_path) or ref.size(old_path) != snapshot.size(new_path)}",Cannot refactor,-1,1,,,modified = set(),"Answer: Yes
+Information:
+zejun = {old_path for (old_path, new_path) in moved if ref.mtime(old_path) != snapshot.mtime(new_path) or ref.size(old_path) != snapshot.size(new_path)}",
+forseti-security,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/forseti-security/tests/services/api_tests/model_test.py,https://github.com/forseti-security/forseti-security/tree/master/tests/services/api_tests/model_test.py,,expand_message$130,"def expand_message(messages, type):
+    """"""Get the access_details in the form of
+       set([member resource permission ])
+    """"""
+    details = set()
+    if type == 'access_by_resource':
+        for access in messages:
+            for member in access.members:
+                details.add(' '.join([member, access.resource, access.role]))
+    elif type == 'access_by_member':
+        for access in messages:
+            for resource in access.resources:
+                details.add(' '.join([access.member, resource, access.role]))
+    elif type == 'access_by_both':
+        for access in messages:
+            details.add(' '.join([access.member, access.resource, access.permission]))
+    elif type == 'role_permission':
+        for permissionsbyrole in messages:
+            for permission in permissionsbyrole.permissions:
+                details.add(' '.join([permissionsbyrole.role, permission]))
+    else:
+        raise Exception('type unrecognized')
+    return details","for access in messages:
+    for resource in access.resources:
+        details.add(' '.join([access.member, resource, access.role]))","details |= {' '.join([access.member, resource, access.role]) for access in messages for resource in access.resources}",Cannot refactor,-1,1,,,details = set(),"Answer: Yes
+Information:
+zejun = {' '.join([access.member, resource, access.role]) for access in messages for resource in access.resources}",
+forseti-security,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/forseti-security/tests/services/api_tests/model_test.py,https://github.com/forseti-security/forseti-security/tree/master/tests/services/api_tests/model_test.py,,expand_message$130,"def expand_message(messages, type):
+    """"""Get the access_details in the form of
+       set([member resource permission ])
+    """"""
+    details = set()
+    if type == 'access_by_resource':
+        for access in messages:
+            for member in access.members:
+                details.add(' '.join([member, access.resource, access.role]))
+    elif type == 'access_by_member':
+        for access in messages:
+            for resource in access.resources:
+                details.add(' '.join([access.member, resource, access.role]))
+    elif type == 'access_by_both':
+        for access in messages:
+            details.add(' '.join([access.member, access.resource, access.permission]))
+    elif type == 'role_permission':
+        for permissionsbyrole in messages:
+            for permission in permissionsbyrole.permissions:
+                details.add(' '.join([permissionsbyrole.role, permission]))
+    else:
+        raise Exception('type unrecognized')
+    return details","for access in messages:
+    details.add(' '.join([access.member, access.resource, access.permission]))","details |= {' '.join([access.member, access.resource, access.permission]) for access in messages}",Cannot refactor,-1,1,,,details = set(),"Answer: Yes
+Information:
+zejun = {' '.join([access.member, access.resource, access.permission]) for access in messages}",
+forseti-security,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/forseti-security/tests/services/api_tests/model_test.py,https://github.com/forseti-security/forseti-security/tree/master/tests/services/api_tests/model_test.py,,expand_message$130,"def expand_message(messages, type):
+    """"""Get the access_details in the form of
+       set([member resource permission ])
+    """"""
+    details = set()
+    if type == 'access_by_resource':
+        for access in messages:
+            for member in access.members:
+                details.add(' '.join([member, access.resource, access.role]))
+    elif type == 'access_by_member':
+        for access in messages:
+            for resource in access.resources:
+                details.add(' '.join([access.member, resource, access.role]))
+    elif type == 'access_by_both':
+        for access in messages:
+            details.add(' '.join([access.member, access.resource, access.permission]))
+    elif type == 'role_permission':
+        for permissionsbyrole in messages:
+            for permission in permissionsbyrole.permissions:
+                details.add(' '.join([permissionsbyrole.role, permission]))
+    else:
+        raise Exception('type unrecognized')
+    return details","for permissionsbyrole in messages:
+    for permission in permissionsbyrole.permissions:
+        details.add(' '.join([permissionsbyrole.role, permission]))","details |= {' '.join([permissionsbyrole.role, permission]) for permissionsbyrole in messages for permission in permissionsbyrole.permissions}",Cannot refactor,-1,1,,,details = set(),"Answer: Yes
+Information:
+zejun = {' '.join([permissionsbyrole.role, permission]) for permissionsbyrole in messages for permission in permissionsbyrole.permissions}",
+cloudtracker,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/cloudtracker/cloudtracker/datasources/athena.py,https://github.com/duo-labs/cloudtracker/tree/master/cloudtracker/datasources/athena.py,Athena,__init__$164,"def __init__(self, config, account, start, end, args):
+    logging.getLogger('botocore').setLevel(logging.WARN)
+    logging.info('Source of CloudTrail logs: s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    if (datetime.datetime.now() - datetime.datetime.strptime(start, '%Y-%m-%d')).days > 365:
+        raise Exception('Start date is over a year old. CloudTracker does not create or use partitions over a year old.')
+    month_restrictions = set()
+    start = start.split('-')
+    end = end.split('-')
+    if start[0] == end[0]:
+        for month in range(int(start[1]), int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+    else:
+        for month in range(int(start[1]), 12 + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+        for year in range(int(start[0]), int(end[0])):
+            for month in (1, 12 + 1):
+                month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month))
+        for month in range(1, int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month))
+    self.search_filter = '((' + ' or '.join(month_restrictions) + ') and errorcode IS NULL)'
+    self.table_name = 'cloudtrail_logs_{}'.format(account['id'])
+    sts = boto3.client('sts')
+    identity = sts.get_caller_identity()
+    logging.info('Using AWS identity: {}'.format(identity['Arn']))
+    current_account_id = identity['Account']
+    region = boto3.session.Session().region_name
+    if 'output_s3_bucket' in config:
+        self.output_bucket = config['output_s3_bucket']
+    else:
+        self.output_bucket = 's3://aws-athena-query-results-{}-{}'.format(current_account_id, region)
+    logging.info('Using output bucket: {}'.format(self.output_bucket))
+    if 'workgroup' in config:
+        self.workgroup = config['workgroup']
+    logging.info('Using workgroup: {}'.format(self.workgroup))
+    if not config.get('org_id'):
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], account_id=account['id'])
+    else:
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{org_id}/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], org_id=config['org_id'], account_id=account['id'])
+    logging.info('Account cloudtrail log path: {}'.format(cloudtrail_log_path))
+    self.athena = boto3.client('athena')
+    self.s3 = boto3.client('s3')
+    if args.skip_setup:
+        logging.info('Skipping initial table creation')
+        return
+    resp = self.s3.list_objects_v2(Bucket=config['s3_bucket'], Prefix=config['path'], MaxKeys=1)
+    if 'Contents' not in resp or len(resp['Contents']) == 0:
+        exit('ERROR: S3 bucket has no contents.  Ensure you have logs at s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    self.query_athena('CREATE DATABASE IF NOT EXISTS {db} {comment}'.format(db=self.database, comment=""COMMENT 'Created by CloudTracker'""), context=None)
+    query = ""CREATE EXTERNAL TABLE IF NOT EXISTS `{table_name}` (\n            `eventversion` string COMMENT 'from deserializer', \n            `useridentity` struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>>> COMMENT 'from deserializer', \n            `eventtime` string COMMENT 'from deserializer', \n            `eventsource` string COMMENT 'from deserializer', \n            `eventname` string COMMENT 'from deserializer', \n            `awsregion` string COMMENT 'from deserializer', \n            `sourceipaddress` string COMMENT 'from deserializer', \n            `useragent` string COMMENT 'from deserializer', \n            `errorcode` string COMMENT 'from deserializer', \n            `errormessage` string COMMENT 'from deserializer', \n            `requestparameters` string COMMENT 'from deserializer', \n            `responseelements` string COMMENT 'from deserializer', \n            `additionaleventdata` string COMMENT 'from deserializer', \n            `requestid` string COMMENT 'from deserializer', \n            `eventid` string COMMENT 'from deserializer', \n            `resources` array<struct<arn:string,accountid:string,type:string>> COMMENT 'from deserializer', \n            `eventtype` string COMMENT 'from deserializer', \n            `apiversion` string COMMENT 'from deserializer', \n            `readonly` string COMMENT 'from deserializer', \n            `recipientaccountid` string COMMENT 'from deserializer', \n            `serviceeventdetails` string COMMENT 'from deserializer', \n            `sharedeventid` string COMMENT 'from deserializer', \n            `vpcendpointid` string COMMENT 'from deserializer')\n            PARTITIONED BY (region string, year string, month string)\n            ROW FORMAT SERDE \n            'com.amazon.emr.hive.serde.CloudTrailSerde' \n            STORED AS INPUTFORMAT \n            'com.amazon.emr.cloudtrail.CloudTrailInputFormat' \n            OUTPUTFORMAT \n            'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'\n            LOCATION '{cloudtrail_log_path}'"".format(table_name=self.table_name, cloudtrail_log_path=cloudtrail_log_path)
+    self.query_athena(query)
+    logging.info('Checking if all partitions for the past {} months exist'.format(NUM_MONTHS_FOR_PARTITIONS))
+    query = 'SHOW PARTITIONS {table_name}'.format(table_name=self.table_name)
+    partition_list = self.query_athena(query, skip_header=False)
+    partition_set = set()
+    for partition in partition_list:
+        partition_set.add(partition[0])
+    regions = boto3.session.Session().get_available_regions('ec2')
+    queries_to_make = set()
+    for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS):
+        date_of_interest = datetime.datetime.now() - relativedelta(months=num_months_ago)
+        year = date_of_interest.year
+        month = '{:0>2}'.format(date_of_interest.month)
+        query = ''
+        for region in regions:
+            if 'region={region}/year={year}/month={month}'.format(region=region, year=year, month=month) in partition_set:
+                continue
+            query += ""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=year, month=month, cloudtrail_log_path=cloudtrail_log_path)
+        if query != '':
+            queries_to_make.add('ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + query)
+    query_count = len(queries_to_make)
+    for query in queries_to_make:
+        logging.info('Partition groups remaining to create: {}'.format(query_count))
+        self.query_athena(query)
+        query_count -= 1","for month in range(int(start[1]), 12 + 1):
+    month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))","month_restrictions |= {""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month) for month in range(int(start[1]), 12 + 1)}",Cannot refactor,-1,1,,,month_restrictions = set(),"Answer: Yes
+Information:
+zejun = {""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month) for month in range(int(start[1]), 12 + 1)}",
+cloudtracker,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/cloudtracker/cloudtracker/datasources/athena.py,https://github.com/duo-labs/cloudtracker/tree/master/cloudtracker/datasources/athena.py,Athena,__init__$164,"def __init__(self, config, account, start, end, args):
+    logging.getLogger('botocore').setLevel(logging.WARN)
+    logging.info('Source of CloudTrail logs: s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    if (datetime.datetime.now() - datetime.datetime.strptime(start, '%Y-%m-%d')).days > 365:
+        raise Exception('Start date is over a year old. CloudTracker does not create or use partitions over a year old.')
+    month_restrictions = set()
+    start = start.split('-')
+    end = end.split('-')
+    if start[0] == end[0]:
+        for month in range(int(start[1]), int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+    else:
+        for month in range(int(start[1]), 12 + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+        for year in range(int(start[0]), int(end[0])):
+            for month in (1, 12 + 1):
+                month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month))
+        for month in range(1, int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month))
+    self.search_filter = '((' + ' or '.join(month_restrictions) + ') and errorcode IS NULL)'
+    self.table_name = 'cloudtrail_logs_{}'.format(account['id'])
+    sts = boto3.client('sts')
+    identity = sts.get_caller_identity()
+    logging.info('Using AWS identity: {}'.format(identity['Arn']))
+    current_account_id = identity['Account']
+    region = boto3.session.Session().region_name
+    if 'output_s3_bucket' in config:
+        self.output_bucket = config['output_s3_bucket']
+    else:
+        self.output_bucket = 's3://aws-athena-query-results-{}-{}'.format(current_account_id, region)
+    logging.info('Using output bucket: {}'.format(self.output_bucket))
+    if 'workgroup' in config:
+        self.workgroup = config['workgroup']
+    logging.info('Using workgroup: {}'.format(self.workgroup))
+    if not config.get('org_id'):
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], account_id=account['id'])
+    else:
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{org_id}/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], org_id=config['org_id'], account_id=account['id'])
+    logging.info('Account cloudtrail log path: {}'.format(cloudtrail_log_path))
+    self.athena = boto3.client('athena')
+    self.s3 = boto3.client('s3')
+    if args.skip_setup:
+        logging.info('Skipping initial table creation')
+        return
+    resp = self.s3.list_objects_v2(Bucket=config['s3_bucket'], Prefix=config['path'], MaxKeys=1)
+    if 'Contents' not in resp or len(resp['Contents']) == 0:
+        exit('ERROR: S3 bucket has no contents.  Ensure you have logs at s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    self.query_athena('CREATE DATABASE IF NOT EXISTS {db} {comment}'.format(db=self.database, comment=""COMMENT 'Created by CloudTracker'""), context=None)
+    query = ""CREATE EXTERNAL TABLE IF NOT EXISTS `{table_name}` (\n            `eventversion` string COMMENT 'from deserializer', \n            `useridentity` struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>>> COMMENT 'from deserializer', \n            `eventtime` string COMMENT 'from deserializer', \n            `eventsource` string COMMENT 'from deserializer', \n            `eventname` string COMMENT 'from deserializer', \n            `awsregion` string COMMENT 'from deserializer', \n            `sourceipaddress` string COMMENT 'from deserializer', \n            `useragent` string COMMENT 'from deserializer', \n            `errorcode` string COMMENT 'from deserializer', \n            `errormessage` string COMMENT 'from deserializer', \n            `requestparameters` string COMMENT 'from deserializer', \n            `responseelements` string COMMENT 'from deserializer', \n            `additionaleventdata` string COMMENT 'from deserializer', \n            `requestid` string COMMENT 'from deserializer', \n            `eventid` string COMMENT 'from deserializer', \n            `resources` array<struct<arn:string,accountid:string,type:string>> COMMENT 'from deserializer', \n            `eventtype` string COMMENT 'from deserializer', \n            `apiversion` string COMMENT 'from deserializer', \n            `readonly` string COMMENT 'from deserializer', \n            `recipientaccountid` string COMMENT 'from deserializer', \n            `serviceeventdetails` string COMMENT 'from deserializer', \n            `sharedeventid` string COMMENT 'from deserializer', \n            `vpcendpointid` string COMMENT 'from deserializer')\n            PARTITIONED BY (region string, year string, month string)\n            ROW FORMAT SERDE \n            'com.amazon.emr.hive.serde.CloudTrailSerde' \n            STORED AS INPUTFORMAT \n            'com.amazon.emr.cloudtrail.CloudTrailInputFormat' \n            OUTPUTFORMAT \n            'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'\n            LOCATION '{cloudtrail_log_path}'"".format(table_name=self.table_name, cloudtrail_log_path=cloudtrail_log_path)
+    self.query_athena(query)
+    logging.info('Checking if all partitions for the past {} months exist'.format(NUM_MONTHS_FOR_PARTITIONS))
+    query = 'SHOW PARTITIONS {table_name}'.format(table_name=self.table_name)
+    partition_list = self.query_athena(query, skip_header=False)
+    partition_set = set()
+    for partition in partition_list:
+        partition_set.add(partition[0])
+    regions = boto3.session.Session().get_available_regions('ec2')
+    queries_to_make = set()
+    for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS):
+        date_of_interest = datetime.datetime.now() - relativedelta(months=num_months_ago)
+        year = date_of_interest.year
+        month = '{:0>2}'.format(date_of_interest.month)
+        query = ''
+        for region in regions:
+            if 'region={region}/year={year}/month={month}'.format(region=region, year=year, month=month) in partition_set:
+                continue
+            query += ""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=year, month=month, cloudtrail_log_path=cloudtrail_log_path)
+        if query != '':
+            queries_to_make.add('ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + query)
+    query_count = len(queries_to_make)
+    for query in queries_to_make:
+        logging.info('Partition groups remaining to create: {}'.format(query_count))
+        self.query_athena(query)
+        query_count -= 1","for year in range(int(start[0]), int(end[0])):
+    for month in (1, 12 + 1):
+        month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month))","month_restrictions |= {""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month) for year in range(int(start[0]), int(end[0])) for month in range(1, 12 + 1)}",Cannot refactor,-1,1,,,month_restrictions = set(),"Answer: Yes
+Information:
+zejun = {""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month) for year in range(int(start[0]), int(end[0])) for month in range(1, 12 + 1)}",
+cloudtracker,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/cloudtracker/cloudtracker/datasources/athena.py,https://github.com/duo-labs/cloudtracker/tree/master/cloudtracker/datasources/athena.py,Athena,__init__$164,"def __init__(self, config, account, start, end, args):
+    logging.getLogger('botocore').setLevel(logging.WARN)
+    logging.info('Source of CloudTrail logs: s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    if (datetime.datetime.now() - datetime.datetime.strptime(start, '%Y-%m-%d')).days > 365:
+        raise Exception('Start date is over a year old. CloudTracker does not create or use partitions over a year old.')
+    month_restrictions = set()
+    start = start.split('-')
+    end = end.split('-')
+    if start[0] == end[0]:
+        for month in range(int(start[1]), int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+    else:
+        for month in range(int(start[1]), 12 + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(start[0], month))
+        for year in range(int(start[0]), int(end[0])):
+            for month in (1, 12 + 1):
+                month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(year, month))
+        for month in range(1, int(end[1]) + 1):
+            month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month))
+    self.search_filter = '((' + ' or '.join(month_restrictions) + ') and errorcode IS NULL)'
+    self.table_name = 'cloudtrail_logs_{}'.format(account['id'])
+    sts = boto3.client('sts')
+    identity = sts.get_caller_identity()
+    logging.info('Using AWS identity: {}'.format(identity['Arn']))
+    current_account_id = identity['Account']
+    region = boto3.session.Session().region_name
+    if 'output_s3_bucket' in config:
+        self.output_bucket = config['output_s3_bucket']
+    else:
+        self.output_bucket = 's3://aws-athena-query-results-{}-{}'.format(current_account_id, region)
+    logging.info('Using output bucket: {}'.format(self.output_bucket))
+    if 'workgroup' in config:
+        self.workgroup = config['workgroup']
+    logging.info('Using workgroup: {}'.format(self.workgroup))
+    if not config.get('org_id'):
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], account_id=account['id'])
+    else:
+        cloudtrail_log_path = 's3://{bucket}/{path}/AWSLogs/{org_id}/{account_id}/CloudTrail'.format(bucket=config['s3_bucket'], path=config['path'], org_id=config['org_id'], account_id=account['id'])
+    logging.info('Account cloudtrail log path: {}'.format(cloudtrail_log_path))
+    self.athena = boto3.client('athena')
+    self.s3 = boto3.client('s3')
+    if args.skip_setup:
+        logging.info('Skipping initial table creation')
+        return
+    resp = self.s3.list_objects_v2(Bucket=config['s3_bucket'], Prefix=config['path'], MaxKeys=1)
+    if 'Contents' not in resp or len(resp['Contents']) == 0:
+        exit('ERROR: S3 bucket has no contents.  Ensure you have logs at s3://{bucket}/{path}'.format(bucket=config['s3_bucket'], path=config['path']))
+    self.query_athena('CREATE DATABASE IF NOT EXISTS {db} {comment}'.format(db=self.database, comment=""COMMENT 'Created by CloudTracker'""), context=None)
+    query = ""CREATE EXTERNAL TABLE IF NOT EXISTS `{table_name}` (\n            `eventversion` string COMMENT 'from deserializer', \n            `useridentity` struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>>> COMMENT 'from deserializer', \n            `eventtime` string COMMENT 'from deserializer', \n            `eventsource` string COMMENT 'from deserializer', \n            `eventname` string COMMENT 'from deserializer', \n            `awsregion` string COMMENT 'from deserializer', \n            `sourceipaddress` string COMMENT 'from deserializer', \n            `useragent` string COMMENT 'from deserializer', \n            `errorcode` string COMMENT 'from deserializer', \n            `errormessage` string COMMENT 'from deserializer', \n            `requestparameters` string COMMENT 'from deserializer', \n            `responseelements` string COMMENT 'from deserializer', \n            `additionaleventdata` string COMMENT 'from deserializer', \n            `requestid` string COMMENT 'from deserializer', \n            `eventid` string COMMENT 'from deserializer', \n            `resources` array<struct<arn:string,accountid:string,type:string>> COMMENT 'from deserializer', \n            `eventtype` string COMMENT 'from deserializer', \n            `apiversion` string COMMENT 'from deserializer', \n            `readonly` string COMMENT 'from deserializer', \n            `recipientaccountid` string COMMENT 'from deserializer', \n            `serviceeventdetails` string COMMENT 'from deserializer', \n            `sharedeventid` string COMMENT 'from deserializer', \n            `vpcendpointid` string COMMENT 'from deserializer')\n            PARTITIONED BY (region string, year string, month string)\n            ROW FORMAT SERDE \n            'com.amazon.emr.hive.serde.CloudTrailSerde' \n            STORED AS INPUTFORMAT \n            'com.amazon.emr.cloudtrail.CloudTrailInputFormat' \n            OUTPUTFORMAT \n            'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'\n            LOCATION '{cloudtrail_log_path}'"".format(table_name=self.table_name, cloudtrail_log_path=cloudtrail_log_path)
+    self.query_athena(query)
+    logging.info('Checking if all partitions for the past {} months exist'.format(NUM_MONTHS_FOR_PARTITIONS))
+    query = 'SHOW PARTITIONS {table_name}'.format(table_name=self.table_name)
+    partition_list = self.query_athena(query, skip_header=False)
+    partition_set = set()
+    for partition in partition_list:
+        partition_set.add(partition[0])
+    regions = boto3.session.Session().get_available_regions('ec2')
+    queries_to_make = set()
+    for num_months_ago in range(0, NUM_MONTHS_FOR_PARTITIONS):
+        date_of_interest = datetime.datetime.now() - relativedelta(months=num_months_ago)
+        year = date_of_interest.year
+        month = '{:0>2}'.format(date_of_interest.month)
+        query = ''
+        for region in regions:
+            if 'region={region}/year={year}/month={month}'.format(region=region, year=year, month=month) in partition_set:
+                continue
+            query += ""PARTITION (region='{region}',year='{year}',month='{month}') location '{cloudtrail_log_path}/{region}/{year}/{month}/'\n"".format(region=region, year=year, month=month, cloudtrail_log_path=cloudtrail_log_path)
+        if query != '':
+            queries_to_make.add('ALTER TABLE {table_name} ADD '.format(table_name=self.table_name) + query)
+    query_count = len(queries_to_make)
+    for query in queries_to_make:
+        logging.info('Partition groups remaining to create: {}'.format(query_count))
+        self.query_athena(query)
+        query_count -= 1","for month in range(1, int(end[1]) + 1):
+    month_restrictions.add(""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month))","month_restrictions |= {""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month) for month in range(1, int(end[1]) + 1)}",Cannot refactor,-1,1,,,month_restrictions = set(),"Answer: Yes
+Information:
+zejun = {""(year = '{:0>2}' and month = '{:0>2}')"".format(end[0], month) for month in range(1, int(end[1]) + 1)}",
+angr,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/angr/angr/utils/graph.py,https://github.com/angr/angr/tree/master/angr/utils/graph.py,,compute_dominance_frontier$128,"def compute_dominance_frontier(graph, domtree):
+    """"""
+    Compute a dominance frontier based on the given post-dominator tree.
+
+    This implementation is based on figure 2 of paper An Efficient Method of Computing Static Single Assignment
+    Form by Ron Cytron, etc.
+
+    :param graph:   The graph where we want to compute the dominance frontier.
+    :param domtree: The dominator tree
+    :returns:       A dict of dominance frontier
+    """"""
+    df = {}
+    for x in networkx.dfs_postorder_nodes(domtree):
+        if x not in graph:
+            continue
+        df[x] = set()
+        for y in graph.successors(x):
+            if x not in domtree.predecessors(y):
+                df[x].add(y)
+        if x is None:
+            continue
+        for z in domtree.successors(x):
+            if z is x:
+                continue
+            if z not in df:
+                continue
+            for y in df[z]:
+                if x not in list(domtree.predecessors(y)):
+                    df[x].add(y)
+    return df","for z in domtree.successors(x):
+    if z is x:
+        continue
+    if z not in df:
+        continue
+    for y in df[z]:
+        if x not in list(domtree.predecessors(y)):
+            df[x].add(y)",df[x] |= {y for z in domtree.successors(x) if z is not x and z in df for y in df[z] if x not in list(domtree.predecessors(y))},Cannot refactor,-1,1,,,df[x] = set(),"Answer: Yes
+Information:
+zejun = {y for z in domtree.successors(x) if z is not x and z in df for y in df[z] if x not in list(domtree.predecessors(y))}",
+Kiwi,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Kiwi/tcms/signals.py,https://github.com/kiwitcms/Kiwi/tree/master/tcms/signals.py,,notify_admins$47,"def notify_admins(sender, **kwargs):
+    """"""
+    Very simple signal handler which sends emails to site
+    admins when a new user has been registered!
+
+    .. warning::
+
+        This handler isn't connected to the ``USER_REGISTERED_SIGNAL`` by default!
+    """"""
+    from django.conf import settings
+    from django.contrib.auth import get_user_model
+    from django.urls import reverse
+    from tcms.core.utils import request_host_link
+    from tcms.core.utils.mailto import mailto
+    if kwargs.get('raw', False):
+        return
+    admin_emails = set()
+    for super_user in get_user_model().objects.filter(is_superuser=True):
+        admin_emails.add(super_user.email)
+    for (_name, email) in settings.ADMINS:
+        admin_emails.add(email)
+    request = kwargs.get('request')
+    user = kwargs.get('user')
+    user_url = request_host_link(request) + reverse('admin:auth_user_change', args=[user.pk])
+    mailto(template_name='email/user_registered/notify_admins.txt', recipients=list(admin_emails), subject=str(_('New user awaiting approval')), context={'username': user.username, 'user_url': user_url})","for (_name, email) in settings.ADMINS:
+    admin_emails.add(email)","admin_emails |= {email for (_name, email) in settings.ADMINS}",Cannot refactor,-1,1,,,admin_emails = set(),"Answer: Yes
+Information:
+zejun = {email for (_name, email) in settings.ADMINS}",
+mopidy,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/mopidy/mopidy/http/handlers.py,https://github.com/mopidy/mopidy/tree/master/mopidy/http/handlers.py,ClientListHandler,get$275,"def get(self):
+    set_mopidy_headers(self)
+    names = set()
+    for app in self.apps:
+        names.add(app['name'])
+    for static in self.statics:
+        names.add(static['name'])
+    names.discard('mopidy')
+    self.render('data/clients.html', apps=sorted(list(names)))","for static in self.statics:
+    names.add(static['name'])",names |= {static['name'] for static in self.statics},Cannot refactor,-1,1,,,names = set(),"Answer: Yes
+Information:
+zejun = {static['name'] for static in self.statics}",
+unknown-horizons,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/unknown-horizons/horizons/world/resourcehandler.py,https://github.com/unknown-horizons/unknown-horizons/tree/master/horizons/world/resourcehandler.py,ResourceHandler,_load_provided_resources$195,"def _load_provided_resources(self):
+    """"""Returns a iterable obj containing all resources this building provides.
+		This is outsourced from initialization to a method for the possibility of
+		overwriting it.
+		Do not alter the returned list; if you need to do so, then copy it.""""""
+    produced_resources = set()
+    for prod in self.get_component(Producer).get_productions():
+        for res in prod.get_produced_resources():
+            produced_resources.add(res)
+    for res in self.additional_provided_resources:
+        produced_resources.add(res)
+    return produced_resources","for res in self.additional_provided_resources:
+    produced_resources.add(res)",produced_resources |= {res for res in self.additional_provided_resources},Cannot refactor,-1,1,,,produced_resources = set(),"Answer: Yes
+Information:
+zejun = {res for res in self.additional_provided_resources}",
+docassemble,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/docassemble/docassemble_webapp/docassemble/webapp/backend.py,https://github.com/jhpyle/docassemble/tree/master/docassemble_webapp/docassemble/webapp/backend.py,,delete_temp_user_data$714,"def delete_temp_user_data(temp_user_id, r):
+    db.session.execute(delete(UserDictKeys).where(UserDictKeys.temp_user_id == temp_user_id))
+    db.session.commit()
+    db.session.execute(delete(UploadsUserAuth).where(UploadsUserAuth.temp_user_id == temp_user_id))
+    db.session.commit()
+    db.session.execute(delete(ChatLog).where(ChatLog.temp_owner_id == temp_user_id))
+    db.session.commit()
+    db.session.execute(delete(ChatLog).where(ChatLog.temp_user_id == temp_user_id))
+    db.session.commit()
+    db.session.execute(delete(GlobalObjectStorage).where(GlobalObjectStorage.temp_user_id == temp_user_id))
+    db.session.commit()
+    files_to_delete = list()
+    for short_code_item in db.session.execute(select(Shortener).filter_by(temp_user_id=temp_user_id)).scalars():
+        for email in db.session.execute(select(Email).filter_by(short=short_code_item.short)).scalars():
+            for attachment in db.session.execute(select(EmailAttachment).filter_by(email_id=email.id)).scalars():
+                files_to_delete.append(attachment.upload)
+    for file_number in files_to_delete:
+        the_file = SavedFile(file_number)
+        the_file.delete()
+    db.session.execute(delete(Shortener).where(Shortener.temp_user_id == temp_user_id))
+    db.session.commit()
+    keys_to_delete = set()
+    for key in r.keys('*userid:t' + str(temp_user_id)):
+        keys_to_delete.add(key)
+    for key in r.keys('*userid:t' + str(temp_user_id) + ':*'):
+        keys_to_delete.add(key)
+    for key in keys_to_delete:
+        r.delete(key)","for key in r.keys('*userid:t' + str(temp_user_id) + ':*'):
+    keys_to_delete.add(key)",keys_to_delete |= {key for key in r.keys('*userid:t' + str(temp_user_id) + ':*')},Cannot refactor,-1,1,,,keys_to_delete = set(),"Answer: Yes
+Information:
+zejun = {key for key in r.keys('*userid:t' + str(temp_user_id) + ':*')}",
+python-string-similarity,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/python-string-similarity/strsimpy/qgram.py,https://github.com/luozhouyang/python-string-similarity/tree/master/strsimpy/qgram.py,QGram,distance_profile$43,"def distance_profile(profile0, profile1):
+    union = set()
+    for k in profile0.keys():
+        union.add(k)
+    for k in profile1.keys():
+        union.add(k)
+    agg = 0
+    for k in union:
+        (v0, v1) = (0, 0)
+        if profile0.get(k) is not None:
+            v0 = int(profile0.get(k))
+        if profile1.get(k) is not None:
+            v1 = int(profile1.get(k))
+        agg += abs(v0 - v1)
+    return agg","for k in profile1.keys():
+    union.add(k)",union |= {k for k in profile1.keys()},Cannot refactor,-1,1,,,union = set(),"Answer: Yes
+Information:
+zejun = {k for k in profile1.keys()}",
+Paddle,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/Paddle/python/paddle/distributed/fleet/meta_optimizers/sharding_optimizer.py,https://github.com/PaddlePaddle/Paddle/tree/master/python/paddle/distributed/fleet/meta_optimizers/sharding_optimizer.py,ShardingOptimizer,_initialization_broadcast$1817,"def _initialization_broadcast(self):
+    """"""
+        this funtion is to ensure the initialization between dp group to be
+        identical when hybrid-dp is used, and the initialization of
+        not distributed param between mp group to be identical.
+        """"""
+    if self.dp_degree <= 1 and self.mp_degree <= 1:
+        return
+    startup_block = self._startup_program.global_block()
+    params = startup_block.all_parameters()
+    params_name = []
+    not_dist_param_name = set()
+    for param in params:
+        params_name.append(param.name)
+        if not hasattr(param, 'is_distributed') or not param.is_distributed:
+            not_dist_param_name.add(param.name)
+    broadcast_params = set()
+    for op in startup_block.ops:
+        if op.type == 'c_broadcast':
+            broadcast_params.add(op.desc.output_arg_names()[0])
+    for param in params_name:
+        if param in broadcast_params:
+            continue
+        rings = []
+        if self.mp_degree > 1 and param in not_dist_param_name:
+            rings.append(self.mp_ring_id)
+        if self.dp_degree > 1:
+            rings.append(self.dp_ring_id)
+        for ring in rings:
+            startup_block.append_op(type='c_broadcast', inputs={'X': param}, outputs={'Out': param}, attrs={'ring_id': ring, 'root': 0, 'use_calc_stream': True, OP_ROLE_KEY: OpRole.Forward})
+    startup_block._sync_with_cpp()","for param in params:
+    params_name.append(param.name)
+    if not hasattr(param, 'is_distributed') or not param.is_distributed:
+        not_dist_param_name.add(param.name)","not_dist_param_name = {param.name for param in params if not hasattr(param, 'is_distributed') or not param.is_distributed}",Cannot refactor,-1,1,,,not_dist_param_name = set(),"Answer: Yes
+Information:
+params_name = [param.name for param in params]
+zejun = {param.name for param in params if not hasattr(param, 'is_distributed') or not param.is_distributed}",
+tuna,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/tuna/tuna/_runtime_profile.py,https://github.com/nschloe/tuna/tree/master/tuna/_runtime_profile.py,,read_runtime_profile$4,"def read_runtime_profile(prof_filename):
+    stats = pstats.Stats(prof_filename)
+    roots = set()
+    for (key, value) in stats.stats.items():
+        if not value[4] and value[3] > 1e-05:
+            roots.add(key)
+    default_roots = [('~', 0, '<built-in method builtins.exec>'), ('~', 0, '<built-in method exec>')]
+    for default_root in default_roots:
+        if default_root in stats.stats:
+            roots.add(default_root)
+    roots = list(roots)
+    children = {key: [] for key in stats.stats.keys()}
+    for (key, value) in stats.stats.items():
+        (_, _, _, _, parents) = value
+        for parent in parents:
+            children[parent].append(key)
+
+    def populate(key, parent, all_ancestors):
+        if parent is None:
+            parent_times = {}
+            (_, _, selftime, cumtime, _) = stats.stats[key]
+        else:
+            (_, _, _, _, parent_times) = stats.stats[key]
+            (_, _, selftime, cumtime) = parent_times[parent]
+        name = '{}::{}::{}'.format(*key)
+        if key in all_ancestors:
+            return {}
+        if len(parent_times) <= 1:
+            c = [populate(child, key, all_ancestors + [key]) for child in children[key]]
+            c.append({'text': [name + '::self', f'{selftime:.3} s'], 'color': 0, 'value': selftime})
+            return {'text': [name], 'color': 0, 'children': c}
+        if children[key]:
+            c = [{'text': ['Possible calls of', ', '.join(('{}::{}::{}'.format(*child) for child in children[key]))], 'color': 3, 'value': cumtime}]
+            return {'text': [name], 'color': 0, 'children': c}
+        return {'text': [name, f'{selftime:.3f}'], 'color': 0, 'value': selftime}
+    if len(roots) == 1:
+        data = populate(roots[0], None, [])
+    else:
+        assert len(roots) > 1
+        data = {'text': ['root'], 'color': 0, 'children': [populate(root, None, []) for root in roots]}
+    return data","for default_root in default_roots:
+    if default_root in stats.stats:
+        roots.add(default_root)",roots |= {default_root for default_root in default_roots if default_root in stats.stats},Cannot refactor,-1,1,,,roots = set(),"Answer: Yes
+Information:
+zejun = {default_root for default_root in default_zejun if default_root in stats.stats}",
+metaworld,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/metaworld/tests/integration/test_new_api.py,https://github.com/rlworkgroup/metaworld/tree/master/tests/integration/test_new_api.py,,test_all_ml45$111,"def test_all_ml45():
+    ml45 = ML45()
+    train_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml45.train_classes.items()}
+    train_env_rand_vecs = check_tasks_unique(ml45.train_tasks, ml45._train_classes.keys())
+    for task in ml45.train_tasks:
+        env = train_env_instances[task.env_name]
+        env.set_task(task)
+        obs = env.reset()
+        assert env.random_init == True
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+    for env in train_env_instances.values():
+        env.close()
+    del train_env_instances
+    test_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml45.test_classes.items()}
+    test_env_rand_vecs = check_tasks_unique(ml45.test_tasks, ml45._test_classes.keys())
+    for task in ml45.test_tasks:
+        env = test_env_instances[task.env_name]
+        env.set_task(task)
+        obs = env.reset()
+        assert np.all(obs[-3:] == np.array([0, 0, 0]))
+        assert env.observation_space.shape == (39,)
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+    for env in test_env_instances.values():
+        env.close()
+    train_test_rand_vecs = set()
+    for rand_vecs in train_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    for rand_vecs in test_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    assert len(train_test_rand_vecs) == (len(ml45.test_classes.keys()) + len(ml45.train_classes.keys())) * metaworld._N_GOALS
+    del test_env_instances","for rand_vecs in test_env_rand_vecs.values():
+    for rand_vec in rand_vecs:
+        train_test_rand_vecs.add(tuple(rand_vec))",train_test_rand_vecs |= {tuple(rand_vec) for rand_vecs in test_env_rand_vecs.values() for rand_vec in rand_vecs},Cannot refactor,-1,1,,,train_test_rand_vecs = set(),"Answer: Yes
+Information:
+zejun = {tuple(rand_vec) for rand_vecs in test_env_rand_vecs.values() for rand_vec in rand_vecs}",
+metaworld,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/metaworld/tests/integration/test_new_api.py,https://github.com/rlworkgroup/metaworld/tree/master/tests/integration/test_new_api.py,,test_all_ml10$62,"def test_all_ml10():
+    ml10 = ML10()
+    train_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml10.train_classes.items()}
+    train_env_rand_vecs = check_tasks_unique(ml10.train_tasks, ml10._train_classes.keys())
+    for task in ml10.train_tasks:
+        env = train_env_instances[task.env_name]
+        env.set_task(task)
+        env.reset()
+        assert env.random_init == True
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+        step_env(env, max_path_length=STEPS, render=False)
+    for env in train_env_instances.values():
+        env.close()
+    del train_env_instances
+    test_env_instances = {env_name: env_cls() for (env_name, env_cls) in ml10.test_classes.items()}
+    test_env_rand_vecs = check_tasks_unique(ml10.test_tasks, ml10._test_classes.keys())
+    for task in ml10.test_tasks:
+        env = test_env_instances[task.env_name]
+        env.set_task(task)
+        env.reset()
+        assert env.random_init == True
+        old_obj_init = env.obj_init_pos
+        old_target_pos = env._target_pos
+        step_env(env, max_path_length=STEPS, render=False)
+        assert np.all(np.allclose(old_obj_init, env.obj_init_pos))
+        assert np.all(np.allclose(old_target_pos, env._target_pos))
+        step_env(env, max_path_length=STEPS, render=False)
+    for env in test_env_instances.values():
+        env.close()
+    train_test_rand_vecs = set()
+    for rand_vecs in train_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    for rand_vecs in test_env_rand_vecs.values():
+        for rand_vec in rand_vecs:
+            train_test_rand_vecs.add(tuple(rand_vec))
+    assert len(train_test_rand_vecs) == (len(ml10.test_classes.keys()) + len(ml10.train_classes.keys())) * metaworld._N_GOALS
+    del test_env_instances","for rand_vecs in test_env_rand_vecs.values():
+    for rand_vec in rand_vecs:
+        train_test_rand_vecs.add(tuple(rand_vec))",train_test_rand_vecs |= {tuple(rand_vec) for rand_vecs in test_env_rand_vecs.values() for rand_vec in rand_vecs},Cannot refactor,-1,1,,,train_test_rand_vecs = set(),"Answer: Yes
+Information:
+zejun = {tuple(rand_vec) for rand_vecs in test_env_rand_vecs.values() for rand_vec in rand_vecs}",
+lbry-sdk,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/lbry-sdk/lbry/testcase.py,https://github.com/lbryio/lbry-sdk/tree/master/lbry/testcase.py,CommandTestCase,get_all_addresses$459,"def get_all_addresses(tx):
+    addresses = set()
+    for txi in tx['inputs']:
+        addresses.add(txi['address'])
+    for txo in tx['outputs']:
+        addresses.add(txo['address'])
+    return list(addresses)","for txo in tx['outputs']:
+    addresses.add(txo['address'])",addresses |= {txo['address'] for txo in tx['outputs']},Cannot refactor,-1,1,,,addresses = set(),"Answer: Yes
+Information:
+zejun = {txo['address'] for txo in tx['outputs']}",
+unknown-horizons,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/unknown-horizons/horizons/ai/aiplayer/productionbuilder.py,https://github.com/unknown-horizons/unknown-horizons/tree/master/horizons/ai/aiplayer/productionbuilder.py,ProductionBuilder,_init_road_connectivity_cache$95,"def _init_road_connectivity_cache(self):
+    self.road_connectivity_cache = PotentialRoadConnectivityCache(self)
+    coords_set = set()
+    for coords in self.plan:
+        coords_set.add(coords)
+    for coords in self.land_manager.roads:
+        coords_set.add(coords)
+    self.road_connectivity_cache.modify_area(list(sorted(coords_set)))","for coords in self.land_manager.roads:
+    coords_set.add(coords)",coords_set |= {coords for coords in self.land_manager.roads},Cannot refactor,-1,1,,,coords_set = set(),"Answer: Yes
+Information:
+zejun = {coords for coords in self.land_manager.roads}",
+no_find,,,,,,,,,,,,,,,
+ARL,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/ARL/app/services/searchEngines.py,https://github.com/TophantTechnology/ARL/tree/master/app/services/searchEngines.py,BingSearch,match_urls$99,"def match_urls(self, html):
+    dom = pq(html)
+    result_items = dom(self.pq_query).items()
+    urls_result = [item.attr('href') for item in result_items]
+    urls = set()
+    for u in urls_result:
+        urls.add(u)
+    return list(urls)","for u in urls_result:
+    urls.add(u)",urls = {u for u in urls_result},0,,,,,,,
+hivemind,/data1/zhangzejun/mnt/zejun/smp/data/python_star_2000repo/hivemind/hivemind/averaging/allreduce.py,https://github.com/learning-at-home/hivemind/tree/master/hivemind/averaging/allreduce.py,AllReduceRunner,finalize$281,"def finalize(self, *, cancel: bool=False, exception: Optional[BaseException]=None):
+    """"""finish or terminate AllReduceRunner, propagate any errors / cancellations to peers.""""""
+    assert not cancel or not exception, 'finalize accepts either exception or cancel, but not both'
+    pending_tasks = set()
+    if cancel or exception:
+        if cancel or isinstance(exception, asyncio.CancelledError):
+            code = averaging_pb2.CANCELLED
+        else:
+            code = averaging_pb2.INTERNAL_ERROR
+        logger.debug(f'{self} - notifying peers about {averaging_pb2.MessageCode.Name(code)}')
+        for (peer_id, mode) in zip(self.ordered_peer_ids, self.modes):
+            if peer_id != self.peer_id and mode != AveragingMode.CLIENT:
+                pending_tasks.add(asyncio.create_task(self._send_error_to_peer(peer_id, code)))
+    if not self._future.done():
+        if cancel:
+            logger.debug(f'{self} - cancelled')
+            self._future.cancel()
+        elif exception:
+            logger.debug(f'{self} - caught {exception}')
+            self._future.set_exception(exception)
+        else:
+            logger.debug(f'{self} - finished')
+            self._future.set_result(None)
+        self.tensor_part_container.finalize()
+        self.tensor_part_reducer.finalize()
+        return pending_tasks
+    else:
+        logger.debug(f'{self} - could not finish: allreduce is already finished: {self._future}')
+        return pending_tasks","for (peer_id, mode) in zip(self.ordered_peer_ids, self.modes):
+    if peer_id != self.peer_id and mode != AveragingMode.CLIENT:
+        pending_tasks.add(asyncio.create_task(self._send_error_to_peer(peer_id, code)))","pending_tasks = {asyncio.create_task(self._send_error_to_peer(peer_id, code)) for (peer_id, mode) in zip(self.ordered_peer_ids, self.modes) if peer_id != self.peer_id and mode != AveragingMode.CLIENT}",0,,,,,,,
